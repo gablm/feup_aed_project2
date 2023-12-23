@@ -33,4 +33,5 @@
 
 # Folders
 objs/
-docs/
+docs/html/
+.vscode/
