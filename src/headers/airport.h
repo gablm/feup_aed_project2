@@ -12,6 +12,7 @@ class Airport {
 		double latitude;
 		double longitude;
 	public:
+		Airport(std::string code);
 		Airport(std::string code, std::string name, 
 			std::string city, std::string country, 
 			double latitude, double longitude);

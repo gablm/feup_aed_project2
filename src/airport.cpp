@@ -1,5 +1,7 @@
 #include "headers/airport.h"
 
+Airport::Airport(std::string code) : code(code) {}
+
 Airport::Airport(std::string code, std::string name, std::string city, std::string country, double latitude, double longitude) 
 			: code(code), name(name), city(city), country(country), latitude(latitude), longitude(longitude)
 			{}

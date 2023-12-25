@@ -23,7 +23,7 @@ class Vertex {
     int num;
     int low;
 
-    void addEdge(Vertex<T, W> *dest, double w);
+    void addEdge(Vertex<T, W> *dest, double w, W &info);
     bool removeEdgeTo(Vertex<T, W> *d);
 public:
     Vertex(T in);
@@ -74,7 +74,7 @@ public:
     int getNumVertex() const;
     bool addVertex(const T &in);
     bool removeVertex(const T &in);
-    bool addEdge(const T &sourc, const T &dest, double w);
+    bool addEdge(const T &sourc, const T &dest, double w, W &info);
     bool removeEdge(const T &sourc, const T &dest);
     vector<Vertex<T, W> * > getVertexSet() const;
     vector<T> dfs() const;
@@ -189,8 +189,8 @@ void Vertex<T, W>::setAdj(const std::vector<Edge<T, W>> &adj) {
  * with a given destination vertex (d) and edge weight (w).
  */
 template<class T, class W>
-void Vertex<T, W>::addEdge(Vertex<T, W> *d, double w) {
-    adj.push_back(Edge<T, W>(d, w));
+void Vertex<T, W>::addEdge(Vertex<T, W> *d, double w, W &info) {
+    adj.push_back(Edge<T, W>(d, w, info));
 }
 
 /*
@@ -248,12 +248,12 @@ bool Graph<T, W>::addVertex(const T &in) {
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
 template<class T, class W>
-bool Graph<T, W>::addEdge(const T &sourc, const T &dest, double w) {
+bool Graph<T, W>::addEdge(const T &sourc, const T &dest, double w, W &info) {
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
         return false;
-    v1->addEdge(v2,w);
+    v1->addEdge(v2,w, info);
     return true;
 }
 
