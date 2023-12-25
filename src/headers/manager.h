@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <map>
 #include "airline.h"
 #include "airport.h"
 #include "graph.h"
@@ -13,8 +14,7 @@ class Manager {
 	private:
 		Graph<Airport, std::string> connections;
 		Graph<Airport, Airline> available_flights;
-		std::list<Airport> airports;
-		std::list<Airline> airlines;
+		std::map<std::string, Airline> airlines;
 	public:
 		Manager() {}
 		void load_airports();
