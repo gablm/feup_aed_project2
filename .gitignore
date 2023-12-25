@@ -30,6 +30,8 @@
 *.exe
 *.out
 *.app
+amadeus
+amadeus.exe
 
 # Folders
 objs/

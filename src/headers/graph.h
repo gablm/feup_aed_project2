@@ -9,10 +9,9 @@
 
 using namespace std;
 
+template <class T, class W> class Vertex;
 template <class T, class W> class Edge;
 template <class T, class W> class Graph;
-template <class T, class W> class Vertex;
-class Airline;
 
 template <class T, class W>
 class Vertex {
