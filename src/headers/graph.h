@@ -6,6 +6,7 @@
 #include <queue>
 #include <stack>
 #include <list>
+#include <unordered_map>
 
 using namespace std;
 
@@ -63,7 +64,7 @@ public:
 
 template <class T, class W>
 class Graph {
-    vector<Vertex<T, W>*> vertexSet;
+    unordered_map<std::string, Vertex<T, W>*> vertexSet;
     int _index_;
     stack<Vertex<T, W>> _stack_;
     list<list<T>> _list_sccs_;
@@ -71,13 +72,13 @@ class Graph {
     void dfsVisit(Vertex<T, W> *v,  vector<T> & res) const;
     bool dfsIsDAG(Vertex<T, W> *v) const;
 public:
-    Vertex<T, W> *findVertex(const T &in) const;
+    Vertex<T, W> *findVertex(std::string id);
     int getNumVertex() const;
-    bool addVertex(const T &in);
+    bool addVertex(const T &in, std::string id);
     bool removeVertex(const T &in);
     bool addEdge(const T &sourc, const T &dest, double w, W &info);
     bool removeEdge(const T &sourc, const T &dest);
-    vector<Vertex<T, W> * > getVertexSet() const;
+    unordered_map<std::string, Vertex<T, W> *> getVertexSet() const;
     vector<T> dfs() const;
     vector<T> dfs(const T & source) const;
     vector<T> bfs(const T &source) const;
@@ -220,7 +221,7 @@ int Graph<T, W>::getNumVertex() const {
 }
 
 template<class T, class W>
-vector<Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
+unordered_map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
     return vertexSet;
 }
 
@@ -228,11 +229,8 @@ vector<Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
  * Auxiliary function to find a vertex with a given content.
  */
 template<class T, class W>
-Vertex<T, W> * Graph<T, W>::findVertex(const T &in) const {
-    for (auto v : vertexSet)
-        if (v->info == in)
-            return v;
-    return NULL;
+Vertex<T, W> * Graph<T, W>::findVertex(std::string id) {
+    return vertexSet[id];
 }
 
 /*
@@ -240,10 +238,10 @@ Vertex<T, W> * Graph<T, W>::findVertex(const T &in) const {
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
 template<class T, class W>
-bool Graph<T, W>::addVertex(const T &in) {
-    if ( findVertex(in) != NULL)
+bool Graph<T, W>::addVertex(const T &in, std::string id) {
+    if (findVertex(id) != NULL)
         return false;
-    vertexSet.push_back(new Vertex<T, W>(in));
+    vertexSet[id] = new Vertex<T, W>(in);
     return true;
 }
 
@@ -259,7 +257,7 @@ bool Graph<T, W>::addEdge(const T &sourc, const T &dest, double w, W &info) {
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
         return false;
-    v1->addEdge(v2,w, info);
+    v1->addEdge(v2, w, info);
     return true;
 }
 

@@ -55,8 +55,8 @@ void Manager::load_airports() {
 
 		Airport newData = Airport(code, name, city, country, latitude, longitude);
 
-		connections.addVertex(newData);
-		available_flights.addVertex(newData);
+		connections.addVertex(newData, code);
+		available_flights.addVertex(newData, code);
 		airports[code] = newData;
 	}
 
@@ -69,7 +69,7 @@ void Manager::test_airports() {
 	
 	for (auto i : connections.getVertexSet()) {
 		count++;
-		Airport info = i->getInfo();
+		Airport info = i.second->getInfo();
 		std::cout 	<< info.getCode() << " - " << info.getCity() 
 					<< "\nLA: " << info.getLatitude() << " LO: " << info.getLongitude() << "\n\n";
 	}
@@ -77,16 +77,11 @@ void Manager::test_airports() {
 	std::cout << "Expected: 3019\nGot: " << count << "\n\n";
 
 	for (std::string codes : {"CGD", "OPO", "CIA"}) {
-		auto res = findAirportByCode(connections, codes)->getInfo();
+		auto res = connections.findVertex(codes)->getInfo();
 		std::cout 	<< "Search for " + codes + " returns: \n\n" 
 					<< res.getCode() << " - " << res.getCity() 
 					<< "\nLA: " << res.getLatitude() << " LO: " << res.getLongitude() << "\n\n";
 	}	
-}
-
-template <class T, class W>
-Vertex<T, W> *Manager::findAirportByCode(Graph<T, W> graph, std::string code) {
-	return graph.findVertex(Airport(code, "", "", "", 0, 0));
 }
 
 void Manager::load_airlines() {
@@ -205,9 +200,9 @@ void Manager::load_flights() {
 					av_src->setAdj(av_edge);
 					cn_src->setAdj(cn_edge);
 				}
-				av_src = findAirportByCode(available_flights, source);
+				av_src = available_flights.findVertex(source);
 				av_edge = av_src->getAdj();
-				cn_src = findAirportByCode(connections, source);
+				cn_src = connections.findVertex(source);
 				cn_edge = cn_src->getAdj();
 				oldSource = source;
 			}
@@ -217,10 +212,10 @@ void Manager::load_flights() {
 
 			double dist = distance(src.getLatitude(), src.getLongitude(), dst.getLatitude(), dst.getLongitude());
 
-			auto av_dst = available_flights.findVertex(dst);
+			auto av_dst = available_flights.findVertex(target);
 			av_edge.push_back(Edge<Airport, Airline>(av_dst, dist, company));
 
-			auto cn_dst = connections.findVertex(dst);
+			auto cn_dst = connections.findVertex(target);
 			Edge <Airport, std::string> edg(cn_dst, dist, empty);
 			if (std::find(cn_edge.begin(), cn_edge.end(), edg) == cn_edge.end())
 				cn_edge.push_back(edg);
@@ -245,12 +240,12 @@ void Manager::test_flights() {
 
 	int count = 0;
 	for (auto i : available_flights.getVertexSet()) {
-		count += i->getAdj().size();
+		count += i.second->getAdj().size();
 	}
 
 	std::cout << "Expected: 63832\nGot: " << count << "\n";
 
-	auto i = findAirportByCode(connections, "DCY");
+	auto i = connections.findVertex("DCY");
 
 	std::cout 	<< "Expected: 1\nGot: " << i->getAdj().size() << "\n"
 				<< i->getAdj().front().getDest()->getInfo().getCode() << "\n";
@@ -264,7 +259,7 @@ int Manager::airportCount() {
 int Manager::flightCount() {
 	int count = 0;
 	for (auto i : available_flights.getVertexSet())
-		count += i->getAdj().size();
+		count += i.second->getAdj().size();
 	return count;
 }
 

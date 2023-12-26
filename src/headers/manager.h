@@ -24,9 +24,6 @@ class Manager {
 		void load_flights();
 		void test_flights();
 
-		template <class T, class W>
-		Vertex<T, W> *findAirportByCode(Graph<T, W> graph, std::string code);
-
 		//i
 		int airportCount();
 		int flightCount();
