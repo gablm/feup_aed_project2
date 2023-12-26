@@ -1,7 +1,12 @@
 #include "headers/manager.h"
 #include <iomanip>
 #include <chrono>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#define _USE_MATH_DEFINES
 #include <cmath>
+#include <algorithm>
 
 void Manager::load_airports() {
 
@@ -155,8 +160,6 @@ double distance(double la1, double lo1, double la2, double lo2) {
 
 void Manager::load_flights() {
 
-	auto start = std::chrono::high_resolution_clock::now();
-
 	std::string line, source, oldSource, target, airline;
 
 	Vertex<Airport, std::string> *cn_src = nullptr;
@@ -218,7 +221,9 @@ void Manager::load_flights() {
 			av_edge.push_back(Edge<Airport, Airline>(av_dst, dist, company));
 
 			auto cn_dst = connections.findVertex(dst);
-			cn_edge.push_back(Edge<Airport, std::string>(cn_dst, dist, empty));
+			Edge <Airport, std::string> edg(cn_dst, dist, empty);
+			if (std::find(cn_edge.begin(), cn_edge.end(), edg) == cn_edge.end())
+				cn_edge.push_back(edg);
 
 		} catch (const std::exception& e) {
 
@@ -231,12 +236,9 @@ void Manager::load_flights() {
 	file.close();
 
 	if (av_src != nullptr && cn_src != nullptr) {
-					av_src->setAdj(av_edge);
-					cn_src->setAdj(cn_edge);
+		av_src->setAdj(av_edge);
+		cn_src->setAdj(cn_edge);
 	}
-
-	auto end = std::chrono::high_resolution_clock::now();
-	std::cout 	<< "Load Time: " << std::chrono::duration<double>(end - start).count() << "s\n\n";
 }
 
 void Manager::test_flights() {
@@ -247,4 +249,25 @@ void Manager::test_flights() {
 	}
 
 	std::cout << "Expected: 63832\nGot: " << count << "\n";
+
+	auto i = findAirportByCode(connections, "DCY");
+
+	std::cout 	<< "Expected: 1\nGot: " << i->getAdj().size() << "\n"
+				<< i->getAdj().front().getDest()->getInfo().getCode() << "\n";
+}
+
+//i
+int Manager::airportCount() {
+	return airports.size();
+}
+
+int Manager::flightCount() {
+	int count = 0;
+	for (auto i : available_flights.getVertexSet())
+		count += i->getAdj().size();
+	return count;
+}
+
+int Manager::airlineCount() {
+	return airlines.size();
 }

@@ -1,10 +1,7 @@
-#include "headers/manager.h"
+#include "headers/ui.h"
 
 int main() {
-	Manager manager;
-	manager.load_airports();
-	manager.load_airlines();
-	manager.load_flights();
-	manager.test_flights();
+	UI ui;
+	ui.mainMenu();
 	return 0;
 }

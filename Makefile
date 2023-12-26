@@ -3,7 +3,7 @@ NAME=amadeus
 CC=g++
 FLAGS= -std=c++11 -pedantic -Wall -Wextra -Werror
 
-FILES= objs/airline.o objs/airport.o objs/main.o objs/manager.o
+FILES= objs/airline.o objs/airport.o objs/main.o objs/manager.o objs/ui.o
 
 all: $(NAME)
 

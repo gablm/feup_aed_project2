@@ -56,6 +56,7 @@ public:
     double getWeight() const;
     void setWeight(double weight);
 	W getInfo() const;
+	bool operator==(const Edge<T,W> cmp);
     friend class Graph<T, W>;
     friend class Vertex<T, W>;
 };
@@ -109,6 +110,11 @@ void Edge<T, W>::setWeight(double weight) {
 template<class T, class W>
 W Edge<T, W>::getInfo() const {
 	return info;
+}
+
+template<class T, class W>
+bool Edge<T, W>::operator==(const Edge<T,W> cmp) {
+	return dest == cmp.dest && weight == cmp.weight && info == cmp.info;
 }
 
 template<class T, class W>
