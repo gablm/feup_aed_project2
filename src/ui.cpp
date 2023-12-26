@@ -4,15 +4,16 @@
 UI::UI() : manager(Manager()) {
 	loader = std::thread(loadAll, this);
 	auto start = std::chrono::high_resolution_clock::now();
-	int count = 0;
-
+	
+	/*int count = 0;
 	while (loading) {
 		CLEAR;
 		std::cout << "Data is currently loading.\nPlease wait" << std::string(count, '.') << "\n";
 		count = count == 3 ? 0 : count + 1;
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	}
-
+	}*/
+	
+	loader.join();
 	auto end = std::chrono::high_resolution_clock::now();
 	loadtime = std::chrono::duration<double>(end - start).count();
 }
