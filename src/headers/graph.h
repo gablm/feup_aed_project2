@@ -6,7 +6,7 @@
 #include <queue>
 #include <stack>
 #include <list>
-#include <unordered_map>
+#include <map>
 
 using namespace std;
 
@@ -64,7 +64,7 @@ public:
 
 template <class T, class W>
 class Graph {
-    unordered_map<std::string, Vertex<T, W>*> vertexSet;
+    map<std::string, Vertex<T, W>*> vertexSet;
 public:
     Vertex<T, W> *findVertex(std::string id);
     int getNumVertex() const;
@@ -72,7 +72,7 @@ public:
     bool removeVertex(const T &in);
     bool addEdge(const T &sourc, const T &dest, double w, W &info);
     bool removeEdge(const T &sourc, const T &dest);
-    unordered_map<std::string, Vertex<T, W> *> getVertexSet() const;
+    map<std::string, Vertex<T, W> *> getVertexSet() const;
 };
 
 template <class T, class W>
@@ -211,7 +211,7 @@ int Graph<T, W>::getNumVertex() const {
 }
 
 template<class T, class W>
-unordered_map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
+map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
     return vertexSet;
 }
 
