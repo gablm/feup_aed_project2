@@ -75,7 +75,7 @@ void UI::mainMenu() {
 				globalStats();
 				break;
 			default:
-				HelpMsg("", "");
+				HelpMsg("Command not found!", "help - shows all commands");
 				break;
 		}
     }
@@ -108,7 +108,7 @@ void UI::globalStats() {
 		}
 		if (str == "B" || str == "b")
 			break;
-		HelpMsg("", "");
+		HelpMsg("Command not found!", "help - shows all commands");
     }
 }
 
