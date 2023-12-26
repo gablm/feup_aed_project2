@@ -13,19 +13,14 @@
 class UI {
 	private:
 		Manager manager;
-		std::thread loader;
 		double loadtime;
-		bool loading = true;
 	public:
 		UI();
-		void setManager(Manager value);
-		void setLoading(bool value);
-		static void loadAll(UI *ui);
 
 		void mainMenu();
 		void globalStats();
 
-		void HelpMsg(std::string error, std::string usage);
+		void helpMsg(std::string error, std::string usage);
 };
 
 #endif

@@ -8,7 +8,7 @@
 #include <cmath>
 #include <algorithm>
 
-void Manager::load_airports() {
+void Manager::loadAirports() {
 
 	std::string line, code, name, city, country, latitudeStr, longitudeStr;
 	double latitude, longitude;
@@ -63,7 +63,7 @@ void Manager::load_airports() {
 	file.close();
 }
 
-void Manager::test_airports() {
+void Manager::testAirports() {
 	std::cout << std::setprecision(6) << std::fixed;
 	int count = 0;
 	
@@ -84,7 +84,7 @@ void Manager::test_airports() {
 	}	
 }
 
-void Manager::load_airlines() {
+void Manager::loadAirlines() {
 
 	std::string line, code, name, callsign, country;
 
@@ -130,7 +130,7 @@ void Manager::load_airlines() {
 	file.close();
 }
 
-void Manager::test_airlines() {
+void Manager::testAirlines() {
 	int count = 0;
 	
 	for (auto i : airlines) {
@@ -153,7 +153,7 @@ double distance(double la1, double lo1, double la2, double lo2) {
 	return 6371 * 2 * asin(sqrt(formula));
 }
 
-void Manager::load_flights() {
+void Manager::loadFlights() {
 
 	std::string line, source, oldSource, target, airline;
 
@@ -236,7 +236,7 @@ void Manager::load_flights() {
 	}
 }
 
-void Manager::test_flights() {
+void Manager::testFlights() {
 
 	int count = 0;
 	for (auto i : available_flights.getVertexSet()) {

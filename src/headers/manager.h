@@ -15,14 +15,14 @@ class Manager {
 		std::map<std::string, Airport> airports;
 	public:
 		Manager() {}
-		void load_airports();
-		void test_airports();
+		void loadAirports();
+		void testAirports();
 
-		void load_airlines();
-		void test_airlines();
+		void loadAirlines();
+		void testAirlines();
 		
-		void load_flights();
-		void test_flights();
+		void loadFlights();
+		void testFlights();
 
 		//i
 		int airportCount();
