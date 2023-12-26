@@ -64,7 +64,8 @@ public:
 
 template <class T, class W>
 class Graph {
-    map<std::string, Vertex<T, W>*> vertexSet;
+    map<std::string, Vertex<T, W>*> vertexMap;
+	vector<Vertex<T, W>*> vertexSet;
 public:
     Vertex<T, W> *findVertex(std::string id);
     int getNumVertex() const;
@@ -72,7 +73,8 @@ public:
     bool removeVertex(const T &in);
     bool addEdge(const T &sourc, const T &dest, double w, W &info);
     bool removeEdge(const T &sourc, const T &dest);
-    map<std::string, Vertex<T, W> *> getVertexSet() const;
+    map<std::string, Vertex<T, W>*> getVertexMap() const;
+	vector<Vertex<T, W>*> getVertexSet() const;
 };
 
 template <class T, class W>
@@ -211,7 +213,12 @@ int Graph<T, W>::getNumVertex() const {
 }
 
 template<class T, class W>
-map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
+map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexMap() const {
+    return vertexMap;
+}
+
+template<class T, class W>
+vector<Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
     return vertexSet;
 }
 
@@ -221,7 +228,7 @@ map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
 template<class T, class W>
 Vertex<T, W> * Graph<T, W>::findVertex(std::string id) {
     try {
-		return vertexSet.at(id);
+		return vertexMap.at(id);
 	} catch (const exception &e) {
 		return NULL;
 	}
@@ -234,8 +241,11 @@ Vertex<T, W> * Graph<T, W>::findVertex(std::string id) {
 template<class T, class W>
 bool Graph<T, W>::addVertex(const T &in, std::string id) {
     if (findVertex(id) != NULL)
-        return false;
-    vertexSet[id] = new Vertex<T, W>(in);
+		return false;
+	
+	auto newVtx = new Vertex<T, W>(in);
+    vertexMap[id] = newVtx;
+	vertexSet.push_back(newVtx);
     return true;
 }
 
@@ -277,9 +287,10 @@ bool Graph<T, W>::removeEdge(const T &sourc, const T &dest) {
 template<class T, class W>
 bool Graph<T, W>::removeVertex(const T &in) {
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++)
-        if (it->second->info == in) {
-            auto v = it->second;
+        if ((*it)->info == in) {
+            auto v = *it;
             vertexSet.erase(it);
+			vertexMap.erase(v.getInfo().getCode());
             for (auto u : vertexSet)
                 u.second->removeEdgeTo(v);
             delete v;

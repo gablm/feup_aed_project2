@@ -69,7 +69,7 @@ void Manager::test_airports() {
 	
 	for (auto i : connections.getVertexSet()) {
 		count++;
-		Airport info = i.second->getInfo();
+		Airport info = i->getInfo();
 		std::cout 	<< info.getCode() << " - " << info.getCity() 
 					<< "\nLA: " << info.getLatitude() << " LO: " << info.getLongitude() << "\n\n";
 	}
@@ -240,7 +240,7 @@ void Manager::test_flights() {
 
 	int count = 0;
 	for (auto i : available_flights.getVertexSet()) {
-		count += i.second->getAdj().size();
+		count += i->getAdj().size();
 	}
 
 	std::cout << "Expected: 63832\nGot: " << count << "\n";
@@ -259,7 +259,7 @@ int Manager::airportCount() {
 int Manager::flightCount() {
 	int count = 0;
 	for (auto i : available_flights.getVertexSet())
-		count += i.second->getAdj().size();
+		count += i->getAdj().size();
 	return count;
 }
 
