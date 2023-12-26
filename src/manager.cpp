@@ -1,7 +1,7 @@
 #include "headers/manager.h"
 #include <iomanip>
 #include <chrono>
-#include <thread>
+#include <cmath>
 
 void Manager::load_airports() {
 
@@ -52,7 +52,7 @@ void Manager::load_airports() {
 
 		connections.addVertex(newData);
 		available_flights.addVertex(newData);
-
+		airports[code] = newData;
 	}
 
 	file.close();
@@ -142,11 +142,29 @@ void Manager::test_airlines() {
 	std::cout << "Expected: 444\nGot: " << count << "\n\n";	
 }
 
+double distance(double la1, double lo1, double la2, double lo2) {
+	double la = (la2 - la1) * M_PI / 180.0;
+	double lo = (lo2 - lo1) * M_PI / 180.0;
+
+	la1 *= M_PI / 180.0;
+	la2 *= M_PI / 180.0;
+
+	double formula = pow(sin(la / 2), 2) + pow(sin(lo / 2), 2) * cos(la1) * cos(la2);
+	return 6371 * 2 * asin(sqrt(formula));
+}
+
 void Manager::load_flights() {
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	std::string line, source, target, airline;
+	std::string line, source, oldSource, target, airline;
+
+	Vertex<Airport, std::string> *cn_src = nullptr;
+	std::vector<Edge<Airport, std::string>> cn_edge;
+
+	Vertex<Airport, Airline> *av_src = nullptr;
+	std::vector<Edge<Airport, Airline>> av_edge;
+	
 
 	ifstream file;
 	file.open("./data/flights.csv");
@@ -177,12 +195,30 @@ void Manager::load_flights() {
 			std::getline(ss, airline, '\r');
 
 			Airline company = airlines[airline];
-			Airport src = Airport(source);
-			Airport dest = Airport(source);
-			std::string empty = "";
-			
-			connections.addEdge(src, dest, 0, empty);
-			available_flights.addEdge(src, dest, 0, company); 
+			std::string empty;
+
+			if (av_src == nullptr || cn_src == nullptr || oldSource != source) {
+				if (av_src != nullptr && cn_src != nullptr) {
+					av_src->setAdj(av_edge);
+					cn_src->setAdj(cn_edge);
+				}
+				av_src = findAirportByCode(available_flights, source);
+				av_edge = av_src->getAdj();
+				cn_src = findAirportByCode(connections, source);
+				cn_edge = cn_src->getAdj();
+				oldSource = source;
+			}
+
+			Airport src = cn_src->getInfo();
+			Airport dst = airports[target];
+
+			double dist = distance(src.getLatitude(), src.getLongitude(), dst.getLatitude(), dst.getLongitude());
+
+			auto av_dst = available_flights.findVertex(dst);
+			av_edge.push_back(Edge<Airport, Airline>(av_dst, dist, company));
+
+			auto cn_dst = connections.findVertex(dst);
+			cn_edge.push_back(Edge<Airport, std::string>(cn_dst, dist, empty));
 
 		} catch (const std::exception& e) {
 
@@ -193,6 +229,11 @@ void Manager::load_flights() {
 	}
 
 	file.close();
+
+	if (av_src != nullptr && cn_src != nullptr) {
+					av_src->setAdj(av_edge);
+					cn_src->setAdj(cn_edge);
+	}
 
 	auto end = std::chrono::high_resolution_clock::now();
 	std::cout 	<< "Load Time: " << std::chrono::duration<double>(end - start).count() << "s\n\n";
@@ -205,5 +246,5 @@ void Manager::test_flights() {
 		count += i->getAdj().size();
 	}
 
-	std::cout << "Expected: 63832\nGot: " << count;
+	std::cout << "Expected: 63832\nGot: " << count << "\n";
 }

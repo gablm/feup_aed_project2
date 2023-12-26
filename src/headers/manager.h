@@ -15,6 +15,7 @@ class Manager {
 		Graph<Airport, std::string> connections;
 		Graph<Airport, Airline> available_flights;
 		std::map<std::string, Airline> airlines;
+		std::map<std::string, Airport> airports;
 	public:
 		Manager() {}
 		void load_airports();
