@@ -2,8 +2,10 @@
 #include <iostream>
 
 UI::UI() : manager(Manager()) {
-	loader = std::thread(loadAll, this);
+    loadAll(this);
+	//loader = std::thread(loadAll, this);
 	auto start = std::chrono::high_resolution_clock::now();
+    loadAll(this);
 	
 	/*int count = 0;
 	while (loading) {
@@ -13,7 +15,7 @@ UI::UI() : manager(Manager()) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}*/
 	
-	loader.join();
+	//loader.join();
 	auto end = std::chrono::high_resolution_clock::now();
 	loadtime = std::chrono::duration<double>(end - start).count();
 }
