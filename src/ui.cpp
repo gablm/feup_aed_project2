@@ -62,7 +62,7 @@ void UI::globalStats() {
         std::cout 
 		<< "Amadeus - Global statistics\n"
 		<< "\n"
-		<< "There are currently available:"
+		<< "There are currently available:\n"
 		<< "\n "
         << manager.airportCount() << " airports \n "
 		<< manager.airlineCount() << " airlines \n "
