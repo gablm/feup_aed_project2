@@ -3,9 +3,9 @@
 
 UI::UI() : manager(Manager()) {
 	auto start = std::chrono::high_resolution_clock::now();
-    manager.load_airports();
-	manager.load_airlines();
-	manager.load_flights();
+    manager.loadAirports();
+	manager.loadAirlines();
+	manager.loadFlights();
 	auto end = std::chrono::high_resolution_clock::now();
 	loadtime = std::chrono::duration<double>(end - start).count();
 }
@@ -40,7 +40,7 @@ void UI::mainMenu() {
             exit(0);
 		}
 		if (str.size() > 1) {
-			HelpMsg("", "");
+			helpMsg("", "");
 			continue;
 		}
 		switch (str[0] - '0')
@@ -49,7 +49,7 @@ void UI::mainMenu() {
 				globalStats();
 				break;
 			default:
-				HelpMsg("Command not found!", "help - shows all commands");
+				helpMsg("Command not found!", "help - shows all commands");
 				break;
 		}
     }
@@ -82,7 +82,7 @@ void UI::globalStats() {
 		}
 		if (str == "B" || str == "b")
 			break;
-		HelpMsg("Command not found!", "help - shows all commands");
+		helpMsg("Command not found!", "help - shows all commands");
     }
 }
 
