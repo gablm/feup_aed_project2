@@ -30,7 +30,7 @@ std::vector<size_t> Manager::airportStats(std::string code) {
 
 	for (auto i : vtx->getAdj())
 		airlines.insert(i.getInfo());
-		
+
 	return {vtx->getAdj().size(), airlines.size()};
 }
 
@@ -161,8 +161,8 @@ std::set<Airport> Manager::essentialAirports() {
 
 	for (auto i : connections.getVertexSet())
 		if (!i->isVisited())
-			//dfsTarjanVisit(i, time, NULL, res);
-			dfs_art(i, Airport(""), res, time, true);
+			dfsTarjanVisit(i, time, NULL, res);
+			//dfs_art(i, Airport(""), res, time, true);
 	
 	return res;
 }
