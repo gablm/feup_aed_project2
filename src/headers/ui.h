@@ -14,6 +14,9 @@ class UI {
 	private:
 		Manager manager;
 		double loadtime;
+
+		vector<Airport> origin;
+		vector<Airport> destination;
 	public:
 		UI();
 
@@ -24,6 +27,9 @@ class UI {
 		void plannerMenu();
 		void plannerAirportSelect();
 		vector<Airport> searchAirport(std::string query);
+		void plannerCitySelect();
+		set<std::string> searchCity(std::string query);
+		void plannerSelected();
 
 		void showAirport(std::string str);
 		void showCity(std::string str);
