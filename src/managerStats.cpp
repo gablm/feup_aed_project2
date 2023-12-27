@@ -6,7 +6,7 @@
 
 //i
 int Manager::airportCount() {
-	return airports.size();
+	return connections.getVertexSet().size();
 }
 
 int Manager::flightCount() {

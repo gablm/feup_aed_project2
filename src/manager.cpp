@@ -61,7 +61,6 @@ void Manager::loadAirports() {
 			Vertex<Airport, Airline> *vertexPointer = available_flights.findVertex(code);
         	cityAirportList[city].push_back(vertexPointer);
 		}
-		airports[code] = newData;
 	}
 
 	file.close();
@@ -149,7 +148,7 @@ void Manager::testAirlines() {
 	std::cout << "Expected: 444\nGot: " << count << "\n\n";	
 }
 
-double distance(double la1, double lo1, double la2, double lo2) {
+double Manager::distance(double la1, double lo1, double la2, double lo2) {
 	double la = (la2 - la1) * M_PI / 180.0;
 	double lo = (lo2 - lo1) * M_PI / 180.0;
 
@@ -214,15 +213,16 @@ void Manager::loadFlights() {
 				oldSource = source;
 			}
 
+			auto cn_dst = connections.findVertex(target);
+
 			Airport src = cn_src->getInfo();
-			Airport dst = airports[target];
+			Airport dst = cn_dst->getInfo();
 
 			double dist = distance(src.getLatitude(), src.getLongitude(), dst.getLatitude(), dst.getLongitude());
 
 			auto av_dst = available_flights.findVertex(target);
 			av_edge.push_back(Edge<Airport, Airline>(av_dst, dist, company));
 
-			auto cn_dst = connections.findVertex(target);
 			Edge <Airport, std::string> edg(cn_dst, dist, empty);
 			if (std::find(cn_edge.begin(), cn_edge.end(), edg) == cn_edge.end())
 				cn_edge.push_back(edg);

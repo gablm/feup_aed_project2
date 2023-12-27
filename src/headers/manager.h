@@ -8,14 +8,14 @@
 #include "airport.h"
 #include "graph.h"
 
-#define  MaxTripVector std::vector<std::pair<Airport, Airport>>
+#define MaxTripVector std::vector<std::pair<Airport, Airport>>
+#define CitySearchResult std::vector<std::pair<std::string, std::string>>
 
 class Manager {
 	private:
 		Graph<Airport, std::string> connections;
 		Graph<Airport, Airline> available_flights;
 		std::map<std::string, Airline> airlines;
-		std::map<std::string, Airport> airports;
         std::map<std::string, std::list<Vertex<Airport, Airline>*>> cityAirportList;
 	public:
 		Manager() {}
@@ -27,6 +27,8 @@ class Manager {
 		
 		void loadFlights();
 		void testFlights();
+
+		double distance(double la1, double lo1, double la2, double lo2);
 
 		//i
 		int airportCount();
@@ -46,6 +48,9 @@ class Manager {
 		std::vector<Vertex<Airport, Airline>*> airportsWithMostTraffic(size_t x);
 		//ix
 		std::set<Airport> essentialAirports();
+
+		vector<Airport> searchAirport(std::string type, std::string query);
+		CitySearchResult searchCity(std::string type, std::string query);
 };
 
 #endif
