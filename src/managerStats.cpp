@@ -28,10 +28,9 @@ std::vector<size_t> Manager::airportStats(std::string code) {
 	
 	std::set<Airline> airlines;
 
-	for (auto i : vtx->getAdj()) {
-		auto w = i.getInfo();
+	for (auto i : vtx->getAdj())
 		airlines.insert(i.getInfo());
-	}
+		
 	return {vtx->getAdj().size(), airlines.size()};
 }
 
