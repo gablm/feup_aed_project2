@@ -18,7 +18,13 @@ class UI {
 		UI();
 
 		void mainMenu();
+		void statsMenu();
 		void globalStats();
+
+		void showAirport(std::string str);
+		void showCity(std::string str);
+		void showAirline(std::string str);
+		
 
 		void helpMsg(std::string error, std::string usage);
 
