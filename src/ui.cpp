@@ -175,18 +175,18 @@ void UI::test() {
 	getline(std::cin, str);
 	if (str == "b")
 		return;
-// -
+	auto start = std::chrono::high_resolution_clock::now();
+// - 
 	auto res = manager.maximumTrip();
 	//std::set<Airport> res = manager.essentialAirports();
-	for (auto i : res) {
+	for (auto i : res.first) {
 		std::cout << i.first.getCode() << " - " << i.second.getCode() << "\n";
 	}
-
-	manager.minPath();
-
-	std::cout << "Count: " << res.size() << "\n"; 
+	std::cout << "\nCount: " << res.first.size() << " | Distance: " << res.second << "\n"; 
 // -
-	std::cout << "\n\nPress ENTER to continue...";
+	auto end = std::chrono::high_resolution_clock::now();
+	double l_time = std::chrono::duration<double>(end - start).count();
+	std::cout << "\nTime elapsed: " << l_time << "s\n\nPress ENTER to continue...";
 	while (std::cin.get() != '\n') { }
 	test();
 }

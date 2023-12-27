@@ -41,14 +41,11 @@ class Manager {
 		std::vector<size_t> reachableDestinationsFromAirport(std::string code, int x);
 		//vii
 		void bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res);
-		MaxTripVector maximumTrip();
+		std::pair<MaxTripVector, int> maximumTrip();
 		//viii
 		std::vector<Vertex<Airport, Airline>*> airportsWithMostTraffic(size_t x);
 		//ix
 		std::set<Airport> essentialAirports();
-
-		void printConns();
-		void minPath();
 };
 
 #endif

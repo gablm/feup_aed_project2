@@ -200,7 +200,7 @@ void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVe
 	}
 }
 
-MaxTripVector Manager::maximumTrip() {
+std::pair<MaxTripVector, int> Manager::maximumTrip() {
 	MaxTripVector res;
 	int maxTrip = 0;
 	
@@ -208,7 +208,5 @@ MaxTripVector Manager::maximumTrip() {
 		bfsFind(i, maxTrip, res);
 	}
 
-	std::cout << "\nDistance: " << maxTrip << "\n\n"; 
-
-	return res;
+	return std::make_pair(res, maxTrip);
 }
