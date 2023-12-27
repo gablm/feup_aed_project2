@@ -46,12 +46,48 @@ void UI::mainMenu() {
 		switch (str[0] - '0')
 		{
 			case 0:
-				globalStats();
+				statsMenu();
 				break;
 			default:
 				helpMsg("Command not found!", "help - shows all commands");
 				break;
 		}
+    }
+}
+
+void UI::statsMenu(){
+	while (1)
+    {
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Statistics Menu\n"
+		<< "\n"
+        << "\n"
+		<< "For the global statistics input 'global'\n"
+        << "\n"
+		<< "For the statistics about a specific airport input 'airport (airport code)'\n"
+		<< "For the statistics about a specific city input 'city (city code)'\n"
+		<< "For the statistics about a specific airline input 'airline (airline code)'\n"
+        << "\n"
+		<< "Loaded in " << loadtime << "s.\n"
+        << "\n"
+		<< "[B] Back\n"
+		<< "[Q] Exit\n"
+		<< "\n"
+        << "$> ";
+        std::string str;
+		getline(std::cin, str);
+		if (str == "global"){
+			globalStats();
+			continue;
+		}
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+		helpMsg("Command not found!", "help - shows all commands");
     }
 }
 

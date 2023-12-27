@@ -18,7 +18,9 @@ class UI {
 		UI();
 
 		void mainMenu();
+		void statsMenu();
 		void globalStats();
+		
 
 		void helpMsg(std::string error, std::string usage);
 };
