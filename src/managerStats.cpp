@@ -93,6 +93,17 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 	return {count, cities.size(), countries.size()};
 }
 
+//viii
+vector<Vertex<Airport, Airline>*> Manager::airportsWithMostTraffic(size_t x) {
+	std::set<Airport> res;
+	vector<Vertex<Airport, Airline>*> copy = available_flights.getVertexSet();
+	std::sort(copy.begin(), copy.end(), 
+		[](Vertex<Airport, Airline> *x, Vertex<Airport, Airline> *y) { return x->getAdj().size() > y->getAdj().size(); });
+	if (x < copy.size())
+		copy.resize(x);
+	return copy;
+}
+
 //ix
 void dfs_art(Vertex<Airport, std::string> *v, Airport parent, set<Airport> &l, int &i, bool start) {
 	v->setLow(i);
@@ -156,15 +167,4 @@ std::set<Airport> Manager::essentialAirports() {
 			//dfs_art(i, Airport(""), res, time, true);
 	
 	return res;
-}
-
-void Manager::printConns() {
-	for (auto i : connections.getVertexSet()) {
-		std::cout << i->getInfo().getCode() << ":\n";
-		for (auto j : i->getAdj()) {
-			auto w = j.getDest();
-			std::cout << w->getInfo().getCode() << " ";
-		}
-		std::cout << "\n\n";
-	}
 }

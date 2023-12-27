@@ -32,12 +32,13 @@ class Manager {
 		int airlineCount();
 		//ii
 		std::vector<size_t> airportStats(std::string code);
-		//v
+		//v e 1/2 iv 
 		std::vector<size_t> destinationsFromAirport(std::string code);
 		//vi
 		std::vector<size_t> reachableDestinationsFromAirport(std::string code, int x);
 		
-
+		//viii
+		std::vector<Vertex<Airport, Airline>*> airportsWithMostTraffic(size_t x);
 		//ix
 		std::set<Airport> essentialAirports();
 
