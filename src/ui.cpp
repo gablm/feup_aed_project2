@@ -171,18 +171,19 @@ void UI::helpMsg(std::string error, std::string usage) {
 void UI::test() {
 	CLEAR;
 	std::cout << "Amadeus - Lookup Tool\n\n";
-	std::string str;
+	std::string str, x;
 	getline(std::cin, str);
 	if (str == "b")
 		return;
 	auto start = std::chrono::high_resolution_clock::now();
-// - 
-	auto res = manager.maximumTrip();
-	//std::set<Airport> res = manager.essentialAirports();
-	for (auto i : res.first) {
-		std::cout << i.first.getCode() << " - " << i.second.getCode() << "\n";
+// -
+	auto res = manager.essentialAirports();
+
+	for (auto i : res) {
+		std::cout << i.getCode() << "\n";
 	}
-	std::cout << "\nCount: " << res.first.size() << " | Distance: " << res.second << "\n"; 
+
+	std::cout << "\nCount: " << res.size() << "\n";
 // -
 	auto end = std::chrono::high_resolution_clock::now();
 	double l_time = std::chrono::duration<double>(end - start).count();
@@ -190,3 +191,37 @@ void UI::test() {
 	while (std::cin.get() != '\n') { }
 	test();
 }
+
+/**
+ *	Test for vii
+
+	auto res = manager.maximumTrip();
+	for (auto i : res.first) {
+		std::cout << i.first.getCode() << " - " << i.second.getCode() << "\n";
+	}
+	std::cout << "\nCount: " << res.first.size() << " | Distance: " << res.second << "\n";
+
+	Expected -> 18 count, 12 distance
+
+ *	Test for viii
+
+	auto res = manager.airportsWithMostTraffic(std::atoi(str.c_str()));
+
+	for (auto i : res) {
+		std::cout << i->getInfo().getCode() << " - " << i->getAdj().size() << "\n";
+	}
+
+	Expected -> ATL - 909, ORD - 556, PEK - 526, etc.
+
+ *	Test for ix
+
+	auto res = manager.essentialAirports();
+
+	for (auto i : res) {
+		std::cout << i.getCode() << "\n";
+	}
+
+	std::cout << "\nCount: " << res.size() << "\n";
+	
+	Expected -> 309 / 310
+*/
