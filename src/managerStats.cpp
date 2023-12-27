@@ -168,22 +168,7 @@ std::set<Airport> Manager::essentialAirports() {
 	return res;
 }
 
-
-void dfsFind(Vertex<Airport, std::string> *vtx, Airport start, int &maxTrip, int count, MaxTripVector &res) {
-	vtx->setVisited(true);
-	for (auto i : vtx->getAdj()) {
-		auto w = i.getDest();
-		if (!w->isVisited())
-			dfsFind(w, start, maxTrip, count + 1, res);
-	}
-	if (count > maxTrip) {
-		maxTrip = count;
-		res.clear();
-	}
-	if (count == maxTrip)
-		res.push_back(std::make_pair(start, vtx->getInfo()));
-}
-
+//vii
 void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res) {
 	for (auto i : connections.getVertexSet()) {
 		i->setVisited(false);
@@ -213,55 +198,17 @@ void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVe
 			}
 		}
 	}
-
-
 }
-//vii
+
 MaxTripVector Manager::maximumTrip() {
 	MaxTripVector res;
 	int maxTrip = 0;
 	
 	for (auto i : connections.getVertexSet()) {
-		/*for (auto x : connections.getVertexSet())
-			x->setVisited(false);
-		dfsFind(i, i->getInfo(), maxTrip, 0, res);*/
 		bfsFind(i, maxTrip, res);
 	}
 
 	std::cout << "\nDistance: " << maxTrip << "\n\n"; 
 
 	return res;
-}
-
-void Manager::minPath() {
-	list<Vertex<Airport, std::string>*> queue;
-
-	for (auto i : connections.getVertexSet()) {
-		i->setVisited(false);
-		i->setNum(__INT32_MAX__);
-	}
-
-	auto ini = connections.findVertex("PTJ");
-	auto end = connections.findVertex("YHO");
-
-	ini->setVisited(true);
-	ini->setNum(0);
-	queue.push_back(ini);
-
-	while (!queue.empty()) {
-		auto u = queue.front();
-		queue.pop_front();
-		for (auto i : u->getAdj()) {
-			auto w = i.getDest();
-			if (!w->isVisited()) {
-				w->setVisited(true);
-				w->setNum(u->getNum() + 1);
-				queue.push_back(w);
-				if (w == end) {
-					std::cout << "\nMin:" << w->getNum() << "\n";
-					return;
-				}
-			}
-		}
-	}
 }
