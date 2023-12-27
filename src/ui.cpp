@@ -114,18 +114,12 @@ void UI::test() {
 	if (str == "b")
 		return;
 	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-	getline(std::cin, x);
 // -
-	vector<size_t> five = manager.destinationsFromAirport(str);
-	vector<size_t> six = manager.reachableDestinationsFromAirport(str, stoi(x));
-	if (five.front() == __INT64_MAX__)
+	vector<size_t> res = manager.airportStats(str);
+	if (res.front() == __INT64_MAX__)
 		std::cout << "INVALID CODE FOR 5\n\n";
 	else
-		std::cout << ">> Direct\nairports: " << five[0] << "\ncities: " << five[1] << "\ncountries: " << five[2] << "\n\n";
-	if (six.front() == __INT64_MAX__)
-		std::cout << "INVALID CODE FOR 6";
-	else
-		std::cout << ">> For " << stoi(x) << " or less stops\nairports: " << six[0] << "\ncities: " << six[1] << "\ncountries: " << six[2];
+		std::cout << ">> Direct\nflights: " << res[0] << "\nairlines: " << res[1] << "\n\n";
 // -
 	std::cout << "\n\nPress ENTER to continue...";
 	while (std::cin.get() != '\n') { }

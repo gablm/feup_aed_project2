@@ -17,6 +17,21 @@ int Manager::airlineCount() {
 	return airlines.size();
 }
 
+//ii
+std::vector<size_t> Manager::airportStats(std::string code) {
+	auto vtx = available_flights.findVertex(code);
+	if (vtx == NULL)
+		return {__INT64_MAX__};
+	
+	std::set<Airline> airlines;
+
+	for (auto i : vtx->getAdj()) {
+		auto w = i.getInfo();
+		airlines.insert(i.getInfo());
+	}
+	return {vtx->getAdj().size(), airlines.size()};
+}
+
 //v
 std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 	auto vtx = connections.findVertex(code);
@@ -56,7 +71,7 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 	auto vtx = connections.findVertex(code);
 	if (vtx == NULL)
 		return {__INT64_MAX__};
-		
+
 	if (x <= 0)
 		x = __INT32_MAX__;
 
