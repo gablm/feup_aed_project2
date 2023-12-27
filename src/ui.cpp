@@ -74,8 +74,6 @@ void UI::statsMenu(){
 		<< "For the statistics about a specific city input 'city (city code)'\n"
 		<< "For the statistics about a specific airline input 'airline (airline code)'\n"
         << "\n"
-		<< "Loaded in " << loadtime << "s.\n"
-        << "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
 		<< "\n"
@@ -86,13 +84,24 @@ void UI::statsMenu(){
 			globalStats();
 			continue;
 		}
-        if (str == "Q" || str == "q") {
+		else if (str.substr(0,8) == "airport "){
+			showAirport(str);
+		}
+		else if (str.substr(0,5) == "city "){
+			showCity(str);
+		}
+		else if (str.substr(0,8) == "airline "){
+			showAirline(str);
+		}
+        else if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
 		}
-		if (str == "B" || str == "b")
+		else if (str == "B" || str == "b")
 			break;
-		helpMsg("Command not found!", "help - shows all commands");
+		else {
+			helpMsg("Command not found!", "help - shows all commands");
+		}
     }
 }
 
@@ -126,6 +135,22 @@ void UI::globalStats() {
 		helpMsg("Command not found!", "help - shows all commands");
     }
 }
+
+void UI::showAirport(std::string str){
+	str = str;
+	return;
+}
+
+void UI::showCity(std::string str){
+	str = str;
+	return;
+}
+
+void UI::showAirline(std::string str){
+	str = str;
+	return;
+}
+
 
 void UI::helpMsg(std::string error, std::string usage) {
 	CLEAR;
