@@ -54,6 +54,9 @@ void UI::mainMenu() {
 			case 0:
 				statsMenu();
 				break;
+			case 3:
+				plannerMenu();
+				break;
 			default:
 				helpMsg("Command not found!", "help - shows all commands");
 				break;

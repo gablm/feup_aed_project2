@@ -21,6 +21,10 @@ class UI {
 		void statsMenu();
 		void globalStats();
 
+		void plannerMenu();
+		void plannerAirportSelect();
+		vector<Airport> searchAirport(std::string query);
+
 		void showAirport(std::string str);
 		void showCity(std::string str);
 		void showAirline(std::string str);

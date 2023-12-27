@@ -19,6 +19,8 @@ class Manager {
         std::map<std::string, std::list<Vertex<Airport, Airline>*>> cityAirportList;
 	public:
 		Manager() {}
+		Graph<Airport, std::string> getConnections() { return connections; }
+		
 		void loadAirports();
 		void testAirports();
 
