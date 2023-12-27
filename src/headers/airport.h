@@ -24,6 +24,8 @@ class Airport {
 		double getLatitude() const;
 		double getLongitude() const;
 		bool operator==(const Airport &rhs);
+		bool operator!=(const Airport &rhs);
+		bool operator<(const Airport &cmp) const;
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include "airline.h"
 #include "airport.h"
 #include "graph.h"
@@ -35,6 +36,12 @@ class Manager {
 		std::vector<size_t> destinationsFromAirport(std::string code);
 		//vi
 		std::vector<size_t> reachableDestinationsFromAirport(std::string code, int x);
+		
+
+		//ix
+		std::set<Airport> essentialAirports();
+
+		void printConns();
 };
 
 #endif

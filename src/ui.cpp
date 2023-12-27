@@ -1,6 +1,7 @@
 #include "headers/ui.h"
 #include <iostream>
 #include <algorithm>
+#include <set>
 
 UI::UI() : manager(Manager()) {
 	auto start = std::chrono::high_resolution_clock::now();
@@ -109,17 +110,17 @@ void UI::helpMsg(std::string error, std::string usage) {
 void UI::test() {
 	CLEAR;
 	std::cout << "Amadeus - Lookup Tool\n\n";
-	std::string str, x;
+	std::string str;
 	getline(std::cin, str);
 	if (str == "b")
 		return;
-	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 // -
-	vector<size_t> res = manager.airportStats(str);
-	if (res.front() == __INT64_MAX__)
-		std::cout << "INVALID CODE FOR 5\n\n";
-	else
-		std::cout << ">> Direct\nflights: " << res[0] << "\nairlines: " << res[1] << "\n\n";
+	std::set<Airport> res = manager.essentialAirports();
+	for (auto i : res) {
+		std::cout << i.getCode() << "\n";
+	}
+
+	std::cout << "Count: " << res.size() << "\n"; 
 // -
 	std::cout << "\n\nPress ENTER to continue...";
 	while (std::cin.get() != '\n') { }
