@@ -89,7 +89,6 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 			dfsVisit(w, &count, cities, countries, x - 1);
 	}
 	
-
 	return {count, cities.size(), countries.size()};
 }
 
@@ -167,4 +166,102 @@ std::set<Airport> Manager::essentialAirports() {
 			//dfs_art(i, Airport(""), res, time, true);
 	
 	return res;
+}
+
+
+void dfsFind(Vertex<Airport, std::string> *vtx, Airport start, int &maxTrip, int count, MaxTripVector &res) {
+	vtx->setVisited(true);
+	for (auto i : vtx->getAdj()) {
+		auto w = i.getDest();
+		if (!w->isVisited())
+			dfsFind(w, start, maxTrip, count + 1, res);
+	}
+	if (count > maxTrip) {
+		maxTrip = count;
+		res.clear();
+	}
+	if (count == maxTrip)
+		res.push_back(std::make_pair(start, vtx->getInfo()));
+}
+
+void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res) {
+	for (auto i : connections.getVertexSet()) {
+		i->setVisited(false);
+		i->setNum(__INT32_MAX__);
+	}
+
+	list<Vertex<Airport, std::string>*> queue;
+	vtx->setVisited(true);
+	vtx->setNum(0);
+	queue.push_back(vtx);
+
+	while (!queue.empty()) {
+		auto u = queue.front();
+		queue.pop_front();
+		for (auto i : u->getAdj()) {
+			auto w = i.getDest();
+			if (!w->isVisited()) {
+				w->setVisited(true);
+				w->setNum(u->getNum() + 1);
+				queue.push_back(w);
+				if (w->getNum() > maxTrip) {
+					maxTrip = w->getNum();
+					res.clear();
+				}
+				if (w->getNum() == maxTrip)
+					res.push_back(std::make_pair(vtx->getInfo(), w->getInfo()));
+			}
+		}
+	}
+
+
+}
+//vii
+MaxTripVector Manager::maximumTrip() {
+	MaxTripVector res;
+	int maxTrip = 0;
+	
+	for (auto i : connections.getVertexSet()) {
+		/*for (auto x : connections.getVertexSet())
+			x->setVisited(false);
+		dfsFind(i, i->getInfo(), maxTrip, 0, res);*/
+		bfsFind(i, maxTrip, res);
+	}
+
+	std::cout << "\nDistance: " << maxTrip << "\n\n"; 
+
+	return res;
+}
+
+void Manager::minPath() {
+	list<Vertex<Airport, std::string>*> queue;
+
+	for (auto i : connections.getVertexSet()) {
+		i->setVisited(false);
+		i->setNum(__INT32_MAX__);
+	}
+
+	auto ini = connections.findVertex("PTJ");
+	auto end = connections.findVertex("YHO");
+
+	ini->setVisited(true);
+	ini->setNum(0);
+	queue.push_back(ini);
+
+	while (!queue.empty()) {
+		auto u = queue.front();
+		queue.pop_front();
+		for (auto i : u->getAdj()) {
+			auto w = i.getDest();
+			if (!w->isVisited()) {
+				w->setVisited(true);
+				w->setNum(u->getNum() + 1);
+				queue.push_back(w);
+				if (w == end) {
+					std::cout << "\nMin:" << w->getNum() << "\n";
+					return;
+				}
+			}
+		}
+	}
 }

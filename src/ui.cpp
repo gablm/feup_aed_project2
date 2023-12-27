@@ -176,11 +176,13 @@ void UI::test() {
 	if (str == "b")
 		return;
 // -
-	auto res = manager.airportsWithMostTraffic(stoi(str));
+	auto res = manager.maximumTrip();
 	//std::set<Airport> res = manager.essentialAirports();
 	for (auto i : res) {
-		std::cout << i->getInfo().getCode() << " - " << i->getAdj().size() << "\n";
+		std::cout << i.first.getCode() << " - " << i.second.getCode() << "\n";
 	}
+
+	manager.minPath();
 
 	std::cout << "Count: " << res.size() << "\n"; 
 // -

@@ -8,6 +8,8 @@
 #include "airport.h"
 #include "graph.h"
 
+#define  MaxTripVector std::vector<std::pair<Airport, Airport>>
+
 class Manager {
 	private:
 		Graph<Airport, std::string> connections;
@@ -32,17 +34,21 @@ class Manager {
 		int airlineCount();
 		//ii
 		std::vector<size_t> airportStats(std::string code);
-		//v e 1/2 iv 
+		
+		//v
 		std::vector<size_t> destinationsFromAirport(std::string code);
 		//vi
 		std::vector<size_t> reachableDestinationsFromAirport(std::string code, int x);
-		
+		//vii
+		void bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res);
+		MaxTripVector maximumTrip();
 		//viii
 		std::vector<Vertex<Airport, Airline>*> airportsWithMostTraffic(size_t x);
 		//ix
 		std::set<Airport> essentialAirports();
 
 		void printConns();
+		void minPath();
 };
 
 #endif
