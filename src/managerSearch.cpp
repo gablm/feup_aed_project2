@@ -1,6 +1,7 @@
 #include "headers/manager.h"
 #include <algorithm>
 #include <set>
+#include <sstream>
 
 CitySearchResult Manager::searchCity(std::string type, std::string query) {
 	CitySearchResult res;
@@ -24,6 +25,7 @@ std::vector<Airport> Manager::searchAirport(std::string type, std::string query)
 		}
 	};
 
+
 	for (auto i : connections.getVertexSet()) {
 		Airport w = i->getInfo();
 		if (type == "code")
@@ -34,10 +36,21 @@ std::vector<Airport> Manager::searchAirport(std::string type, std::string query)
 			add(w.getName(), w);
 		if (type == "country")
 			add(w.getName(), w);
-		if (type == "coords") {
-
-		}
+		if (type == "coords")
+			res.push_back(w);
 	}
+
+	istringstream in(query);
+	std::string xs, ys;
+	in >> xs >> ys;
+	double x = atoi(xs.c_str()), y = atoi(ys.c_str());
+
+	if (type == "coords")
+		std::sort(res.begin(), res.end(), 
+			[x, y, this](const Airport &a, const Airport &b) { 
+				return distance(x, y, a.getLatitude(), a.getLongitude()) < distance(x, y, b.getLatitude(), b.getLongitude());  
+			});
+			
 	return res;
 }
 
