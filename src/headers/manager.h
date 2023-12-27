@@ -13,6 +13,7 @@ class Manager {
 		Graph<Airport, Airline> available_flights;
 		std::map<std::string, Airline> airlines;
 		std::map<std::string, Airport> airports;
+        std::map<std::string,std::list<Vertex<Airport, Airline>*>> cityAirportList;
 	public:
 		Manager() {}
 		void loadAirports();

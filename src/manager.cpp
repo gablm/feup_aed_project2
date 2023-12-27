@@ -57,7 +57,10 @@ void Manager::loadAirports() {
 		Airport newData = Airport(code, name, city, country, latitude, longitude);
 
 		connections.addVertex(newData, code);
-		available_flights.addVertex(newData, code);
+		if (available_flights.addVertex(newData, code)){
+			Vertex<Airport, Airline> *vertexPointer = available_flights.findVertex(code);
+        	cityAirportList[city].push_back(vertexPointer);
+		}
 		airports[code] = newData;
 	}
 
@@ -82,7 +85,10 @@ void Manager::testAirports() {
 		std::cout 	<< "Search for " + codes + " returns: \n\n" 
 					<< res.getCode() << " - " << res.getCity() 
 					<< "\nLA: " << res.getLatitude() << " LO: " << res.getLongitude() << "\n\n";
-	}	
+	}
+
+
+
 }
 
 void Manager::loadAirlines() {
