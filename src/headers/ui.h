@@ -21,6 +21,8 @@ class UI {
 		void globalStats();
 
 		void helpMsg(std::string error, std::string usage);
+
+		void test();
 };
 
 #endif

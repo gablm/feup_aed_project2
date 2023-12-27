@@ -28,6 +28,11 @@ class Manager {
 		int airportCount();
 		int flightCount();
 		int airlineCount();
+
+		//v
+		vector<size_t> destinationsFromAirport(std::string code);
+		//vi
+		vector<size_t> reachableDestinationsFromAirport(std::string code, int x);
 };
 
 #endif
