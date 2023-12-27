@@ -23,6 +23,8 @@ class UI {
 		
 
 		void helpMsg(std::string error, std::string usage);
+
+		void test();
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "headers/ui.h"
 #include <iostream>
+#include <algorithm>
 
 UI::UI() : manager(Manager()) {
 	auto start = std::chrono::high_resolution_clock::now();
@@ -38,6 +39,10 @@ void UI::mainMenu() {
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
+		}
+		if (str == "t") {
+			test();
+			continue;
 		}
 		if (str.size() > 1) {
 			helpMsg("", "");
@@ -123,7 +128,6 @@ void UI::globalStats() {
 }
 
 void UI::helpMsg(std::string error, std::string usage) {
-
 	CLEAR;
 	std::cout << "Amadeus - Lookup Tool\n\n";
 	if (error != "" && usage != "") {
@@ -136,4 +140,24 @@ void UI::helpMsg(std::string error, std::string usage) {
 				  << "\n\nPress ENTER to continue...";
 	}
 	while (std::cin.get() != '\n') { }
+}
+
+void UI::test() {
+	CLEAR;
+	std::cout << "Amadeus - Lookup Tool\n\n";
+	std::string str, x;
+	getline(std::cin, str);
+	if (str == "b")
+		return;
+	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+// -
+	vector<size_t> res = manager.airportStats(str);
+	if (res.front() == __INT64_MAX__)
+		std::cout << "INVALID CODE FOR 5\n\n";
+	else
+		std::cout << ">> Direct\nflights: " << res[0] << "\nairlines: " << res[1] << "\n\n";
+// -
+	std::cout << "\n\nPress ENTER to continue...";
+	while (std::cin.get() != '\n') { }
+	test();
 }

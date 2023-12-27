@@ -19,3 +19,15 @@ std::string Airline::getCallSign() const {
 std::string Airline::getCountry() const {
 	return country;
 }
+
+bool Airline::operator==(const Airline &cmp) {
+	return code == cmp.code && name == cmp.name 
+		&& callsign == cmp.callsign && country == cmp.country;
+}
+
+bool Airline::operator<(const Airline &cmp) const {
+	return code != cmp.code ? code < cmp.code : 
+			name != cmp.name ? name < cmp.name :
+			callsign != cmp.callsign ? callsign < cmp.callsign :
+			country < cmp.country; 
+}

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
@@ -255,20 +256,4 @@ void Manager::testFlights() {
 
 	std::cout 	<< "Expected: 1\nGot: " << i->getAdj().size() << "\n"
 				<< i->getAdj().front().getDest()->getInfo().getCode() << "\n";
-}
-
-//i
-int Manager::airportCount() {
-	return airports.size();
-}
-
-int Manager::flightCount() {
-	int count = 0;
-	for (auto i : available_flights.getVertexSet())
-		count += i->getAdj().size();
-	return count;
-}
-
-int Manager::airlineCount() {
-	return airlines.size();
 }
