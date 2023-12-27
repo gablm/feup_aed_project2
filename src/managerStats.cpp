@@ -88,6 +88,7 @@ std::vector<size_t> Manager::airlineStats(std::string code){
 
 }
 
+
 //v
 std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 	auto vtx = connections.findVertex(code);

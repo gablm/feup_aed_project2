@@ -142,8 +142,51 @@ void UI::globalStats() {
 }
 
 void UI::showAirport(std::string str){
-	str = str;
-	return;
+	std::istringstream is(str);
+	std::string airportName;
+	is >> airportName >> airportName;
+
+	std::vector<size_t> dataVector1 = manager.airportStats(airportName);
+	if (dataVector1[0]==__INT64_MAX__){
+		helpMsg("Invalid airport name! Airport doesn't belong to the network!","Choose a valid city name.");
+		return;
+	}
+	std::vector<size_t> dataVector2 = manager.destinationsFromAirport(airportName);
+
+	int totalFlights = dataVector1[0];
+	int totalAirlines = dataVector1[1];
+	int totalAirports = dataVector2[0];
+	int totalCities = dataVector2[1];
+	int totalCountries = dataVector2[2];
+
+	while (1)
+    {
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Airport statistics - "+ airportName + "\n"
+		<< "\n"
+		<< "This airport:\n"
+		<< "Has "<< totalFlights << " flights departing from it\n"
+		<< "Belonging to a total of "<<totalAirlines << " airlines\n"
+		<< "that go to "<<totalAirports<<" different airports\n"
+		<< "in "<<totalCities<< " different cities\n"
+		<< "and "<<totalCountries<<" different countries."
+		<< "\n "
+        << "\n"
+		<< "[B] Back\n"
+		<< "[Q] Exit\n"
+		<< "\n"
+        << "$> ";
+        std::string str;
+		getline(std::cin, str);
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+		helpMsg("Command not found!", "help - shows all commands");
+    }
 }
 
 void UI::showCity(std::string str){
