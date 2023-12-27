@@ -94,27 +94,25 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 }
 
 //ix
-void dfs_art(Vertex<Airport, std::string> *v, vector<Airport> &s, set<Airport> &l, int &i, bool start) {
+void dfs_art(Vertex<Airport, std::string> *v, Airport parent, set<Airport> &l, int &i, bool start) {
 	v->setLow(i);
 	v->setNum(i);
-	s.push_back(v->getInfo());
 	i++;
 	int children = 0;
 	for (auto x : v->getAdj()) {
 		auto w = x.getDest();
 		if (w->getNum() == 0) {
 			children++;
-			dfs_art(w, s, l, i, false);
+			dfs_art(w, v->getInfo(), l, i, false);
 			v->setLow(min(v->getLow(), w->getLow()));
 			if (!start && w->getLow() >= v->getNum())
 				l.insert(v->getInfo());
-		} else if (std::find(s.begin(), s.end(), w->getInfo()) != s.end())
+		} else if (v->getInfo() != parent)
 			v->setLow(min(v->getLow(), w->getNum()));
 	}
+
 	if (start && children > 1)
 		l.insert(v->getInfo());
-
-	s.pop_back();
 }
 
 void dfsTarjanVisit(Vertex<Airport, std::string> *vtx, int &time, Vertex<Airport, std::string> *last, std::set<Airport> &res) {
@@ -144,7 +142,6 @@ void dfsTarjanVisit(Vertex<Airport, std::string> *vtx, int &time, Vertex<Airport
 std::set<Airport> Manager::essentialAirports() {
 
 	std::set<Airport> res;
-	std::vector<Airport> s;
 	int time = 0;
 
 	for (auto i : connections.getVertexSet()) {
@@ -154,11 +151,10 @@ std::set<Airport> Manager::essentialAirports() {
 	}
 
 	for (auto i : connections.getVertexSet())
-		if (!i->isVisited()) {
+		if (!i->isVisited())
 			dfsTarjanVisit(i, time, NULL, res);
-			//dfs_art(i, s, res, time, true);
-		}
-
+			//dfs_art(i, Airport(""), res, time, true);
+	
 	return res;
 }
 
