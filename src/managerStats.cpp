@@ -162,8 +162,8 @@ std::set<Airport> Manager::essentialAirports() {
 
 	for (auto i : connections.getVertexSet())
 		if (!i->isVisited())
-			dfsTarjanVisit(i, time, NULL, res);
-			//dfs_art(i, Airport(""), res, time, true);
+			//dfsTarjanVisit(i, time, NULL, res);
+			dfs_art(i, Airport(""), res, time, true);
 	
 	return res;
 }

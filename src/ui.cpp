@@ -223,5 +223,5 @@ void UI::test() {
 
 	std::cout << "\nCount: " << res.size() << "\n";
 	
-	Expected -> 309 / 310
+	Expected -> 309 - net / 310 - teoricas
 */
