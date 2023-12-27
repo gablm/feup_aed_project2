@@ -38,6 +38,9 @@ class Manager {
 		int airlineCount();
 		//ii
 		std::vector<size_t> airportStats(std::string code);
+		//iii
+		std::vector<size_t> cityStats(std::string code);
+		std::vector<size_t> airlineStats(std::string code);
 		
 		//v
 		std::vector<size_t> destinationsFromAirport(std::string code);

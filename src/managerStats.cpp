@@ -34,6 +34,60 @@ std::vector<size_t> Manager::airportStats(std::string code) {
 	return {vtx->getAdj().size(), airlines.size()};
 }
 
+//iii
+//returns a vector with {num of airports inside it, num of flights, num of airlines, num of destination cities, num of destination countries}
+std::vector<size_t> Manager::cityStats(std::string code){
+	auto airportList = cityAirportList[code];
+	if(airportList.size()==0){
+		return {INT64_MAX};
+	}
+	std::set<string> airlineList;
+	std::set<string> cityList;
+	std::set<string> countryList;
+
+
+	size_t totalFlights = 0;
+
+	for (auto airportptr : airportList){
+		for (auto i : airportptr->getAdj()) {
+			airlineList.insert(i.getInfo().getName());
+			cityList.insert(i.getDest()->getInfo().getCity());
+			countryList.insert(i.getDest()->getInfo().getCountry());
+		}
+		totalFlights+=airportptr->getAdj().size();
+	}
+	return {airportList.size(),totalFlights, airlineList.size(), cityList.size(), countryList.size()};
+
+}
+
+//returns a vector with {num of flights, num of airports, num of cities, num of countries}
+std::vector<size_t> Manager::airlineStats(std::string code){
+	Airline airline = airlines[code];
+	set<string> airportList;
+	set<string> cityList;
+	set<string> countryList;
+	size_t totalFlights = 0;
+
+	
+
+	for (auto airport : available_flights.getVertexSet()){
+		for(auto flight : airport->getAdj()){
+			if (flight.getInfo()==airline){
+				totalFlights++;
+				airportList.emplace(airport->getInfo().getName());
+				airportList.emplace(flight.getDest()->getInfo().getName());
+				cityList.emplace(airport->getInfo().getCity());
+				cityList.emplace(flight.getDest()->getInfo().getCity());
+				countryList.emplace(airport->getInfo().getCountry());
+				countryList.emplace(flight.getDest()->getInfo().getCountry());
+			}
+		}
+	}
+
+	return {totalFlights, airportList.size(), cityList.size(), countryList.size()};
+
+}
+
 //v
 std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 	auto vtx = connections.findVertex(code);
