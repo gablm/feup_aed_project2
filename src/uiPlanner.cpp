@@ -62,7 +62,7 @@ void UI::plannerAirportSelect() {
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
 		<< "\n"
-		<< "Please enter the Airport code" << (lst.empty() ? "or a name to search:\n" : ":\n")
+		<< "Please enter the Airport code" << (lst.empty() ? " or a name to search:\n" : ":\n")
         << "$> ";
         std::string str;
 		getline(std::cin, str);

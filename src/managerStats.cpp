@@ -38,13 +38,13 @@ std::vector<size_t> Manager::airportStats(std::string code) {
 //returns a vector with {num of airports inside it, num of flights, num of airlines, num of destination cities, num of destination countries}
 std::vector<size_t> Manager::cityStats(std::string code){
 	auto airportList = cityAirportList[code];
-	if(airportList.size()==0){
-		return {INT64_MAX};
-	}
+	
+	if (airportList.empty())
+		return {__INT64_MAX__};
+
 	std::set<string> airlineList;
 	std::set<string> cityList;
 	std::set<string> countryList;
-
 
 	size_t totalFlights = 0;
 
