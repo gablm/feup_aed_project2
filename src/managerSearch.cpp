@@ -25,7 +25,6 @@ std::vector<Airport> Manager::searchAirport(std::string type, std::string query)
 		}
 	};
 
-
 	for (auto i : connections.getVertexSet()) {
 		Airport w = i->getInfo();
 		if (type == "code")
