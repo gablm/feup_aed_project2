@@ -18,6 +18,8 @@ template <class T, class W>
 class Vertex {
     T info;
     std::vector<Edge<T, W>> adj;
+
+	Vertex<T, W> *last;
     bool visited;
     bool processing;
     int indegree;
@@ -30,6 +32,8 @@ public:
     Vertex(T in);
     T getInfo() const;
     void setInfo(T in);
+	Vertex<T, W> *getLast() const;
+	void setLast(Vertex<T, W> *v);
     bool isVisited() const;
     void setVisited(bool v);
     bool isProcessing() const;
@@ -121,6 +125,15 @@ T Vertex<T, W>::getInfo() const {
 template<class T, class W>
 void Vertex<T, W>::setInfo(T in) {
     Vertex::info = in;
+}
+
+template<class T, class W>
+Vertex<T, W> *Vertex<T, W>::getLast() const {
+	return last;
+}
+template<class T, class W>
+void Vertex<T, W>::setLast(Vertex<T, W> *v) {
+	last = v;
 }
 
 template<class T, class W>

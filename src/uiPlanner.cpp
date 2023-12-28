@@ -70,6 +70,35 @@ void UI::plannerSelected() {
 
 template <class T, class W>
 vector<pair<T, W>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
+	
+	for (auto i : g->getVertexSet()) {
+		i->setVisited(false);
+		i->setNum(__INT32_MAX__);
+	}
+
+	list<Vertex<T, W>*> queue;
+	bool found = false;
+	start->setVisited(true);
+	start->setNum(0);
+	queue.push_back(start);
+
+	while (!queue.empty() && found == false) {
+		auto u = queue.front();
+		queue.pop_front();
+		for (auto i : u->getAdj()) {
+			auto w = i.getDest();
+			if (!w->isVisited()) {
+				w->setVisited(true);
+				w->setLast(u);
+				w->setNum(u->getNum() + 1);
+				queue.push_back(w);
+				if (w == end) {
+					found = true;
+					break;
+				}
+			}
+		}
+	}
 
 }
 
