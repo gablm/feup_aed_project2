@@ -23,7 +23,7 @@ void UI::plannerSelected() {
 		<< " [0] - Select origin\t\t[1] - Select destination\n"
 		<< " (erasing destinations if any)\n"
 		<< "\n"
-		<< " [F] - Add filters\t\t[ENTER] - start search\n"
+		<< " [F] - Add filters\t\t[search] - Start search\n"
 		<< " [B] Back\t\t\t[Q] - Quit\n"
 		<< "\n$> ";
 
@@ -50,12 +50,13 @@ void UI::plannerSelected() {
 			plannerOutMenu();
 			continue;
 		}
-		if (str == "\n") {
+		if (str == "search") {
 			if (origin.empty() || destination.empty()) {
 				helpMsg("Please select both the origin and destination first!", 
 					"[0] to select the origin and [1] to select the destination");
 				continue;
 			}
+			helpMsg("not implemented", "not implemented");
 			continue;
 		}
 		helpMsg("Unknown option!", "[command]");
