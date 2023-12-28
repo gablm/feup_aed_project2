@@ -117,25 +117,29 @@ vector<Airport> UI::searchAirport(std::string query) {
 
 void UI::plannerCitySelect() {
 	std::set<std::string> lst;
-
+	size_t count = 0;
 	while (1)
     {
         CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
-		<< ">> Source location\n";
+		<< ">> Selecting source location\n";
 		if (!lst.empty()) {
-			std::cout << "\nYour previous search has returned:\n";
-			for (auto i : lst)
-				std::cout << i << "\n";
+			std::cout << "\nThe search has returned:\n\n";
+			auto iter = lst.begin();
+			std::advance(iter, count);
+			for (size_t i = count; i < min(count + 10, lst.size()); i++)
+				std::cout << i << ". " << *(iter++) << "\n";
+			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
+						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << " total\n";
 		}
 		std::cout
         << "\n"
-		<< "[B] Back\n"
-		<< "[Q] Exit\n"
+		<< (lst.empty() ? "" : "next - Next page | back - Last page\n")
+		<< "b - Back | q - Exit\n"
 		<< "\n"
-		<< "Please enter the city or country name" << (lst.empty() ? " to search:\n" : ":\n")
+		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
         << "$> ";
         std::string str;
 		getline(std::cin, str);
@@ -145,7 +149,32 @@ void UI::plannerCitySelect() {
 		}
 		if (str == "B" || str == "b")
 			break;
+		if (str == "next" && !lst.empty()) {
+			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
+			continue;
+		}
+		if (str == "back" && !lst.empty()) {
+			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+
+		size_t num = atol(str.c_str());
+		if (str == "0" || num != 0) {
+			auto it = lst.begin();
+			std::advance(it, num);
+			vector<Airport> res;
+			for (auto i : manager.getConnections().getVertexSet()) {
+				auto w = i->getInfo();
+				if (w.getCity() + ", " + w.getCountry() == *it)
+					res.push_back(w);
+			}
+			origin = res;
+			plannerSelected();
+			break;
+		}
+
 		if (str.size() > 1) {
+			count = 0;
 			lst = searchCity(str);
 			if (lst.size() == 1) {
 				vector<Airport> res;
