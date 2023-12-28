@@ -47,35 +47,65 @@ void UI::plannerMenu() {
 
 void UI::plannerAirportSelect() {
 	std::vector<Airport> lst;
-
+	size_t count = 0;
 	while (1)
-    {
+    { 
         CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
-		<< ">> Source location\n";
+		<< ">> Selecting source location\n";
 		if (!lst.empty()) {
-			std::cout << "\nYour previous search has returned:\n";
-			for (auto i : lst)
-				std::cout << i.getCode() << " - " << i.getName() << "\n";
+			std::cout << "\nThe search has returned:\n\n";
+			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
+				auto w = lst[i];
+				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+			}
+			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
+						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << " total\n";
 		}
+
 		std::cout
         << "\n"
-		<< "[B] Back\n"
-		<< "[Q] Exit\n"
+		<< (lst.empty() ? "" : "next - Next page | back - Last page\n")
+		<< "b - Back | q - Exit\n"
 		<< "\n"
-		<< "Please enter the Airport code" << (lst.empty() ? " or a name to search:\n" : ":\n")
+		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
         << "$> ";
+
         std::string str;
 		getline(std::cin, str);
+
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
 		}
 		if (str == "B" || str == "b")
 			break;
+
+		if (str == "next" && !lst.empty()) {
+			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
+			continue;
+		}
+		if (str == "back" && !lst.empty()) {
+			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+
+		size_t num = atol(str.c_str());
+		if (str == "0" || num != 0) {
+			if (num >= lst.size()) {
+				helpMsg("Please enter a valid option!", "[number]");
+				continue;
+			}
+			vector<Airport> res;
+			res.push_back(lst[num]);
+			origin = res;
+			plannerSelected();
+			break;
+		}
 		if (str.size() > 1) {
+			count = 0;
 			lst = searchAirport(str);
 			if (lst.size() == 1) {
 				origin = lst;
@@ -134,6 +164,7 @@ void UI::plannerCitySelect() {
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << " total\n";
 		}
+
 		std::cout
         << "\n"
 		<< (lst.empty() ? "" : "next - Next page | back - Last page\n")
@@ -141,6 +172,7 @@ void UI::plannerCitySelect() {
 		<< "\n"
 		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
         << "$> ";
+
         std::string str;
 		getline(std::cin, str);
         if (str == "Q" || str == "q") {
@@ -149,6 +181,7 @@ void UI::plannerCitySelect() {
 		}
 		if (str == "B" || str == "b")
 			break;
+			
 		if (str == "next" && !lst.empty()) {
 			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
 			continue;
@@ -160,6 +193,10 @@ void UI::plannerCitySelect() {
 
 		size_t num = atol(str.c_str());
 		if (str == "0" || num != 0) {
+			if (num >= lst.size()) {
+				helpMsg("Please enter a valid option!", "[number]");
+				continue;
+			}
 			auto it = lst.begin();
 			std::advance(it, num);
 			vector<Airport> res;
