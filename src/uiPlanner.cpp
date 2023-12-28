@@ -67,3 +67,7 @@ void UI::plannerSelected() {
 		helpMsg("Unknown option!", "[command]");
 	}
 }
+
+void UI::displayFlights() {
+
+}

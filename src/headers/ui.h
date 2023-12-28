@@ -17,10 +17,7 @@ class UI {
 
 		vector<Airport> origin;
 		vector<Airport> destination;
-	public:
-		UI();
 
-		void mainMenu();
 		void statsMenu();
 		void globalStats();
 
@@ -42,6 +39,8 @@ class UI {
 		void plannerCoordsOutSelect();
 		std::vector<Airport> searchOutCoords(double lat, double lon);
 
+		void displayFlights();
+
 		void showAirport(std::string str);
 		void showCity(std::string str);
 		void showAirline(std::string str);
@@ -49,6 +48,9 @@ class UI {
 		void helpMsg(std::string error, std::string usage);
 
 		void test();
+	public:
+		UI();
+		void mainMenu();
 };
 
 #endif
