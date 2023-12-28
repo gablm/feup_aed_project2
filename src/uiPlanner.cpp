@@ -61,13 +61,17 @@ void UI::plannerSelected() {
 					"[0] to select the origin and [1] to select the destination");
 				continue;
 			}
-			helpMsg("not implemented", "not implemented");
+			displayFlights();
 			continue;
 		}
 		helpMsg("Unknown option!", "[command]");
 	}
 }
 
-void UI::displayFlights() {
+vector<pair<Airport, Airline>> findPath(Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end) {
+	
+}
 
+void UI::displayFlights() {
+	
 }
