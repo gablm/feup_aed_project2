@@ -11,13 +11,13 @@ void UI::plannerSelected() {
 		for (auto i : origin)
 			std::cout << " " << i.getCode() << " - " << i.getCity() << ", " << i.getCountry() << "\n";
 		if (origin.empty())
-			std::cout << "(none)\n";
+			std::cout << " (none)\n";
 		
 		std::cout << "\n>> Destination\n\n";
 		for (auto i : destination)
 			std::cout << " " << i.getCode() << " - " << i.getCity() << ", " << i.getCountry() << "\n";
 		if (destination.empty())
-			std::cout << "(none)\n";
+			std::cout << " (none)\n";
 		std::cout
 		<< "\n"
 		<< " [0] - Select origin\t\t[1] - Select destination\n"
