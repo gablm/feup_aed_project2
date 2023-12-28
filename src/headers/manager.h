@@ -9,7 +9,6 @@
 #include "graph.h"
 
 #define MaxTripVector std::vector<std::pair<Airport, Airport>>
-#define CitySearchResult std::vector<std::pair<std::string, std::string>>
 
 class Manager {
 	private:
@@ -54,9 +53,6 @@ class Manager {
 		std::vector<Vertex<Airport, Airline>*> airportsWithMostTraffic(size_t x);
 		//ix
 		std::set<Airport> essentialAirports();
-
-		vector<Airport> searchAirport(std::string type, std::string query);
-		CitySearchResult searchCity(std::string type, std::string query);
 };
 
 #endif
