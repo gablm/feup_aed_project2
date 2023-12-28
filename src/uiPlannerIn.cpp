@@ -54,16 +54,22 @@ void UI::plannerAirportInSelect() {
 	std::vector<Airport> lst;
 	size_t count = 0;
 	std::string str;
+	std::string search;
+	int type;
 
 	while (1)
-    { 
+    {
+		type = lst.empty() ? 0 : 1;
+		if (!lst.empty() && lst[0].getCode() == "NULL")
+			type = 2;
+
         CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
 		<< ">> Selecting source location by Airport\n";
-		if (!lst.empty()) {
-			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n";
+		if (type == 1) {
+			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
 				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
@@ -72,12 +78,16 @@ void UI::plannerAirportInSelect() {
 						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
 		}
 
+		if (type == 2) {
+			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n(nothing)\n";
+		}
+
 		std::cout
         << "\n"
-		<< (lst.empty() ? "" : "next - Next page | back - Last page\n")
-		<< "b - Back | q - Exit\n"
+		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
+		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a airport using a number:\n")
         << "$> ";
 
 		getline(std::cin, str);
@@ -100,7 +110,7 @@ void UI::plannerAirportInSelect() {
 
 		size_t num = atol(str.c_str());
 		if (str == "0" || num != 0) {
-			if (num >= lst.size()) {
+			if (num >= lst.size() || type == 2) {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
@@ -113,8 +123,9 @@ void UI::plannerAirportInSelect() {
 		}
 		if (str.size() > 1) {
 			count = 0;
+			search = str;
 			lst = searchInAirport(str);
-			if (lst.size() == 1) {
+			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
 				origin = lst;
 				destination.clear();
 				plannerSelected();
@@ -150,6 +161,9 @@ vector<Airport> UI::searchInAirport(std::string query) {
 			res.push_back(w);
 	}
 
+	if (res.empty())
+		res.push_back(Airport("NULL"));
+
 	return res;
 }
 
@@ -157,16 +171,22 @@ void UI::plannerCityInSelect() {
 	std::set<std::string> lst;
 	size_t count = 0;
 	std::string str;
+	std::string search;
+	int type;
 
 	while (1)
     {
-        CLEAR;
+		type = lst.empty() ? 0 : 1;
+		if (!lst.empty() && *lst.begin() == "NULL")
+			type = 2;
+        
+		CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
 		<< ">> Selecting source location by City\n";
-		if (!lst.empty()) {
-			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n";
+		if (type == 1) {
+			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
 			auto iter = lst.begin();
 			std::advance(iter, count);
 			for (size_t i = count; i < min(count + 10, lst.size()); i++)
@@ -175,12 +195,16 @@ void UI::plannerCityInSelect() {
 						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
 		}
 
+		if (type == 2) {
+			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n(nothing)\n";
+		}
+
 		std::cout
         << "\n"
-		<< (lst.empty() ? "" : "next - Next page | back - Last page\n")
-		<< "b - Back | q - Exit\n"
+		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
+		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a city using a number:\n")
         << "$> ";
 
 		getline(std::cin, str);
@@ -202,7 +226,7 @@ void UI::plannerCityInSelect() {
 
 		size_t num = atol(str.c_str());
 		if (str == "0" || num != 0) {
-			if (num >= lst.size()) {
+			if (num >= lst.size() || type == 2) {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
@@ -222,8 +246,9 @@ void UI::plannerCityInSelect() {
 
 		if (str.size() > 1) {
 			count = 0;
+			search = str;
 			lst = searchInCity(str);
-			if (lst.size() == 1) {
+			if (lst.size() == 1 && *lst.begin() != "NULL") {
 				vector<Airport> res;
 				for (auto i : manager.getConnections().getVertexSet()) {
 					auto w = i->getInfo();
@@ -259,6 +284,9 @@ set<std::string> UI::searchInCity(std::string query) {
 		}
 	}
 
+	if (res.empty())
+		res.insert("NULL");
+
 	return res;
 }
 
@@ -267,16 +295,21 @@ void UI::plannerCoordsInSelect() {
 	std::string str;
 	size_t count = 0;
 	double lat = 0, lon = 0;
+	int type;
 
 	while (1)
     { 
+		type = lst.empty() ? 0 : 1;
+		if (!lst.empty() && lst[0].getCode() == "NULL")
+			type = 2;
+
         CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
 		<< ">> Selecting source location by coordinates\n";
-		if (!lst.empty()) {
-			std::cout << "\nThe closest airports to (" << lat << " La, " << lon << " Lo) are:\n\n";
+		if (type == 1) {
+			std::cout << "\nThe closest airports to " << lat << " La, " << lon << " Lo are:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
 				std::cout << std::fixed << std::setprecision(2) << Manager::distance(lat, lon, w.getLatitude(), w.getLongitude()) << "\tkm | "
@@ -286,12 +319,16 @@ void UI::plannerCoordsInSelect() {
 						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
 		}
 
+		if (type == 2) {
+			std::cout << "\nThere are no airport within a 300 km radius of " << lat << " La, " << lon << " Lo\n";
+		}
+
 		std::cout
         << "\n"
-		<< (lst.empty() ? "" : "next - Next page | back - Last page\n")
-		<< "b - Back | q - Exit\n"
+		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter coordinates to search" << (lst.empty() ? ":\n" : " or enter the number of closest airports to consider:\n")
+		<< "Please enter coordinates to search" << (type != 1 ? ":\n" : " or enter the number of closest airports to consider:\n")
         << "$> ";
 
 		getline(std::cin, str);
@@ -323,7 +360,7 @@ void UI::plannerCoordsInSelect() {
 
 		size_t num = atol(str.c_str());
 		if (str.find(' ') == str.npos && num != 0) {
-			if (num > lst.size()) {
+			if (num > lst.size() || type == 2) {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
@@ -335,8 +372,8 @@ void UI::plannerCoordsInSelect() {
 		}
 		if (str.size() > 1) {
 			count = 0;
-			lst = searchOutCoords(lat, lon);
-			if (lst.size() == 1) {
+			lst = searchInCoords(lat, lon);
+			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
 				origin = lst;
 				destination.clear();
 				plannerSelected();
@@ -359,12 +396,16 @@ std::vector<Airport> UI::searchInCoords(double lat, double lon) {
 			res.push_back(w);
 			return res;
 		}
-		if (dist <= 100)
+		if (dist <= 300)
 			res.push_back(w);
 	}
 	std::sort(res.begin(), res.end(), [lat, lon](Airport &a, Airport &b) {
 		return Manager::distance(lat, lon, a.getLatitude(), a.getLongitude()) < 
 			Manager::distance(lat, lon, b.getLatitude(), b.getLongitude());
-	});	
+	});
+
+	if (res.empty())
+		res.push_back(Airport("NULL"));
+
 	return res;
 }
