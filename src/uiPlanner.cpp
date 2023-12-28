@@ -68,8 +68,9 @@ void UI::plannerSelected() {
 	}
 }
 
-vector<pair<Airport, Airline>> findPath(Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end) {
-	
+template <class T, class W>
+vector<pair<T, W>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
+
 }
 
 void UI::displayFlights() {
