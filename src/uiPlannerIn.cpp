@@ -107,6 +107,7 @@ void UI::plannerAirportInSelect() {
 			vector<Airport> res;
 			res.push_back(lst[num]);
 			origin = res;
+			destination.clear();
 			plannerSelected();
 			break;
 		}
@@ -115,6 +116,7 @@ void UI::plannerAirportInSelect() {
 			lst = searchInAirport(str);
 			if (lst.size() == 1) {
 				origin = lst;
+				destination.clear();
 				plannerSelected();
 				break;
 			}
@@ -213,6 +215,7 @@ void UI::plannerCityInSelect() {
 					res.push_back(w);
 			}
 			origin = res;
+			destination.clear();
 			plannerSelected();
 			break;
 		}
@@ -228,6 +231,7 @@ void UI::plannerCityInSelect() {
 						res.push_back(w);
 				}
 				origin = res;
+				destination.clear();
 				plannerSelected();
 				break;
 			}
@@ -325,6 +329,7 @@ void UI::plannerCoordsInSelect() {
 			}
 			lst.resize(num);
 			origin = lst;
+			destination.clear();
 			plannerSelected();
 			break;
 		}
@@ -333,6 +338,7 @@ void UI::plannerCoordsInSelect() {
 			lst = searchOutCoords(lat, lon);
 			if (lst.size() == 1) {
 				origin = lst;
+				destination.clear();
 				plannerSelected();
 				break;
 			}

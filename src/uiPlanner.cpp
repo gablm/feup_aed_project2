@@ -7,21 +7,37 @@ void UI::plannerSelected() {
 	while (1) {
 		CLEAR;
 
-		std::cout << "Amadeus - Trip planner\n\nOrigin Selected:\n\n";
+		std::cout << "Amadeus - Trip planner\n\n>> Origin\n\n";
 		for (auto i : origin)
-			std::cout << i.getCode() << " - " << i.getCity() << ", " << i.getCountry() << "\n";
+			std::cout << " " << i.getCode() << " - " << i.getCity() << ", " << i.getCountry() << "\n";
 		if (origin.empty())
 			std::cout << "(none)\n";
 		
-		std::cout << "\nDestination Selected:\n\n";
+		std::cout << "\n>> Destination\n\n";
 		for (auto i : destination)
-			std::cout << i.getCode() << " - " << i.getCity() << ", " << i.getCountry() << "\n";
+			std::cout << " " << i.getCode() << " - " << i.getCity() << ", " << i.getCountry() << "\n";
 		if (destination.empty())
 			std::cout << "(none)\n";
 		std::cout
+		<< "\n"
+		<< " [0] - Select origin\t\t[1] - Select destination\n"
+		<< " (erasing destinations if any)\n"
+		<< "\n"
+		<< " [F] - Add filters\t\t[ENTER] - start search\n"
+		<< " [B] Back\t\t\t[Q] - Quit\n"
 		<< "\n$> ";
 
 		std::getline(std::cin, str);
+		if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b") {
+			origin.clear();
+			destination.clear();
+			mainMenu();
+			return;
+		}
 		if (str == "0") {
 			plannerInMenu();
 			continue;
@@ -34,6 +50,14 @@ void UI::plannerSelected() {
 			plannerOutMenu();
 			continue;
 		}
-		helpMsg("Unknown option", "");
+		if (str == "\n") {
+			if (origin.empty() || destination.empty()) {
+				helpMsg("Please select both the origin and destination first!", 
+					"[0] to select the origin and [1] to select the destination");
+				continue;
+			}
+			continue;
+		}
+		helpMsg("Unknown option!", "[command]");
 	}
 }
