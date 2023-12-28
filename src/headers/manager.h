@@ -30,7 +30,7 @@ class Manager {
 		void loadFlights();
 		void testFlights();
 
-		double distance(double la1, double lo1, double la2, double lo2);
+		double static distance(double la1, double lo1, double la2, double lo2);
 
 		//i
 		int airportCount();

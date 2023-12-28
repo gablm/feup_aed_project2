@@ -156,7 +156,7 @@ double Manager::distance(double la1, double lo1, double la2, double lo2) {
 	la2 *= M_PI / 180.0;
 
 	double formula = pow(sin(la / 2), 2) + pow(sin(lo / 2), 2) * cos(la1) * cos(la2);
-	return 6371 * 2 * asin(sqrt(formula));
+	return abs(6371 * 2 * asin(sqrt(formula)));
 }
 
 void Manager::loadFlights() {

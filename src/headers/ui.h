@@ -26,9 +26,12 @@ class UI {
 
 		void plannerMenu();
 		void plannerAirportSelect();
-		vector<Airport> searchAirport(std::string query);
+		std::vector<Airport> searchAirport(std::string query);
 		void plannerCitySelect();
-		set<std::string> searchCity(std::string query);
+		std::set<std::string> searchCity(std::string query);
+		void plannerCoordsSelect();
+		std::vector<Airport> searchCoords(double lat, double lon);
+		
 		void plannerSelected();
 
 		void showAirport(std::string str);
