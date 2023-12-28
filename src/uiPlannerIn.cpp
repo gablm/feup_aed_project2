@@ -53,6 +53,8 @@ void UI::plannerMenu() {
 void UI::plannerAirportSelect() {
 	std::vector<Airport> lst;
 	size_t count = 0;
+	std::string str;
+
 	while (1)
     { 
         CLEAR;
@@ -61,7 +63,7 @@ void UI::plannerAirportSelect() {
 		<< "\n"
 		<< ">> Selecting source location by Airport\n";
 		if (!lst.empty()) {
-			std::cout << "\nThe search has returned:\n\n";
+			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
 				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
@@ -78,7 +80,6 @@ void UI::plannerAirportSelect() {
 		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
         << "$> ";
 
-        std::string str;
 		getline(std::cin, str);
 
         if (str == "Q" || str == "q") {
@@ -153,6 +154,8 @@ vector<Airport> UI::searchAirport(std::string query) {
 void UI::plannerCitySelect() {
 	std::set<std::string> lst;
 	size_t count = 0;
+	std::string str;
+
 	while (1)
     {
         CLEAR;
@@ -161,7 +164,7 @@ void UI::plannerCitySelect() {
 		<< "\n"
 		<< ">> Selecting source location by City\n";
 		if (!lst.empty()) {
-			std::cout << "\nThe search has returned:\n\n";
+			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n";
 			auto iter = lst.begin();
 			std::advance(iter, count);
 			for (size_t i = count; i < min(count + 10, lst.size()); i++)
@@ -178,7 +181,6 @@ void UI::plannerCitySelect() {
 		<< "Please enter a term to search" << (lst.empty() ? ":\n" : " or select a city using a number:\n")
         << "$> ";
 
-        std::string str;
 		getline(std::cin, str);
         if (str == "Q" || str == "q") {
 			CLEAR;
@@ -267,6 +269,7 @@ void UI::plannerSelected() {
 
 void UI::plannerCoordsSelect() {
 	std::vector<Airport> lst;
+	std::string str;
 	size_t count = 0;
 	double lat = 0, lon = 0;
 
@@ -278,7 +281,7 @@ void UI::plannerCoordsSelect() {
 		<< "\n"
 		<< ">> Selecting source location by coordinates\n";
 		if (!lst.empty()) {
-			std::cout << "\nThe closest airports are:\n\n";
+			std::cout << "\nThe closest airports to (" << lat << " La, " << lon << " Lo) are:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
 				std::cout << std::fixed << std::setprecision(2) << Manager::distance(lat, lon, w.getLatitude(), w.getLongitude()) << "\tkm | "
@@ -296,7 +299,6 @@ void UI::plannerCoordsSelect() {
 		<< "Please enter coordinates to search" << (lst.empty() ? ":\n" : " or enter the number of closest airports to consider:\n")
         << "$> ";
 
-        std::string str;
 		getline(std::cin, str);
 
 		std::istringstream in(str);
