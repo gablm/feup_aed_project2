@@ -21,7 +21,7 @@ void UI::plannerSelected() {
 		std::cout
 		<< "\n"
 		<< " [0] - Select origin\t\t[1] - Select destination\n"
-		<< " (erasing destinations if any)\n"
+		<< " (erasing destinations if any)\t[clear] - Clear both fields\n"
 		<< "\n"
 		<< " [F] - Add filters\t\t[search] - Start search\n"
 		<< " [B] Back\t\t\t[Q] - Quit\n"
@@ -37,6 +37,11 @@ void UI::plannerSelected() {
 			destination.clear();
 			mainMenu();
 			return;
+		}
+		if (str == "clear") {
+			origin.clear();
+			destination.clear();
+			continue;
 		}
 		if (str == "0") {
 			plannerInMenu();
