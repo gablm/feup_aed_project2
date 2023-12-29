@@ -56,11 +56,11 @@ void UI::plannerSelected() {
 			continue;
 		}
 		if (str == "search") {
-			/*if (origin.empty() || destination.empty()) {
+			if (origin.empty() || destination.empty()) {
 				helpMsg("Please select both the origin and destination first!", 
 					"[0] to select the origin and [1] to select the destination");
 				continue;
-			}*/
+			}
 			displayFlights();
 			continue;
 		}
