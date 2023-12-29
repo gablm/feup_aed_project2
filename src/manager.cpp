@@ -59,7 +59,7 @@ void Manager::loadAirports() {
 		connections.addVertex(newData, code);
 		if (available_flights.addVertex(newData, code)){
 			Vertex<Airport, Airline> *vertexPointer = available_flights.findVertex(code);
-        	cityAirportList[city].push_back(vertexPointer);
+        	cityAirportList[city+", "+country].push_back(vertexPointer);
 		}
 	}
 
