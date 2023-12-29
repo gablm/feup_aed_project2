@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <set>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 int main() {
 	UI ui;
@@ -155,8 +157,30 @@ void UI::globalStats() {
     }
 }
 
+void wait(Manager *manager, std::pair<MaxTripVector, int> *res, bool *loading) {
+	*res = manager->maximumTrip();
+	*loading = false;
+}
+
 void UI::showMax() {
-	auto dataPair = manager.maximumTrip();
+	bool loading = true;
+	std::pair<MaxTripVector, int> dataPair;
+
+	std::thread p = std::thread(wait, &manager, &dataPair, &loading);
+
+	int count = 0;
+	while (loading) {
+		CLEAR;
+		std::cout << "Amadeus - Global statistics\n"
+				  << "\n"
+				  << "Maximum trip is currently being calculated.\n"
+				  << "Please wait" << std::string(count, '.') << "\n";
+		count = count == 3 ? 0 : count + 1;
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+
+	p.join();
+
 	int tripSize = dataPair.second;
 	std::vector<std::pair<Airport, Airport>> airportVector = dataPair.first;
 
