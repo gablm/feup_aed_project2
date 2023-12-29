@@ -70,17 +70,14 @@ void UI::statsAirportSelect() {
 				continue;
 			}
 			showAirport(lst[num].getCode());
-			lst.clear();
 			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
 			lst = searchInAirport(str);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
+			if (lst.size() == 1 && lst[0].getCode() != "NULL")
 				showAirport(lst[num].getCode());
-				lst.clear();
-			}
 			continue;
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
@@ -155,7 +152,6 @@ void UI::statsCitySelect() {
 			auto it = lst.begin();
 			std::advance(it, num);
 			showCity(*it);
-			lst.clear();
 			continue;
 		}
 
@@ -163,10 +159,8 @@ void UI::statsCitySelect() {
 			count = 0;
 			search = str;
 			lst = searchInCity(str);
-			if (lst.size() == 1 && *lst.begin() != "NULL") {
+			if (lst.size() == 1 && *lst.begin() != "NULL")
 				showCity(*lst.begin());
-				lst.clear();
-			}
 			continue;
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
@@ -238,17 +232,14 @@ void UI::statsAirlineSelect() {
 				continue;
 			}
 			showAirline(lst[num].getCode());
-			lst.clear();
 			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
 			lst = searchAirline(str);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
+			if (lst.size() == 1 && lst[0].getCode() != "NULL")
 				showAirline(lst[num].getCode());
-				lst.clear();
-			}
 			continue;
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
