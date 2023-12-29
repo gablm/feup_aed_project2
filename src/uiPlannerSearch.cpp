@@ -69,6 +69,7 @@ void UI::plannerAirportSelect(bool in) {
 		type = lst.empty() ? 0 : 1;
 		if (!lst.empty() && lst[0].getCode() == "NULL")
 			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
         CLEAR;
         std::cout 
@@ -82,7 +83,7 @@ void UI::plannerAirportSelect(bool in) {
 				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
+						<< totalPages << "\n";
 		}
 
 		if (type == 2) {
@@ -92,6 +93,7 @@ void UI::plannerAirportSelect(bool in) {
 		std::cout
         << "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a airport using a number:\n")
@@ -112,6 +114,19 @@ void UI::plannerAirportSelect(bool in) {
 		}
 		if (str == "back" && !lst.empty()) {
 			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
 			continue;
 		}
 
@@ -162,6 +177,7 @@ void UI::plannerCitySelect(bool in) {
 		type = lst.empty() ? 0 : 1;
 		if (!lst.empty() && *lst.begin() == "NULL")
 			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
         
 		CLEAR;
         std::cout 
@@ -175,7 +191,7 @@ void UI::plannerCitySelect(bool in) {
 			for (size_t i = count; i < min(count + 10, lst.size()); i++)
 				std::cout << i << ". " << *(iter++) << "\n";
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
+						<< totalPages << "\n";
 		}
 
 		if (type == 2) {
@@ -185,6 +201,7 @@ void UI::plannerCitySelect(bool in) {
 		std::cout
         << "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a city using a number:\n")
@@ -204,6 +221,19 @@ void UI::plannerCitySelect(bool in) {
 		}
 		if (str == "back" && !lst.empty()) {
 			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
 			continue;
 		}
 
@@ -267,6 +297,7 @@ void UI::plannerCoordsSelect(bool mode) {
 		type = lst.empty() ? 0 : 1;
 		if (!lst.empty() && lst[0].getCode() == "NULL")
 			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
         CLEAR;
         std::cout 
@@ -281,7 +312,7 @@ void UI::plannerCoordsSelect(bool mode) {
 					<< w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ") \n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
+						<< totalPages << "\n";
 		}
 
 		if (type == 2) {
@@ -291,6 +322,7 @@ void UI::plannerCoordsSelect(bool mode) {
 		std::cout
         << "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Please enter coordinates to search" << (type != 1 ? ":\n" : " or enter the number of closest airports to consider:\n")
@@ -320,6 +352,19 @@ void UI::plannerCoordsSelect(bool mode) {
 		}
 		if (str == "back" && !lst.empty()) {
 			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
 			continue;
 		}
 
