@@ -5,7 +5,7 @@ FLAGS= -std=c++11 -pedantic -Wall -Wextra -Werror
 
 FILES= objs/manager.o objs/managerStats.o \
 	objs/ui.o objs/uiPlanner.o \
-	objs/uiPlannerIn.o objs/uiPlannerOut.o objs/uiStatSearch.o
+	objs/uiPlannerSearch.o objs/uiStatSearch.o
 
 all: $(NAME)
 

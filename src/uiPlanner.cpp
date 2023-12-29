@@ -44,7 +44,7 @@ void UI::plannerSelected() {
 			continue;
 		}
 		if (str == "0") {
-			plannerInMenu();
+			plannerMenu(true);
 			continue;
 		}
 		if (str == "1") {
@@ -52,7 +52,7 @@ void UI::plannerSelected() {
 				helpMsg("Please select the origin first!", "0 - go to the origin selection menu");
 				continue;
 			}
-			plannerOutMenu();
+			plannerMenu(false);
 			continue;
 		}
 		if (str == "search") {

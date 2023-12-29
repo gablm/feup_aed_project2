@@ -24,22 +24,18 @@ class UI {
 		void showTop(int x);
 		void showEssential();
 
-		void plannerInMenu();
-		void plannerAirportInSelect();
+		void plannerMenu(bool in);
+		void plannerAirportSelect(bool in);
 		std::vector<Airport> searchInAirport(std::string query);
-		void plannerCityInSelect();
+		void plannerCitySelect(bool in);
 		std::set<std::string> searchInCity(std::string query);
-		void plannerCoordsInSelect();
+		void plannerCoordsSelect(bool in);
 		std::vector<Airport> searchInCoords(double lat, double lon);
 		
 		void plannerSelected();
-
-		void plannerOutMenu();
-		void plannerAirportOutSelect();
+		
 		std::vector<Airport> searchOutAirport(std::string query);
-		void plannerCityOutSelect();
 		std::set<std::string> searchOutCity(std::string query);
-		void plannerCoordsOutSelect();
 		std::vector<Airport> searchOutCoords(double lat, double lon);
 
 		void displayFlights();
