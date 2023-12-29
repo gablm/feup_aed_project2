@@ -13,7 +13,7 @@ objs/%.o: src/%.cpp
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(NAME): $(FILES)
-	$(CC) -lpthread $(FLAGS) $(FILES) -o $(NAME)
+	$(CC) -pthread $(FLAGS) $(FILES) -o $(NAME)
 
 doxygen:
 	@doxygen Doxyfile
