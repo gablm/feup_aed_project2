@@ -12,20 +12,39 @@ class Airport {
 		double latitude;
 		double longitude;
 	public:
-		Airport() {};
-		Airport(std::string code);
-		Airport(std::string code, std::string name, 
-			std::string city, std::string country, 
-			double latitude, double longitude);
-		std::string getCode() const;
-		std::string getName() const;
-		std::string getCity() const;
-		std::string getCountry() const;
-		double getLatitude() const;
-		double getLongitude() const;
-		bool operator==(const Airport &rhs);
-		bool operator!=(const Airport &rhs);
-		bool operator<(const Airport &cmp) const;
+		Airport() {}
+		Airport(std::string code) : code(code) {}
+		Airport(std::string code, std::string name, std::string city, 
+			std::string country, double latitude, double longitude) : 
+			code(code), name(name), city(city), country(country), 
+			latitude(latitude), longitude(longitude) {}
+		std::string getCode() const {
+			return code;
+		}
+		std::string getName() const {
+			return name;
+		}
+		std::string getCity() const {
+			return city;
+		}
+		std::string getCountry() const {
+			return country;
+		}
+		double getLatitude() const {
+			return latitude;
+		}
+		double getLongitude() const {
+			return longitude;
+		}
+		bool operator==(const Airport &rhs) {
+			return code == rhs.code;
+		}
+		bool operator!=(const Airport &rhs) {
+			return code != rhs.code;
+		}
+		bool operator<(const Airport &cmp) const {
+			return code != cmp.code ? code < cmp.code : name < cmp.name;
+		}
 };
 
 #endif

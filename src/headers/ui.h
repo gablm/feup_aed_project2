@@ -42,6 +42,11 @@ class UI {
 
 		void displayFlights();
 
+		void statsAirportSelect();
+		void statsCitySelect();
+		void statsAirlineSelect();
+		std::vector<Airline> searchAirline(std::string query);
+
 		void showAirport(std::string str);
 		void showCity(std::string str);
 		void showAirline(std::string str);

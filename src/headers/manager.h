@@ -20,6 +20,7 @@ class Manager {
 		Manager() {}
 		Graph<Airport, std::string> getConnections() { return connections; }
 		Graph<Airport, Airline> getFlights() { return available_flights; }
+		std::map<std::string, Airline> getAirlines() { return airlines; }
 		
 		void loadAirports();
 		void testAirports();

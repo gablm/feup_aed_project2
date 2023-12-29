@@ -72,12 +72,15 @@ void UI::statsMenu(){
         std::cout 
 		<< "Amadeus - Statistics Menu\n"
 		<< "\n"
-        << "\n"
 		<< "For the global statistics input 'global'\n"
         << "\n"
-		<< "For the statistics about a specific airport input 'airport (airport code)'\n"
-		<< "For the statistics about a specific city input 'city (city code)'\n"
-		<< "For the statistics about a specific airline input 'airline (airline code)'\n"
+		<< ">> Search and display statistics\n"
+		<< "\n"
+		<< " [0] - Global\n"
+		<< "\n"
+		<< " [1] - Airports\n"
+		<< " [2] - Cities\n"
+		<< " [3] - Airlines\n"
         << "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
@@ -85,27 +88,32 @@ void UI::statsMenu(){
         << "$> ";
         std::string str;
 		getline(std::cin, str);
-		if (str == "global"){
-			globalStats();
-			continue;
-		}
-		else if (str.substr(0,8) == "airport "){
-			showAirport(str);
-		}
-		else if (str.substr(0,5) == "city "){
-			showCity(str);
-		}
-		else if (str.substr(0,8) == "airline "){
-			showAirline(str);
-		}
-        else if (str == "Q" || str == "q") {
+		if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
 		}
-		else if (str == "B" || str == "b")
+		if (str == "B" || str == "b")
 			break;
-		else {
+		if (str.size() > 1) {
 			helpMsg("Command not found!", "help - shows all commands");
+			continue;
+		}
+		switch (str[0] - '0') {
+			case 0:
+				globalStats();
+				break;
+			case 1:
+				statsAirportSelect();
+				break;
+			case 2:
+				statsCitySelect();
+				break;
+			case 3:
+				statsAirlineSelect();
+				break;
+			default:
+				helpMsg("Command not found!", "help - shows all commands");
+				break;
 		}
     }
 }
@@ -118,7 +126,7 @@ void UI::globalStats() {
 		<< "Amadeus - Global statistics\n"
 		<< "\n"
 		<< "There are currently available:\n"
-		<< "\n"
+		<< "\n "
         << manager.airportCount() << " airports \n "
 		<< manager.airlineCount() << " airlines \n "
         << manager.flightCount() << " flights\n"
@@ -148,7 +156,7 @@ void UI::globalStats() {
     }
 }
 
-void UI::showMax(){
+void UI::showMax() {
 	auto dataPair = manager.maximumTrip();
 	int tripSize = dataPair.second;
 	std::vector<std::pair<Airport, Airport>> airportVector = dataPair.first;
@@ -184,7 +192,7 @@ void UI::showMax(){
     }
 }
 
-void UI::showAirport(std::string str){
+void UI::showAirport(std::string str) {
 	bool numberInputed = false;
 	int stops;
 	size_t nonDigits;
@@ -273,7 +281,7 @@ void UI::showAirport(std::string str){
     }
 }
 
-void UI::showCity(std::string str){
+void UI::showCity(std::string str) {
 	std::istringstream is(str);
 	std::string cityName;
 	is >> cityName >> cityName;
@@ -320,7 +328,7 @@ void UI::showCity(std::string str){
     }
 }
 
-void UI::showAirline(std::string str){
+void UI::showAirline(std::string str) {
 	std::istringstream is(str);
 	std::string airlineName;
 	is >> airlineName >> airlineName;
@@ -331,7 +339,6 @@ void UI::showAirline(std::string str){
 		helpMsg("Invalid airline name! Airline doesn't belong to the network!","Choose a valid airline name.");
 		return;
 	}
-
 
 	int totalFlights = dataVector[0];
 	int totalAirports = dataVector[1];
