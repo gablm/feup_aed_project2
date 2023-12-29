@@ -48,15 +48,15 @@ std::vector<size_t> Manager::cityStats(std::string code){
 
 	size_t totalFlights = 0;
 
-	for (auto airportptr : airportList){
-		for (auto i : airportptr->getAdj()) {
+	for (auto airportPtr : airportList){
+		for (auto i : airportPtr->getAdj()) {
 			airlineList.insert(i.getInfo().getName());
 			cityList.insert(i.getDest()->getInfo().getCity());
 			countryList.insert(i.getDest()->getInfo().getCountry());
 		}
-		totalFlights+=airportptr->getAdj().size();
+		totalFlights += airportPtr->getAdj().size();
 	}
-	return {airportList.size(),totalFlights, airlineList.size(), cityList.size(), countryList.size()};
+	return {airportList.size(), totalFlights, airlineList.size(), cityList.size(), countryList.size()};
 
 }
 
