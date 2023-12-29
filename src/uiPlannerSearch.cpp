@@ -117,7 +117,7 @@ void UI::plannerAirportSelect(bool in) {
 			continue;
 		}
 		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 4 || lst.empty()) {
+			if (str.size() <= 5 || lst.empty()) {
 				helpMsg("There is no page to change to!", "page [num] if there is results");
 				continue;
 			}
@@ -224,7 +224,7 @@ void UI::plannerCitySelect(bool in) {
 			continue;
 		}
 		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 4 || lst.empty()) {
+			if (str.size() <= 5 || lst.empty()) {
 				helpMsg("There is no page to change to!", "page [num] if there is results");
 				continue;
 			}
@@ -355,7 +355,7 @@ void UI::plannerCoordsSelect(bool mode) {
 			continue;
 		}
 		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 4 || lst.empty()) {
+			if (str.size() <= 5 || lst.empty()) {
 				helpMsg("There is no page to change to!", "page [num] if there is results");
 				continue;
 			}
