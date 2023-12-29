@@ -279,12 +279,9 @@ void UI::showAirport(std::string str) {
 }
 
 void UI::showCity(std::string str) {
-	std::istringstream is(str);
-	std::string cityName;
-	is >> cityName >> cityName;
+	std::vector<size_t> dataVector = manager.cityStats(str);
 
-	std::vector<size_t> dataVector = manager.cityStats(cityName);
-	if (dataVector[0]==__INT64_MAX__){
+	if (dataVector[0] == __INT64_MAX__) {
 		helpMsg("Invalid city name! City doesn't belong to the network!","Choose a valid city name.");
 		return;
 	}
@@ -299,15 +296,14 @@ void UI::showCity(std::string str) {
     {
         CLEAR;
         std::cout 
-		<< "Amadeus - City statistics - "+ cityName + "\n"
+		<< "Amadeus - City statistics\n"
 		<< "\n"
-		<< "This city:\n"
-		<< "Contains "<<internalAirports << " airports.\n"
-		<< "Has "<< totalFlights << " flights departing from it\n"
-		<< "Belonging to a total of "<<totalAirlines << " airlines\n"
-		<< "and go to "<<totalCities<< " different cities\n"
-		<< "in "<<totalCountries<<" different countries."
-		<< "\n "
+		<< " " << str << "contains " << internalAirports << " airports,\n"
+		<< " with " << totalFlights << " flights departing from it\n"
+		<< " belonging to a total of " << totalAirlines << " airlines\n"
+		<< " and go to " << totalCities << " different cities\n"
+		<< " in " << totalCountries << " different countries."
+		<< "\n"
         << "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
