@@ -27,12 +27,10 @@ void UI::mainMenu() {
         #endif
 		<< "Select an option [0-3]:\n"
         << "\n"
-        << " [0] Global statistics\n"
-		<< " [1] ??\n"
-		<< " [2] ??\n"
-        << "\n"
-		<< " [3] Plan a trip\n"
+        << " [0] Statistics\n"
 		<< "\n"
+		<< " [1] Plan a trip\n"
+        << "\n"
 		<< "[Q] Exit\n"
 		<< "\n"
         << "$> ";
@@ -55,7 +53,7 @@ void UI::mainMenu() {
 			case 0:
 				statsMenu();
 				break;
-			case 3:
+			case 1:
 				plannerSelected();
 				break;
 			default:
