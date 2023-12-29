@@ -107,23 +107,6 @@ std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 }
 
 //vi
-void dfsVisit(Vertex<Airport, std::string> *vtx, size_t *cnt, std::set<std::string> &cities, std::set<std::string> &countries, int stops) {
-	vtx->setVisited(true);
-	auto airport = vtx->getInfo();
-	cities.insert(airport.getCity() + ", " + airport.getCountry());
-	countries.insert(airport.getCountry());
-	*cnt += 1;
-
-	if (stops == 0)
-		return;
-
-	for (auto i : vtx->getAdj()) {
-		auto w = i.getDest();
-		if (!w->isVisited())
-			dfsVisit(w, cnt, cities, countries, stops - 1);
-	}
-}
-
 std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, int x) {
 	auto vtx = connections.findVertex(code);
 	if (vtx == NULL)
@@ -132,15 +115,36 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 	if (x <= 0)
 		x = __INT32_MAX__;
 
-	std::set<std::string> cities, countries;
-	size_t count = 0;
-	for (auto i : connections.getVertexSet())
+	for (auto i : connections.getVertexSet()) {
 		i->setVisited(false);
+		i->setNum(__INT32_MAX__);
+	}
 
-	for (auto i : vtx->getAdj()) {
-		auto w = i.getDest();
-		if (!w->isVisited())
-			dfsVisit(w, &count, cities, countries, x - 1);
+	std::set<std::string> cities, countries;
+	list<Vertex<Airport, std::string>*> queue;
+	size_t count = 0;
+	vtx->setVisited(true);
+	vtx->setNum(0);
+	queue.push_back(vtx);
+
+	while (!queue.empty()) {
+		auto u = queue.front();
+		queue.pop_front();
+		for (auto i : u->getAdj()) {
+			auto w = i.getDest();
+			if (!w->isVisited()) {
+				auto lvl = u->getNum() + 1;
+				w->setVisited(true);
+				w->setNum(lvl);
+				queue.push_back(w);
+				if (lvl <= x) {
+					auto wa = w->getInfo();
+					cities.insert(wa.getCity() + ", " + wa.getCountry());
+					countries.insert(wa.getCountry());
+					count++;
+				}
+			}
+		}
 	}
 	
 	return {count, cities.size(), countries.size()};
