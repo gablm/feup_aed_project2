@@ -38,11 +38,12 @@ void UI::statsAirportSelect() {
 		}
 
 		std::cout
-        << "\n"
+		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a airport using a number:\n")
+		<< "Search for a term" << (type != 1 ? "" : ", select a airport using a number") << " or use one of the commands above\n"
+		<< "\n"
         << "$> ";
 
 		getline(std::cin, str);
@@ -119,11 +120,12 @@ void UI::statsCitySelect() {
 		}
 
 		std::cout
-        << "\n"
+		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a city using a number:\n")
+		<< "Search for a term" << (type != 1 ? "" : ", select a city using a number") << " or use one of the commands above\n"
+		<< "\n"
         << "$> ";
 
 		getline(std::cin, str);
@@ -200,11 +202,12 @@ void UI::statsAirlineSelect() {
 		}
 
 		std::cout
-        << "\n"
+		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a airline using a number:\n")
+		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above\n"
+		<< "\n"
         << "$> ";
 
 		getline(std::cin, str);
