@@ -139,7 +139,7 @@ void UI::globalStats() {
 		<< "\n"
 		<< "To get information about the top-K airports with most air traffic input 'top (integer)'\n"
 		<< "\n"
-		<< "To show the listing of essential airports, use 'essential'"
+		<< "To show the listing of essential airports, use 'essential'\n"
         << "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
@@ -211,12 +211,12 @@ void UI::showMax() {
         std::cout 
 		<< "Amadeus - Global statistics - Maximum trip\n"
 		<< "\n"
-		<< "The biggest trips you can take require "<<tripSize<<" stops\n"
-		<< "\n"
-		<< "There are several places you can start and end a trip of that size. These are:"
+		<< "The biggest trip you can take requires " << tripSize <<" stops.\n"
+		//<< "\n"
+		<< "There are several places you can start and end a trip of that size, those being:\n"
 		<< "\n";
 		for(auto i : airportVector){
-			std::cout << "    From "<<i.first.getCode()<<" to "<<i.second.getCode()<<"\n";
+			std::cout << " " << i.first.getCode() << " to " << i.second.getCode() << "\n";
 		}
 		std::cout
         << "\n"
@@ -234,12 +234,6 @@ void UI::showMax() {
 			break;
 		helpMsg("Command not found!", "help - shows all commands");
     }
-}
-
-void UI::showTop(int x) {
-	auto airportList = manager.airportsWithMostTraffic(x);
-
-
 }
 
 void UI::showAirport(std::string str) {
@@ -518,6 +512,84 @@ void UI::showEssential() {
 			auto it = lst.begin();
 			std::advance(it, num);
 			showAirport((*it).getCode());
+			continue;
+		}
+		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
+    }
+}
+
+
+void UI::showTop(int x) {
+	auto lst = manager.airportsWithMostTraffic(x);
+	size_t count = 0;
+	std::string str;
+	int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
+
+	while (1)
+    {
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Statistics\n"
+		<< "\n"
+		<< ">> Airports with most traffic\n\n";
+		if (!lst.empty()) {
+			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
+				auto w = lst[i]->getInfo();
+				std::cout << i + 1 << ". " <<  std::fixed << lst[i]->getAdj().size() << " flights | " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+			}
+			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
+						<< totalPages << "\n";
+			std::cout << "Total count: " << lst.size() << "\n";
+		} else
+			std::cout << " There are airports.\nThis is most likely an error. Please go back and try again!\n";
+
+		std::cout
+		<< "\n"
+		<< (lst.empty() ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
+		<< "\n"
+		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
+		<< "\n"
+        << "$> ";
+
+		getline(std::cin, str);
+
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+
+		if (str == "next" && !lst.empty()) {
+			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
+			continue;
+		}
+		if (str == "back" && !lst.empty()) {
+			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
+			continue;
+		}
+		size_t num = atol(str.c_str());
+		if (num != 0) {
+			if (num > lst.size() || lst.empty()) {
+				helpMsg("Please enter a valid option!", "[number]");
+				continue;
+			}
+			showAirport(lst[num - 1]->getInfo().getCode());
 			continue;
 		}
 		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
