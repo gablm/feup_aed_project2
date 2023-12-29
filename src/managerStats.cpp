@@ -99,7 +99,7 @@ std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 
 	for (auto i : vtx->getAdj()) {
 		auto flg = i.getDest()->getInfo();
-		cities.insert(flg.getCity());
+		cities.insert(flg.getCity() + ", " + flg.getCountry());
 		countries.insert(flg.getCountry());
 	}
 
@@ -110,7 +110,7 @@ std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 void dfsVisit(Vertex<Airport, std::string> *vtx, size_t *cnt, std::set<std::string> &cities, std::set<std::string> &countries, int stops) {
 	vtx->setVisited(true);
 	auto airport = vtx->getInfo();
-	cities.insert(airport.getCity());
+	cities.insert(airport.getCity() + ", " + airport.getCountry());
 	countries.insert(airport.getCountry());
 	*cnt += 1;
 
@@ -216,7 +216,7 @@ std::set<Airport> Manager::essentialAirports() {
 
 	for (auto i : connections.getVertexSet())
 		if (!i->isVisited())
-			 dfsTarjanVisit(i, time, NULL, res);
+			dfsTarjanVisit(i, time, NULL, res);
 			//dfs_art(i, Airport(""), res, time, true);
 	
 	return res;
