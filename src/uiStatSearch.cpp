@@ -91,7 +91,7 @@ void UI::statsAirportSelect() {
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
-			lst = searchInAirport(str);
+			lst = searchAirport(str, true);
 			if (lst.size() == 1 && lst[0].getCode() != "NULL")
 				showAirport(lst[num].getCode());
 			continue;
@@ -190,7 +190,7 @@ void UI::statsCitySelect() {
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
-			lst = searchInCity(str);
+			lst = searchCity(str, true);
 			if (lst.size() == 1 && *lst.begin() != "NULL")
 				showCity(*lst.begin());
 			continue;

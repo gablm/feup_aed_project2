@@ -134,7 +134,7 @@ void UI::plannerAirportSelect(bool in) {
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
-			lst = searchInAirport(str);
+			lst = searchAirport(str, in);
 			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
 				if (in) {
 					origin = lst;
@@ -148,52 +148,6 @@ void UI::plannerAirportSelect(bool in) {
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
     }
-}
-
-vector<Airport> UI::searchInAirport(std::string query) {
-	auto conns = manager.getConnections();
-	std::transform(query.begin(), query.end(), query.begin(), ::toupper);
-	auto vtx = conns.findVertex(query);
-	vector<Airport> res;
-
-	if (vtx != NULL) {
-		res.push_back(vtx->getInfo());
-		return res;
-	}
-	
-	for (auto i : conns.getVertexSet()) {
-		auto w = i->getInfo();
-		if (str_find(w.getCode(), query) || str_find(w.getName(), query))
-			res.push_back(w);
-	}
-
-	if (res.empty())
-		res.push_back(Airport("NULL"));
-
-	return res;
-}
-
-vector<Airport> UI::searchOutAirport(std::string query) {
-	auto conns = manager.getConnections();
-	std::transform(query.begin(), query.end(), query.begin(), ::toupper);
-	auto vtx = conns.findVertex(query);
-	vector<Airport> res;
-
-	if (vtx != NULL) {
-		res.push_back(vtx->getInfo());
-		return res;
-	}
-	
-	for (auto i : conns.getVertexSet()) {
-		auto w = i->getInfo();
-		if (str_find(w.getCode(), query) || str_find(w.getName(), query))
-			res.push_back(w);
-	}
-
-	if (res.empty())
-		res.push_back(Airport("NULL"));
-
-	return res;
 }
 
 void UI::plannerCitySelect(bool in) {
@@ -279,7 +233,7 @@ void UI::plannerCitySelect(bool in) {
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
-			lst = searchInCity(str);
+			lst = searchCity(str, in);
 			if (lst.size() == 1 && *lst.begin() != "NULL") {
 				vector<Airport> res;
 				for (auto i : manager.getConnections().getVertexSet()) {
@@ -299,54 +253,6 @@ void UI::plannerCitySelect(bool in) {
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
     }
-}
-
-set<std::string> UI::searchInCity(std::string query) {	
-	auto conns = manager.getConnections();
-	set<std::string> res;
-	std::transform(query.begin(), query.end(), query.begin(), ::tolower);
-	for (auto i : conns.getVertexSet()) {
-		auto w = i->getInfo();
-		std::string fullName = w.getCity() + ", " + w.getCountry();
-		if (str_find(w.getCity(), query) || str_find(w.getCountry(), query))
-			res.insert(fullName);
-		std::string fl2 = fullName;
-		std::transform(fullName.begin(), fullName.end(), fl2.begin(), ::tolower);
-		if (fl2 == query) {
-			res.clear();
-			res.insert(fullName);
-			return res;
-		}
-	}
-
-	if (res.empty())
-		res.insert("NULL");
-
-	return res;
-}
-
-set<std::string> UI::searchOutCity(std::string query) {	
-	auto conns = manager.getConnections();
-	set<std::string> res;
-	std::transform(query.begin(), query.end(), query.begin(), ::tolower);
-	for (auto i : conns.getVertexSet()) {
-		auto w = i->getInfo();
-		std::string fullName = w.getCity() + ", " + w.getCountry();
-		if (str_find(w.getCity(), query) || str_find(w.getCountry(), query))
-			res.insert(fullName);
-		std::string fl2 = fullName;
-		std::transform(fullName.begin(), fullName.end(), fl2.begin(), ::tolower);
-		if (fl2 == query) {
-			res.clear();
-			res.insert(fullName);
-			return res;
-		}
-	}
-
-	if (res.empty())
-		res.insert("NULL");
-
-	return res;
 }
 
 void UI::plannerCoordsSelect(bool mode) {
@@ -434,7 +340,7 @@ void UI::plannerCoordsSelect(bool mode) {
 		}
 		if (str.size() > 1) {
 			count = 0;
-			lst = searchInCoords(lat, lon);
+			lst = searchCoords(lat, lon, mode);
 			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
 				if (in) {
 					origin = lst;
@@ -450,32 +356,58 @@ void UI::plannerCoordsSelect(bool mode) {
     }
 }
 
-std::vector<Airport> UI::searchInCoords(double lat, double lon) {
-	std::vector<Airport> res;
+vector<Airport> UI::searchAirport(std::string query, bool in) {
+	auto conns = manager.getConnections();
+	std::transform(query.begin(), query.end(), query.begin(), ::toupper);
+	auto vtx = conns.findVertex(query);
+	vector<Airport> res;
 
-	for (auto i : manager.getConnections().getVertexSet()) {
+	if (vtx != NULL) {
+		res.push_back(vtx->getInfo());
+		return res;
+	}
+	
+	for (auto i : conns.getVertexSet()) {
 		auto w = i->getInfo();
-		double dist = Manager::distance(lat, lon, w.getLatitude(), w.getLongitude());
-		if (dist < 5) {
-			res.clear();
-			res.push_back(w);
-			return res;
-		}
-		if (dist <= 300)
+		if (str_find(w.getCode(), query) || str_find(w.getName(), query))
 			res.push_back(w);
 	}
-	std::sort(res.begin(), res.end(), [lat, lon](Airport &a, Airport &b) {
-		return Manager::distance(lat, lon, a.getLatitude(), a.getLongitude()) < 
-			Manager::distance(lat, lon, b.getLatitude(), b.getLongitude());
-	});
 
 	if (res.empty())
 		res.push_back(Airport("NULL"));
+
+	(void)in;
+	
+	return res;
+}
+
+set<std::string> UI::searchCity(std::string query, bool in) {	
+	auto conns = manager.getConnections();
+	set<std::string> res;
+	std::transform(query.begin(), query.end(), query.begin(), ::tolower);
+	for (auto i : conns.getVertexSet()) {
+		auto w = i->getInfo();
+		std::string fullName = w.getCity() + ", " + w.getCountry();
+		if (str_find(w.getCity(), query) || str_find(w.getCountry(), query))
+			res.insert(fullName);
+		std::string fl2 = fullName;
+		std::transform(fullName.begin(), fullName.end(), fl2.begin(), ::tolower);
+		if (fl2 == query) {
+			res.clear();
+			res.insert(fullName);
+			return res;
+		}
+	}
+
+	if (res.empty())
+		res.insert("NULL");
+
+	(void)in;
 
 	return res;
 }
 
-std::vector<Airport> UI::searchOutCoords(double lat, double lon) {
+std::vector<Airport> UI::searchCoords(double lat, double lon, bool in) {
 	std::vector<Airport> res;
 
 	for (auto i : manager.getConnections().getVertexSet()) {
@@ -496,6 +428,8 @@ std::vector<Airport> UI::searchOutCoords(double lat, double lon) {
 
 	if (res.empty())
 		res.push_back(Airport("NULL"));
+
+	(void)in;
 
 	return res;
 }
