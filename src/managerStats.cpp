@@ -112,9 +112,6 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 	if (vtx == NULL)
 		return {__INT64_MAX__};
 
-	if (x <= 0)
-		x = __INT32_MAX__;
-
 	for (auto i : connections.getVertexSet()) {
 		i->setVisited(false);
 		i->setNum(__INT32_MAX__);
@@ -146,7 +143,6 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 			}
 		}
 	}
-	
 	return {count, cities.size(), countries.size()};
 }
 

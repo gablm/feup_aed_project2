@@ -239,12 +239,7 @@ void UI::showTop(int x) {
 void UI::showAirport(std::string str) {
 	bool numberInputed = false;
 	int stops;
-	size_t nonDigits;
 	std::vector<size_t> destinationDataVector;
-
-	std::istringstream is(str);
-	std::string airportName;
-	is >> airportName >> airportName;
 
 	std::vector<size_t> dataVector1 = manager.airportStats(str);
 	if (dataVector1[0] == __INT64_MAX__) {
@@ -253,15 +248,17 @@ void UI::showAirport(std::string str) {
 	}
 	std::vector<size_t> dataVector2 = manager.destinationsFromAirport(str);
 
-	int totalFlights = dataVector1[0];
-	int totalAirlines = dataVector1[1];
-	int totalAirports = dataVector2[0];
-	int totalCities = dataVector2[1];
-	int totalCountries = dataVector2[2];
+	size_t totalFlights = dataVector1[0];
+	size_t totalAirlines = dataVector1[1];
+	size_t totalAirports = dataVector2[0];
+	size_t totalCities = dataVector2[1];
+	size_t totalCountries = dataVector2[2];
 	
-	int destinationAirports;
-	int destinationCities;
-	int destinationCountries;
+	size_t destinationAirports = 0;
+	size_t destinationCities = 0;
+	size_t destinationCountries = 0;
+
+	Airport airport = manager.getConnections().findVertex(str)->getInfo();
 
 	while (1)
     {
@@ -269,31 +266,40 @@ void UI::showAirport(std::string str) {
         std::cout 
 		<< "Amadeus - Airport statistics\n"
 		<< "\n"
-		<< str << " airport has:\n\n"
-		<< " " << totalFlights << " flights departing from it\n"
-		<< " from a total of " << totalAirlines << " airlines\n"
-		<< " which go to " << totalAirports << " different airports\n"
-		<< " in " << totalCities << " different cities\n"
-		<< " in " << totalCountries <<" different countries.\n "
-		<< "\n";
+		<< airport.getCode() << " or " << airport.getName() << " is an airport in " << airport.getCity() << ", " << airport.getCountry() << "\n"
+		<< "\n"
+		<< "This airport has a total of " << totalFlights << " flights departing from it, which can reach:\n"
+		<< " \n"
+		<< " " << totalAirports << " Airports\n"
+		<< " " << totalCities << " Cities\n"
+		<< " " << totalCountries << " Countries\n "
+		<< "\n"
+		<< "The flights are operated by a total of " << totalAirlines << " distinct airlines.\n"
+		<< "\n"
+		<< "To check the number of possible destinations in a maximum of a certain amount of layovers or less, input a number.\n"
+		<< "Note: 0 will show direct flights, -1 will show the results with an infinite amount of lay-overs.\n";
 
 		if (numberInputed) {
 			destinationAirports = destinationDataVector[0];
 			destinationCities = destinationDataVector[1];
 			destinationCountries = destinationDataVector[2];
 
+			if (stops < 0)
+				stops = __INT32_MAX__ - 1;
+				
+			if (stops < __INT32_MAX__ - 1)
+				std::cout << "\nIn the maximum of " << stops << " lay-overs (" << stops + 1 << " flights), you can reach:\n\n";
+			else
+				std::cout << "\nIn the maximum of infinite lay-overs (infinite flights), you can reach:\n\n";
+
 			std::cout
-			<< "From this airport, you can reach:\n\n "
-			<< destinationAirports <<" airports\n "
-			<< destinationCities <<" cities\n "
-			<< destinationCountries<<" countries\n"
-			<<"\nin the maximum of "<< stops <<" lay-overs (" << stops + 1 << " flights)\n\n";			
+			<< " " << destinationAirports << " airports\n"
+			<< " " << destinationCities << " cities\n"
+			<< " " << destinationCountries << " countries\n";		
 		}
 
-		std::cout
-		<< "Input an integer to receive the ammount of possible destinations (airports, cities and countries) in that amount of layovers or less.\n"
-		<< "Inputting -1 corresponde to the max amount of lay-overs.\n"
-        << "\n"
+        std::cout
+		<< "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
 		<< "\n"
@@ -306,21 +312,17 @@ void UI::showAirport(std::string str) {
 		}
 		if (str == "B" || str == "b")
 			break;
-		try {
-			stops = stoi(str,&nonDigits);
+		stops = atoi(str.c_str());
+		if (str == "0" || stops >= -1) {
 
-			if (nonDigits != str.size()){
-				throw std::invalid_argument("Invalid argument: command not found!");
-			}
 			if (stops < 0)
 				stops = __INT32_MAX__ - 1;
-			destinationDataVector = manager.reachableDestinationsFromAirport(airportName, stops + 1);
+
+			destinationDataVector = manager.reachableDestinationsFromAirport(airport.getCode(), stops + 1);
 			numberInputed = true;
 			continue;
-		} catch (const std::invalid_argument& ia) {
-				helpMsg("Command not found!", "help - shows all commands");
 		}
-
+		helpMsg("Command not found!", "help - shows all commands");
     }
 }
 
