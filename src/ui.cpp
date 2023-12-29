@@ -25,14 +25,11 @@ void UI::mainMenu() {
         #else
         << "Welcome!\n"
         #endif
-		<< "Select an option [0-3]:\n"
+		<< "Select an option:\n"
         << "\n"
-        << " [0] Global statistics\n"
-		<< " [1] ??\n"
-		<< " [2] ??\n"
+        << " [1] Statistics\n"
+		<< " [2] Plan a trip\n"
         << "\n"
-		<< " [3] Plan a trip\n"
-		<< "\n"
 		<< "[Q] Exit\n"
 		<< "\n"
         << "$> ";
@@ -52,10 +49,10 @@ void UI::mainMenu() {
 		}
 		switch (str[0] - '0')
 		{
-			case 0:
+			case 1:
 				statsMenu();
 				break;
-			case 3:
+			case 2:
 				plannerSelected();
 				break;
 			default:
@@ -71,8 +68,6 @@ void UI::statsMenu(){
         CLEAR;
         std::cout 
 		<< "Amadeus - Statistics Menu\n"
-		<< "\n"
-		<< "For the global statistics input 'global'\n"
         << "\n"
 		<< ">> Search and display statistics\n"
 		<< "\n"
@@ -92,8 +87,10 @@ void UI::statsMenu(){
 			CLEAR;
             exit(0);
 		}
-		if (str == "B" || str == "b")
+		if (str == "B" || str == "b") {
+			mainMenu();
 			break;
+		}
 		if (str.size() > 1) {
 			helpMsg("Command not found!", "help - shows all commands");
 			continue;
