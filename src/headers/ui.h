@@ -21,7 +21,7 @@ class UI {
 		void statsMenu();
 		void globalStats();
 		void showMax();
-		void showTop(std::string str);
+		void showTop(int x);
 
 		void plannerInMenu();
 		void plannerAirportInSelect();

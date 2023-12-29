@@ -42,7 +42,7 @@ void UI::mainMenu() {
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
+		std::getline(std::cin, str);
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
@@ -86,7 +86,7 @@ void UI::statsMenu(){
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
+		std::getline(std::cin, str);
 		if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
@@ -144,9 +144,18 @@ void UI::globalStats() {
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
-		if(str.substr(0,4)=="top "){
-			showTop(str);
+		std::getline(std::cin, str);
+		if (str.substr(0, 3) == "top") {
+			if (str.size() <= 4) {
+				helpMsg("Please insert an valid integer!", "top [integer >= 1]");
+				continue;
+			}
+			int num = atoi(str.substr(4).c_str());
+			if (num <= 0 && num != -1) {
+				helpMsg("Please insert an valid integer!", "top [integer >= 1]");
+				continue;
+			}
+			showTop(num);
 			continue;
 		}
 		if (str == "max"){
@@ -210,7 +219,7 @@ void UI::showMax() {
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
+		std::getline(std::cin, str);
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
@@ -221,15 +230,9 @@ void UI::showMax() {
     }
 }
 
-void UI::showTop(std::string str) {
-	std::istringstream is(str);
-	std::string numberStr;
-	is >> numberStr >> numberStr;
-	int number = stoi(numberStr);
+void UI::showTop(int x) {
+	auto airportList = manager.airportsWithMostTraffic(x);
 
-	auto airportList = manager.airportsWithMostTraffic(number);
-
-	
 
 }
 
@@ -244,7 +247,7 @@ void UI::showAirport(std::string str) {
 	is >> airportName >> airportName;
 
 	std::vector<size_t> dataVector1 = manager.airportStats(str);
-	if (dataVector1[0]==__INT64_MAX__){
+	if (dataVector1[0] == __INT64_MAX__) {
 		helpMsg("Invalid airport name! Airport doesn't belong to the network!","Choose a valid city name.");
 		return;
 	}
@@ -296,7 +299,7 @@ void UI::showAirport(std::string str) {
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
+		std::getline(std::cin, str);
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
@@ -335,25 +338,30 @@ void UI::showCity(std::string str) {
 	int totalCities = dataVector[3];
 	int totalCountries = dataVector[4];
 
+	auto city = str.substr(0, str.find(", "));
+	auto country = str.substr(str.find(", ") + 2);
+
 	while (1)
     {
         CLEAR;
         std::cout 
 		<< "Amadeus - City statistics\n"
 		<< "\n"
-		<< " " << str << "contains " << internalAirports << " airports,\n"
-		<< " with " << totalFlights << " flights departing from it\n"
-		<< " belonging to a total of " << totalAirlines << " airlines\n"
-		<< " and go to " << totalCities << " different cities\n"
-		<< " in " << totalCountries << " different countries."
+		<< city << " is a city in " << country << " with a total of " << internalAirports << " airport" << (internalAirports != 1 ? "s" : "") << ".\n"
 		<< "\n"
+		<< "The " << totalFlights << " flights departing from " << (internalAirports != 1 ? "them" : "it") << " can reach:\n"
+		<< "\n"
+		<< " " << totalCities << " different cities\n"
+		<< " " << totalCountries << " different countries\n"
         << "\n"
+		<< "The flights are operated by a total of " << totalAirlines << " distinct airlines.\n"
+		<< "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
+		std::getline(std::cin, str);
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
@@ -398,7 +406,7 @@ void UI::showAirline(std::string str) {
 		<< "\n"
         << "$> ";
         std::string str;
-		getline(std::cin, str);
+		std::getline(std::cin, str);
         if (str == "Q" || str == "q") {
 			CLEAR;
             exit(0);
@@ -413,13 +421,7 @@ void UI::showAirline(std::string str) {
 void UI::helpMsg(std::string error, std::string usage) {
 	CLEAR;
 	std::cout << "Amadeus - Lookup Tool\n\n";
-	if (error == "Invalid city name! City doesn't belong to the network!"){
-		std::cout << "Invalid operation!\n"
-				  << "\n Problem: " << error
-				  << "\n Usage: " << usage
-				  << "\n\nPress ENTER to continue...";
-	}
-	else if (error != "" && usage != "") {
+	if (error != "" && usage != "") {
 		std::cout << "Invalid operation!\n"
 				  << "\n Problem: " << error
 				  << "\n Usage: " << usage
