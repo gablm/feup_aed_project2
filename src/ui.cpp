@@ -491,7 +491,7 @@ void UI::showEssential() {
 			continue;
 		}
 		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 4 || lst.empty()) {
+			if (str.size() <= 5 || lst.empty()) {
 				helpMsg("There is no page to change to!", "page [num] if there is results");
 				continue;
 			}
@@ -523,10 +523,11 @@ void UI::showTop(int x) {
 	auto lst = manager.airportsWithMostTraffic(x);
 	size_t count = 0;
 	std::string str;
-	int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
 	while (1)
     {
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
+
         CLEAR;
         std::cout 
 		<< "Amadeus - Statistics\n"
@@ -547,6 +548,7 @@ void UI::showTop(int x) {
 		<< "\n"
 		<< (lst.empty() ? "" : "[back] - Previous page\t[next] - Next page\n")
 		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< "[top (integer)] - Increase the number of results shown\n"
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
@@ -571,7 +573,7 @@ void UI::showTop(int x) {
 			continue;
 		}
 		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 4 || lst.empty()) {
+			if (str.size() <= 5 || lst.empty()) {
 				helpMsg("There is no page to change to!", "page [num] if there is results");
 				continue;
 			}
@@ -581,6 +583,19 @@ void UI::showTop(int x) {
 				continue;
 			}
 			count = (page - 1) * 10;
+			continue;
+		}
+		if (str.substr(0, 3) == "top") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "top [num]");
+				continue;
+			}
+			int top = atoi(str.substr(4).c_str());
+			if (top <= 0) {
+				helpMsg("This number is too small", "top [num]");
+				continue;
+			}
+			lst = manager.airportsWithMostTraffic(top);
 			continue;
 		}
 		size_t num = atol(str.c_str());
