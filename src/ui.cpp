@@ -118,12 +118,55 @@ void UI::globalStats() {
 		<< "Amadeus - Global statistics\n"
 		<< "\n"
 		<< "There are currently available:\n"
-		<< "\n "
+		<< "\n"
         << manager.airportCount() << " airports \n "
 		<< manager.airlineCount() << " airlines \n "
         << manager.flightCount() << " flights\n"
 		<< "\n"
+		<< "To get information about the maximum possible trips input 'max'"
+		<< "\n"
+		<< "\n"
 		<< "Loaded in " << loadtime << "s.\n"
+        << "\n"
+		<< "[B] Back\n"
+		<< "[Q] Exit\n"
+		<< "\n"
+        << "$> ";
+        std::string str;
+		getline(std::cin, str);
+		if (str == "max"){
+			showMax();
+			continue;
+		}
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+		helpMsg("Command not found!", "help - shows all commands");
+    }
+}
+
+void UI::showMax(){
+	auto dataPair = manager.maximumTrip();
+	int tripSize = dataPair.second;
+	std::vector<std::pair<Airport, Airport>> airportVector = dataPair.first;
+
+	while (1)
+    {
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Global statistics - Maximum trip\n"
+		<< "\n"
+		<< "The biggest trips you can take require "<<tripSize<<" stops\n"
+		<< "\n"
+		<< "There are several places you can start and end a trip of that size. These are:"
+		<< "\n";
+		for(auto i : airportVector){
+			std::cout << "    From "<<i.first.getCode()<<" to "<<i.second.getCode()<<"\n";
+		}
+		std::cout
         << "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"

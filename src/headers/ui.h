@@ -20,6 +20,7 @@ class UI {
 
 		void statsMenu();
 		void globalStats();
+		void showMax();
 
 		void plannerInMenu();
 		void plannerAirportInSelect();
