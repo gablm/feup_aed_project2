@@ -92,8 +92,10 @@ void UI::statsMenu(){
 			CLEAR;
             exit(0);
 		}
-		if (str == "B" || str == "b")
+		if (str == "B" || str == "b") {
+			mainMenu();
 			break;
+		}
 		if (str.size() > 1) {
 			helpMsg("Command not found!", "help - shows all commands");
 			continue;
