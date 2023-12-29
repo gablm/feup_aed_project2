@@ -68,18 +68,18 @@ std::vector<size_t> Manager::airlineStats(std::string code){
 	set<string> countryList;
 	size_t totalFlights = 0;
 
-	
-
 	for (auto airport : available_flights.getVertexSet()){
 		for(auto flight : airport->getAdj()){
-			if (flight.getInfo()==airline){
+			if (flight.getInfo() == airline) {
+				auto w1 = airport->getInfo();
+				auto w2 = flight.getDest()->getInfo();
 				totalFlights++;
-				airportList.emplace(airport->getInfo().getName());
-				airportList.emplace(flight.getDest()->getInfo().getName());
-				cityList.emplace(airport->getInfo().getCity());
-				cityList.emplace(flight.getDest()->getInfo().getCity());
-				countryList.emplace(airport->getInfo().getCountry());
-				countryList.emplace(flight.getDest()->getInfo().getCountry());
+				airportList.insert(w1.getCode());
+				airportList.insert(w2.getCode());
+				cityList.insert(w1.getCity() + ", " + w1.getCountry());
+				cityList.insert(w2.getCity() + ", " + w2.getCountry());
+				countryList.insert(w1.getCountry());
+				countryList.insert(w2.getCountry());
 			}
 		}
 	}
