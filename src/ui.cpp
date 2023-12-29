@@ -4,6 +4,12 @@
 #include <set>
 #include <sstream>
 
+int main() {
+	UI ui;
+	ui.mainMenu();
+	return 0;
+}
+
 UI::UI() : manager(Manager()) {
 	auto start = std::chrono::high_resolution_clock::now();
     manager.loadAirports();
