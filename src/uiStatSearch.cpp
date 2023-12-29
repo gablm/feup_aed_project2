@@ -41,7 +41,7 @@ void UI::statsAirportSelect() {
 		std::cout
 		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
-		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Search for a term" << (type != 1 ? "" : ", select a airport using a number") << " or use one of the commands above\n"
@@ -138,7 +138,7 @@ void UI::statsCitySelect() {
 		std::cout
 		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
-		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Search for a term" << (type != 1 ? "" : ", select a city using a number") << " or use one of the commands above\n"
@@ -235,7 +235,7 @@ void UI::statsAirlineSelect() {
 		std::cout
 		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
-		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above\n"
