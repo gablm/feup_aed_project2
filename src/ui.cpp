@@ -25,11 +25,10 @@ void UI::mainMenu() {
         #else
         << "Welcome!\n"
         #endif
-		<< "Select an option [0-3]:\n"
+		<< "Select an option:\n"
         << "\n"
-        << " [0] Statistics\n"
-		<< "\n"
-		<< " [1] Plan a trip\n"
+        << " [1] Statistics\n"
+		<< " [2] Plan a trip\n"
         << "\n"
 		<< "[Q] Exit\n"
 		<< "\n"
@@ -50,10 +49,10 @@ void UI::mainMenu() {
 		}
 		switch (str[0] - '0')
 		{
-			case 0:
+			case 1:
 				statsMenu();
 				break;
-			case 1:
+			case 2:
 				plannerSelected();
 				break;
 			default:
@@ -69,8 +68,6 @@ void UI::statsMenu(){
         CLEAR;
         std::cout 
 		<< "Amadeus - Statistics Menu\n"
-		<< "\n"
-		<< "For the global statistics input 'global'\n"
         << "\n"
 		<< ">> Search and display statistics\n"
 		<< "\n"
