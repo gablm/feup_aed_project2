@@ -70,18 +70,16 @@ void UI::statsAirportSelect() {
 				continue;
 			}
 			showAirport(lst[num].getCode());
-			statsMenu();
-			break;
+			lst.clear();
+			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
 			lst = searchInAirport(str);
 			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
-				origin = lst;
 				showAirport(lst[num].getCode());
-				statsMenu();
-				break;
+				lst.clear();
 			}
 			continue;
 		}
@@ -157,8 +155,8 @@ void UI::statsCitySelect() {
 			auto it = lst.begin();
 			std::advance(it, num);
 			showCity(*it);
-			statsMenu();
-			break;
+			lst.clear();
+			continue;
 		}
 
 		if (str.size() > 1) {
@@ -167,8 +165,7 @@ void UI::statsCitySelect() {
 			lst = searchInCity(str);
 			if (lst.size() == 1 && *lst.begin() != "NULL") {
 				showCity(*lst.begin());
-				statsMenu();
-				break;
+				lst.clear();
 			}
 			continue;
 		}
@@ -241,8 +238,8 @@ void UI::statsAirlineSelect() {
 				continue;
 			}
 			showAirline(lst[num].getCode());
-			statsMenu();
-			break;
+			lst.clear();
+			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
@@ -250,8 +247,7 @@ void UI::statsAirlineSelect() {
 			lst = searchAirline(str);
 			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
 				showAirline(lst[num].getCode());
-				statsMenu();
-				break;
+				lst.clear();
 			}
 			continue;
 		}

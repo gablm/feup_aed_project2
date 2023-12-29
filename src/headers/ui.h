@@ -52,8 +52,6 @@ class UI {
 		void showAirline(std::string str);
 		
 		void helpMsg(std::string error, std::string usage);
-
-		void test();
 	public:
 		UI();
 		void mainMenu();

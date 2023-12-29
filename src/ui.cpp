@@ -45,10 +45,6 @@ void UI::mainMenu() {
 			CLEAR;
             exit(0);
 		}
-		if (str == "t") {
-			test();
-			continue;
-		}
 		if (str.size() > 1) {
 			helpMsg("", "");
 			continue;
@@ -235,10 +231,12 @@ void UI::showAirport(std::string str) {
 		<< " in " << totalCities << " different cities\n"
 		<< " in " << totalCountries <<" different countries.\n "
 		<< "\n";
+
 		if (numberInputed) {
 			destinationAirports = destinationDataVector[0];
 			destinationCities = destinationDataVector[1];
 			destinationCountries = destinationDataVector[2];
+
 			std::cout
 			<< "From this airport, you can reach:\n\n "
 			<< destinationAirports <<" airports\n "
@@ -263,9 +261,7 @@ void UI::showAirport(std::string str) {
 		}
 		if (str == "B" || str == "b")
 			break;
-		
-
-		try{
+		try {
 			stops = stoi(str,&nonDigits);
 
 			if (nonDigits != str.size()){
@@ -276,10 +272,9 @@ void UI::showAirport(std::string str) {
 			destinationDataVector = manager.reachableDestinationsFromAirport(airportName, stops + 1);
 			numberInputed = true;
 			continue;
-			}
-			catch(const std::invalid_argument& ia){
+		} catch (const std::invalid_argument& ia) {
 				helpMsg("Command not found!", "help - shows all commands");
-			}
+		}
 
     }
 }
@@ -330,7 +325,7 @@ void UI::showCity(std::string str) {
 void UI::showAirline(std::string str) {
 	//{num of flights, num of departure airports, num of destination airports, num of cities, num of countries}
 	std::vector<size_t> dataVector = manager.airlineStats(str);
-	if (dataVector[0]==__INT64_MAX__){
+	if (dataVector[0] == __INT64_MAX__) {
 		helpMsg("Invalid airline name! Airline doesn't belong to the network!","Choose a valid airline name.");
 		return;
 	}
@@ -340,19 +335,22 @@ void UI::showAirline(std::string str) {
 	int totalCities = dataVector[2];
 	int totalCountries = dataVector[3];
 
+	Airline airline = manager.getAirlines()[str];
+
 	while (1)
     {
         CLEAR;
         std::cout 
-		<< "Amadeus - Airline statistics - "+ str + "\n"
+		<< "Amadeus - Airline statistics\n"
 		<< "\n"
-		<< "This airline has "<<totalFlights << " scheduled flights.\n"
-		<< "Operates in:\n"
-		<< totalAirports << " Airports\n"
-		<< totalCities << " Cities\n"
-		<< totalCountries << " Countries\n"
+		<< str << " - " << airline.getName() << " (" << airline.getCountry() <<")\n"
+		<< "\n"
+		<< "Has " << totalFlights << " scheduled flights and operates in:\n"
 		<< "\n "
-        << "\n"
+		<< totalAirports << " Airports\n "
+		<< totalCities << " Cities\n "
+		<< totalCountries << " Countries\n"
+		<< "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
 		<< "\n"
@@ -390,61 +388,3 @@ void UI::helpMsg(std::string error, std::string usage) {
 	}
 	while (std::cin.get() != '\n') { }
 }
-
-void UI::test() {
-	CLEAR;
-	std::cout << "Amadeus - Lookup Tool\n\n";
-	std::string str, x;
-	getline(std::cin, str);
-	if (str == "b")
-		return;
-	auto start = std::chrono::high_resolution_clock::now();
-// -
-	auto res = manager.essentialAirports();
-
-	for (auto i : res) {
-		std::cout << i.getCode() << "\n";
-	}
-
-	std::cout << "\nCount: " << res.size() << "\n";
-// -
-	auto end = std::chrono::high_resolution_clock::now();
-	double l_time = std::chrono::duration<double>(end - start).count();
-	std::cout << "\nTime elapsed: " << l_time << "s\n\nPress ENTER to continue...";
-	while (std::cin.get() != '\n') { }
-	test();
-}
-
-/**
- *	Test for vii
-
-	auto res = manager.maximumTrip();
-	for (auto i : res.first) {
-		std::cout << i.first.getCode() << " - " << i.second.getCode() << "\n";
-	}
-	std::cout << "\nCount: " << res.first.size() << " | Distance: " << res.second << "\n";
-
-	Expected -> 18 count, 12 distance
-
- *	Test for viii
-
-	auto res = manager.airportsWithMostTraffic(std::atoi(str.c_str()));
-
-	for (auto i : res) {
-		std::cout << i->getInfo().getCode() << " - " << i->getAdj().size() << "\n";
-	}
-
-	Expected -> ATL - 909, ORD - 556, PEK - 526, etc.
-
- *	Test for ix
-
-	auto res = manager.essentialAirports();
-
-	for (auto i : res) {
-		std::cout << i.getCode() << "\n";
-	}
-
-	std::cout << "\nCount: " << res.size() << "\n";
-	
-	Expected -> 309 - net / 310 - teoricas
-*/
