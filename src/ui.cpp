@@ -328,10 +328,6 @@ void UI::showCity(std::string str) {
 }
 
 void UI::showAirline(std::string str) {
-	std::istringstream is(str);
-	std::string airlineName;
-	is >> airlineName >> airlineName;
-
 	//{num of flights, num of departure airports, num of destination airports, num of cities, num of countries}
 	std::vector<size_t> dataVector = manager.airlineStats(str);
 	if (dataVector[0]==__INT64_MAX__){
