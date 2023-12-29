@@ -17,6 +17,7 @@ void UI::statsAirportSelect() {
 		type = lst.empty() ? 0 : 1;
 		if (!lst.empty() && lst[0].getCode() == "NULL")
 			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
         CLEAR;
         std::cout 
@@ -30,7 +31,7 @@ void UI::statsAirportSelect() {
 				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
+						<< totalPages << "\n";
 		}
 
 		if (type == 2) {
@@ -40,6 +41,7 @@ void UI::statsAirportSelect() {
 		std::cout
 		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Search for a term" << (type != 1 ? "" : ", select a airport using a number") << " or use one of the commands above\n"
@@ -61,6 +63,19 @@ void UI::statsAirportSelect() {
 		}
 		if (str == "back" && !lst.empty()) {
 			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
 			continue;
 		}
 
@@ -99,6 +114,7 @@ void UI::statsCitySelect() {
 		type = lst.empty() ? 0 : 1;
 		if (!lst.empty() && *lst.begin() == "NULL")
 			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
         
 		CLEAR;
         std::cout 
@@ -112,7 +128,7 @@ void UI::statsCitySelect() {
 			for (size_t i = count; i < min(count + 10, lst.size()); i++)
 				std::cout << i << ". " << *(iter++) << "\n";
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
+						<< totalPages << "\n";
 		}
 
 		if (type == 2) {
@@ -122,6 +138,7 @@ void UI::statsCitySelect() {
 		std::cout
 		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Search for a term" << (type != 1 ? "" : ", select a city using a number") << " or use one of the commands above\n"
@@ -142,6 +159,19 @@ void UI::statsCitySelect() {
 		}
 		if (str == "back" && !lst.empty()) {
 			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
 			continue;
 		}
 
@@ -181,6 +211,7 @@ void UI::statsAirlineSelect() {
 		type = lst.empty() ? 0 : 1;
 		if (!lst.empty() && lst[0].getCode() == "NULL")
 			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
         CLEAR;
         std::cout 
@@ -194,7 +225,7 @@ void UI::statsAirlineSelect() {
 				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< (lst.size() + 9 - (lst.size() - 1) % 10) / 10 << "\n";
+						<< totalPages << "\n";
 		}
 
 		if (type == 2) {
@@ -204,6 +235,7 @@ void UI::statsAirlineSelect() {
 		std::cout
 		<< "\n"
 		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
 		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above\n"
@@ -225,6 +257,19 @@ void UI::statsAirlineSelect() {
 		}
 		if (str == "back" && !lst.empty()) {
 			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 4 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
 			continue;
 		}
 
