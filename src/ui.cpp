@@ -205,12 +205,12 @@ void UI::showAirport(std::string str) {
 	std::string airportName;
 	is >> airportName >> airportName;
 
-	std::vector<size_t> dataVector1 = manager.airportStats(airportName);
+	std::vector<size_t> dataVector1 = manager.airportStats(str);
 	if (dataVector1[0]==__INT64_MAX__){
 		helpMsg("Invalid airport name! Airport doesn't belong to the network!","Choose a valid city name.");
 		return;
 	}
-	std::vector<size_t> dataVector2 = manager.destinationsFromAirport(airportName);
+	std::vector<size_t> dataVector2 = manager.destinationsFromAirport(str);
 
 	int totalFlights = dataVector1[0];
 	int totalAirlines = dataVector1[1];
@@ -228,7 +228,7 @@ void UI::showAirport(std::string str) {
         std::cout 
 		<< "Amadeus - Airport statistics\n"
 		<< "\n"
-		<< airportName << " airport has:\n\n"
+		<< str << " airport has:\n\n"
 		<< " " << totalFlights << " flights departing from it\n"
 		<< " from a total of " << totalAirlines << " airlines\n"
 		<< " which go to " << totalAirports << " different airports\n"
@@ -333,7 +333,7 @@ void UI::showAirline(std::string str) {
 	is >> airlineName >> airlineName;
 
 	//{num of flights, num of departure airports, num of destination airports, num of cities, num of countries}
-	std::vector<size_t> dataVector = manager.airlineStats(airlineName);
+	std::vector<size_t> dataVector = manager.airlineStats(str);
 	if (dataVector[0]==__INT64_MAX__){
 		helpMsg("Invalid airline name! Airline doesn't belong to the network!","Choose a valid airline name.");
 		return;
@@ -348,7 +348,7 @@ void UI::showAirline(std::string str) {
     {
         CLEAR;
         std::cout 
-		<< "Amadeus - Airline statistics - "+ airlineName + "\n"
+		<< "Amadeus - Airline statistics - "+ str + "\n"
 		<< "\n"
 		<< "This airline has "<<totalFlights << " scheduled flights.\n"
 		<< "Operates in:\n"
