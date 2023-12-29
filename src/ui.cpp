@@ -131,6 +131,8 @@ void UI::globalStats() {
 		<< "To get information about the maximum possible trips input 'max'\n"
 		<< "(This might take a few seconds)\n"
 		<< "\n"
+		<< "To get information about the top-K airports with most air traffic input 'top (integer)'\n"
+		<< "\n"
 		<< "Loaded in " << loadtime << "s.\n"
         << "\n"
 		<< "[B] Back\n"
@@ -139,6 +141,10 @@ void UI::globalStats() {
         << "$> ";
         std::string str;
 		getline(std::cin, str);
+		if(str.substr(0,4)=="top "){
+			showTop(str);
+			continue;
+		}
 		if (str == "max"){
 			showMax();
 			continue;
@@ -187,6 +193,18 @@ void UI::showMax() {
 			break;
 		helpMsg("Command not found!", "help - shows all commands");
     }
+}
+
+void UI::showTop(std::string str) {
+	std::istringstream is(str);
+	std::string numberStr;
+	is >> numberStr >> numberStr;
+	int number = stoi(numberStr);
+
+	auto airportList = manager.airportsWithMostTraffic(number);
+
+	
+
 }
 
 void UI::showAirport(std::string str) {
@@ -322,10 +340,6 @@ void UI::showCity(std::string str) {
 }
 
 void UI::showAirline(std::string str) {
-	std::istringstream is(str);
-	std::string airlineName;
-	is >> airlineName >> airlineName;
-
 	//{num of flights, num of departure airports, num of destination airports, num of cities, num of countries}
 	std::vector<size_t> dataVector = manager.airlineStats(str);
 	if (dataVector[0]==__INT64_MAX__){
