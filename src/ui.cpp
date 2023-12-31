@@ -12,6 +12,10 @@ int main() {
 	return 0;
 }
 
+/**
+ * Constructs the manager and loads the information from the data folder.
+ * Additionally, calculates the time it took to parse and store the data.
+*/
 UI::UI() : manager(Manager()) {
 	auto start = std::chrono::high_resolution_clock::now();
     manager.loadAirports();
@@ -21,6 +25,10 @@ UI::UI() : manager(Manager()) {
 	loadtime = std::chrono::duration<double>(end - start).count();
 }
 
+/**
+ * Print the main menu, the starting page of the app.
+ * Enables access to the Planner and the Statistics sections.
+*/
 void UI::mainMenu() {
 	while (1)
     {
@@ -66,6 +74,9 @@ void UI::mainMenu() {
     }
 }
 
+/**
+ * Prints the menu to choose which stats are gonna be viewed.
+*/
 void UI::statsMenu(){
 	while (1)
     {
@@ -119,6 +130,9 @@ void UI::statsMenu(){
     }
 }
 
+/**
+ * Shows the global stats for the network, including system load time.
+*/
 void UI::globalStats() {
 	while (1)
     {
@@ -178,11 +192,19 @@ void UI::globalStats() {
     }
 }
 
+/**
+ * Function used to separate a piece of code into its own thread.
+ * The calculations for maximum trip are made in another thread, 
+ * enabling the screen to still be changed.
+*/
 void wait(Manager *manager, std::pair<MaxTripVector, int> *res, bool *loading) {
 	*res = manager->maximumTrip();
 	*loading = false;
 }
 
+/**
+ * Prints the maximum trip(s) that can be done in the network
+*/
 void UI::showMax() {
 	bool loading = true;
 	std::pair<MaxTripVector, int> dataPair;
@@ -236,6 +258,10 @@ void UI::showMax() {
     }
 }
 
+/**
+ * Shows the statistics of an airport
+ * @param str Airport code
+*/
 void UI::showAirport(std::string str) {
 	bool numberInputed = false;
 	int stops = -20;
@@ -326,6 +352,10 @@ void UI::showAirport(std::string str) {
     }
 }
 
+/**
+ * Shows the statistics of a city.
+ * @param str identifier in the format "city, country"
+*/
 void UI::showCity(std::string str) {
 	std::vector<size_t> dataVector = manager.cityStats(str);
 
@@ -374,8 +404,11 @@ void UI::showCity(std::string str) {
     }
 }
 
+/**
+ * Shows the statistics of an Airline
+ * @param str Airline code
+*/
 void UI::showAirline(std::string str) {
-	//{num of flights, num of departure airports, num of destination airports, num of cities, num of countries}
 	std::vector<size_t> dataVector = manager.airlineStats(str);
 	if (dataVector[0] == __INT64_MAX__) {
 		helpMsg("Invalid airline name! Airline doesn't belong to the network!","Choose a valid airline name.");
@@ -421,7 +454,12 @@ void UI::showAirline(std::string str) {
     }
 }
 
-
+/**
+ * Prints an help message when something goes wrong.
+ * Serves as an general function to display errors when needed.
+ * @param error The error that occurred
+ * @param usage How to use the command that returned the error
+*/
 void UI::helpMsg(std::string error, std::string usage) {
 	CLEAR;
 	std::cout << "Amadeus - Lookup Tool\n\n";
@@ -437,6 +475,9 @@ void UI::helpMsg(std::string error, std::string usage) {
 	while (std::cin.get() != '\n') { }
 }
 
+/**
+ * Shows the essential airports to the network.
+*/
 void UI::showEssential() {
 	std::set<Airport> lst = manager.essentialAirports();
 	size_t count = 0;
@@ -518,7 +559,9 @@ void UI::showEssential() {
     }
 }
 
-
+/**
+ * Shows the top airports with the most traffic, that is number of flights
+*/
 void UI::showTop(int x) {
 	auto lst = manager.airportsWithMostTraffic(x);
 	size_t count = 0;
