@@ -1,6 +1,10 @@
 #include "headers/ui.h"
 #include <iostream>
 
+/**
+ * Shows the main menu of the trip planner, 
+ * with options to select the origin, destination and filters.
+*/
 void UI::plannerSelected() {
 	std::string str;
 	allowedAirlines.clear();
@@ -164,6 +168,9 @@ void UI::displayFlights() {
 	while (std::cin.get() != '\n') {}
 }
 
+/**
+ * Shows the current filters and which filters can be changed.
+*/
 void UI::filterSelect() {
 	while(1){
 		CLEAR;
@@ -211,6 +218,9 @@ void UI::filterSelect() {
 	}
 }
 
+/**
+ * Prints the menu to change the maximum number of airlines a trip should use.
+*/
 void UI::filterSelectMax() {
 	while(1){
 		CLEAR;
@@ -244,6 +254,9 @@ void UI::filterSelectMax() {
 	}
 }
 
+/**
+ * Shows the menu to search and add airlines to the filter of what airlines to use.
+*/
 void UI::filterSelectList() {
 	std::vector<Airline> lst;
 	size_t count = 0;
