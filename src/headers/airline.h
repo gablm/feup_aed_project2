@@ -18,7 +18,7 @@ class Airline {
 		std::string getName() const { return name; }
 		std::string getCallSign() const { return callsign; }
 		std::string getCountry() const { return country; }
-		bool operator==(const Airline &cmp) {
+		bool operator==(const Airline &cmp) const {
 			return code == cmp.code && name == cmp.name 
 				&& callsign == cmp.callsign && country == cmp.country;
 		}

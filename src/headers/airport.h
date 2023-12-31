@@ -36,10 +36,10 @@ class Airport {
 		double getLongitude() const {
 			return longitude;
 		}
-		bool operator==(const Airport &rhs) {
+		bool operator==(const Airport &rhs) const {
 			return code == rhs.code;
 		}
-		bool operator!=(const Airport &rhs) {
+		bool operator!=(const Airport &rhs) const {
 			return code != rhs.code;
 		}
 		bool operator<(const Airport &cmp) const {

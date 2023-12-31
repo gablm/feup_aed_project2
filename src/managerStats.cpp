@@ -5,10 +5,18 @@
 #include <algorithm>
 
 //i
+/**
+ * @note Complexity: O(1)
+ * @return Number of airports in the Graphs
+*/
 int Manager::airportCount() {
 	return connections.getVertexSet().size();
 }
 
+/**
+ * @note Complexity: O(V)
+ * @return Number of flights in the available flights Graph
+*/
 int Manager::flightCount() {
 	int count = 0;
 	for (auto i : available_flights.getVertexSet())
@@ -16,6 +24,10 @@ int Manager::flightCount() {
 	return count;
 }
 
+/**
+ * @note Complexity: O(1)
+ * @return Number of airlines
+*/
 int Manager::airlineCount() {
 	return airlines.size();
 }
@@ -63,9 +75,9 @@ std::vector<size_t> Manager::cityStats(std::string code){
 //returns a vector with {num of flights, num of airports, num of cities, num of countries}
 std::vector<size_t> Manager::airlineStats(std::string code){
 	Airline airline = airlines[code];
-	set<string> airportList;
-	set<string> cityList;
-	set<string> countryList;
+	unordered_set<string> airportList;
+	unordered_set<string> cityList;
+	unordered_set<string> countryList;
 	size_t totalFlights = 0;
 
 	for (auto airport : available_flights.getVertexSet()){
@@ -95,7 +107,7 @@ std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 	if (vtx == NULL)
 		return {__INT64_MAX__};
 		
-	std::set<std::string> cities, countries;
+	std::unordered_set<std::string> cities, countries;
 
 	for (auto i : vtx->getAdj()) {
 		auto flg = i.getDest()->getInfo();
@@ -148,7 +160,6 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 
 //viii
 vector<Vertex<Airport, Airline>*> Manager::airportsWithMostTraffic(size_t x) {
-	std::set<Airport> res;
 	vector<Vertex<Airport, Airline>*> copy = available_flights.getVertexSet();
 	std::sort(copy.begin(), copy.end(), 
 		[](Vertex<Airport, Airline> *x, Vertex<Airport, Airline> *y) { return x->getAdj().size() > y->getAdj().size(); });

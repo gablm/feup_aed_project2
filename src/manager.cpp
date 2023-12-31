@@ -9,6 +9,12 @@
 #include <cmath>
 #include <algorithm>
 
+/**
+ * Loads the airports into the graphs.
+ * As our graph class has an addicional map to improve access times to the graph,
+ * the complexity is equal to number of airports * (log V)
+ * @note Complexity: O(N * log V)
+*/
 void Manager::loadAirports() {
 
 	std::string line, code, name, city, country, latitudeStr, longitudeStr;
@@ -66,30 +72,11 @@ void Manager::loadAirports() {
 	file.close();
 }
 
-void Manager::testAirports() {
-	std::cout << std::setprecision(6) << std::fixed;
-	int count = 0;
-	
-	for (auto i : connections.getVertexSet()) {
-		count++;
-		Airport info = i->getInfo();
-		std::cout 	<< info.getCode() << " - " << info.getCity() 
-					<< "\nLA: " << info.getLatitude() << " LO: " << info.getLongitude() << "\n\n";
-	}
-
-	std::cout << "Expected: 3019\nGot: " << count << "\n\n";
-
-	for (std::string codes : {"CGD", "OPO", "CIA"}) {
-		auto res = connections.findVertex(codes)->getInfo();
-		std::cout 	<< "Search for " + codes + " returns: \n\n" 
-					<< res.getCode() << " - " << res.getCity() 
-					<< "\nLA: " << res.getLatitude() << " LO: " << res.getLongitude() << "\n\n";
-	}
-
-
-
-}
-
+/**
+ * Loads the airlines into a map.
+ * A map provides fast access to the airlines by their code name.
+ * @note Complexity: O(N * log N)
+*/
 void Manager::loadAirlines() {
 
 	std::string line, code, name, callsign, country;
@@ -136,18 +123,13 @@ void Manager::loadAirlines() {
 	file.close();
 }
 
-void Manager::testAirlines() {
-	int count = 0;
-	
-	for (auto i : airlines) {
-		count++;
-		Airline info = i.second;
-		std::cout << info.getCode() << " - " << info.getName() << "\n\n";
-	}
-
-	std::cout << "Expected: 444\nGot: " << count << "\n\n";	
-}
-
+/**
+ * Used to calculate the distance between two coordinates,
+ * using the Haversine formula.
+ * As the sqrt function is used, the complexity is O(log N)
+ * @note Complexity: O(log N)
+ * @return Distance in kilometers
+*/
 double Manager::distance(double la1, double lo1, double la2, double lo2) {
 	double la = (la2 - la1) * M_PI / 180.0;
 	double lo = (lo2 - lo1) * M_PI / 180.0;
@@ -159,6 +141,12 @@ double Manager::distance(double la1, double lo1, double la2, double lo2) {
 	return abs(6371 * 2 * asin(sqrt(formula)));
 }
 
+/**
+ * Loads flights into the graphs.
+ * Finds the Vertex of each airport and adds an Edge 
+ * between them with an Airline field inside of them.
+ * @note Complexity: O(N * log V)
+*/
 void Manager::loadFlights() {
 
 	std::string line, source, oldSource, target, airline;
@@ -241,19 +229,4 @@ void Manager::loadFlights() {
 		av_src->setAdj(av_edge);
 		cn_src->setAdj(cn_edge);
 	}
-}
-
-void Manager::testFlights() {
-
-	int count = 0;
-	for (auto i : available_flights.getVertexSet()) {
-		count += i->getAdj().size();
-	}
-
-	std::cout << "Expected: 63832\nGot: " << count << "\n";
-
-	auto i = connections.findVertex("DCY");
-
-	std::cout 	<< "Expected: 1\nGot: " << i->getAdj().size() << "\n"
-				<< i->getAdj().front().getDest()->getInfo().getCode() << "\n";
 }

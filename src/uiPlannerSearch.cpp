@@ -426,9 +426,9 @@ vector<Airport> UI::searchAirport(std::string query, bool in) {
 	return res;
 }
 
-set<std::string> UI::searchCity(std::string query, bool in) {	
+std::set<std::string> UI::searchCity(std::string query, bool in) {	
 	auto conns = manager.getConnections();
-	set<std::string> res;
+	std::set<std::string> res;
 	std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 	for (auto i : conns.getVertexSet()) {
 		auto w = i->getInfo();
