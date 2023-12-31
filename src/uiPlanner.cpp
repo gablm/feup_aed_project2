@@ -138,15 +138,15 @@ void UI::displayFlights() {
 		exit(0);
 	}
 
-	/*
 	vector<list<pair<Airport, Airline>>> tempRes; 
 	for (auto i : res){
 		if (isValid(i)){
 			tempRes.push_back(i);
 		}
-		res = tempRes;
 	}
-	*/
+	res = tempRes;
+	
+
 	for (auto i : res) {
 		size_t len = 0;
 		for (auto j : i) {
@@ -330,9 +330,9 @@ void UI::filterSelectList() {
 }
 
 bool UI::isValid(list<std::pair<Airport, Airline>> path){
-	vector<Airline> usedAirlines;
+	set<Airline> usedAirlines;
 	bool newAirline = false;
-	int airlineNum = 0;
+	int airlineNum = -1;
 
 	if (allowedAirlines.empty() && maxAirlines == 0){
 		return true;
@@ -341,20 +341,22 @@ bool UI::isValid(list<std::pair<Airport, Airline>> path){
 	for (auto i : path){
 		newAirline = true;
 		for (auto j : allowedAirlines){
-			if (j==i.second){
+			if (j.getName()==i.second.getName()){
 				return false;
 			}
 		}
+		cout << i.second.getName() << "\n";
 		for (auto j : usedAirlines){
-			if (j==i.second){
+			if (j.getName()==i.second.getName() && i.second.getName() != ""){
 				newAirline=false;
 			}
 		}
 		if (newAirline == true){
 			airlineNum++;
-			usedAirlines.push_back(i.second);
+			usedAirlines.emplace(i.second);
 		}
 	}
+
 	if (airlineNum<=maxAirlines){
 		return true;
 	}
