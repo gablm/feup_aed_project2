@@ -17,7 +17,7 @@ class UI {
 
 		vector<Airport> origin;
 		vector<Airport> destination;
-		vector<Airline> allowedAirlines;
+		set<Airline> allowedAirlines;
 		int maxAirlines;
 
 		void statsMenu();

@@ -6,7 +6,6 @@ void UI::plannerSelected() {
 	allowedAirlines.clear();
 	maxAirlines = 0;
 
-
 	while (1) {
 		CLEAR;
 
@@ -24,7 +23,7 @@ void UI::plannerSelected() {
 		std::cout
 		<< "\n"
 		<< " [0] - Select origin\t\t[1] - Select destination\n"
-		<< " (erasing destinations if any)\t[clear] - Clear both fields\n"
+		<< " (erasing destinations if any)\t[clear] - Reset all fields\n"
 		<< "\n"
 		<< " [F] - Add filters\t\t[search] - Start search\n"
 		<< " [B] Back\t\t\t[Q] - Quit\n"
@@ -48,6 +47,8 @@ void UI::plannerSelected() {
 		if (str == "clear") {
 			origin.clear();
 			destination.clear();
+			allowedAirlines.clear();
+			maxAirlines = 0;
 			continue;
 		}
 		if (str == "0") {
@@ -127,6 +128,8 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 }
 
 void UI::displayFlights() {
+	CLEAR;
+	
 	auto graph = manager.getFlights();
 	auto ini = graph.findVertex(origin[0].getCode());
 	auto end = graph.findVertex(destination[0].getCode());
@@ -161,11 +164,22 @@ void UI::displayFlights() {
 	while (std::cin.get() != '\n') {}
 }
 
-void UI::filterSelect(){
+void UI::filterSelect() {
 	while(1){
 		CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
+		<< "\n"
+		<< ">> Current filters:\n"
+		<< "\n"
+		<< " Airline limit: " << (maxAirlines > 0 ? to_string(maxAirlines) : "None") << "\n"
+		<< "\n"
+		<< " Selected airlines: " << (allowedAirlines.empty() ? "All\n" : "\n\n");
+
+		for (auto i : allowedAirlines)
+			std::cout << "\t" << i.getCode() << " - " << i.getName() << "\n";
+		
+		std::cout
 		<< "\n"
 		<< ">> Select filtering method:\n"
 		<< "\n"
@@ -197,7 +211,7 @@ void UI::filterSelect(){
 	}
 }
 
-void UI::filterSelectMax(){
+void UI::filterSelectMax() {
 	while(1){
 		CLEAR;
         std::cout 
@@ -248,15 +262,18 @@ void UI::filterSelectList() {
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
-		<< ">> Select filtering method: Specified airlines.\n"
+		<< ">> Select filtering method: Specified Airlines.\n"
 		<< "\n"
-		<< "Input the what airlines you would like to limit the search to.\n"
+		<< "Input the what Airlines you would like to limit the search to.\n"
+		<< "Selecting a Airline currently selected will remove it\n"
 		<< "\n"
 		<< ">> Selecting Airline\n";
 		if (type == 1) {
 			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
+				if (allowedAirlines.find(w) != allowedAirlines.end())
+					std::cout << "FILTERED ";
 				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
@@ -314,15 +331,22 @@ void UI::filterSelectList() {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
-			showAirline(lst[num].getCode());
+			if (allowedAirlines.find(lst[num]) == allowedAirlines.end())
+					allowedAirlines.insert(lst[num]);
+				else
+					allowedAirlines.erase(lst[num]);
 			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
 			lst = searchAirline(str);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL")
-				showAirline(lst[num].getCode());
+			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
+				if (allowedAirlines.find(lst[num]) == allowedAirlines.end())
+					allowedAirlines.insert(lst[num]);
+				else
+					allowedAirlines.erase(lst[num]);
+			}
 			continue;
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
@@ -334,11 +358,10 @@ bool UI::isValid(list<std::pair<Airport, Airline>> path){
 	bool newAirline = false;
 	int airlineNum = -1;
 
-	if (allowedAirlines.empty() && maxAirlines == 0){
+	if (allowedAirlines.empty() && maxAirlines == 0)
 		return true;
-	}
 
-	for (auto i : path){
+	for (auto i : path) {
 		newAirline = true;
 		for (auto j : allowedAirlines){
 			if (j.getName()==i.second.getName()){
@@ -346,19 +369,18 @@ bool UI::isValid(list<std::pair<Airport, Airline>> path){
 			}
 		}
 		cout << i.second.getName() << "\n";
-		for (auto j : usedAirlines){
-			if (j.getName()==i.second.getName() && i.second.getName() != ""){
+		for (auto j : usedAirlines) {
+			if (j.getName()==i.second.getName() && i.second.getName() != "")
 				newAirline=false;
-			}
 		}
-		if (newAirline == true){
+		if (newAirline == true) {
 			airlineNum++;
 			usedAirlines.emplace(i.second);
 		}
 	}
 
-	if (airlineNum<=maxAirlines){
+	if (airlineNum <= maxAirlines)
 		return true;
-	}
+
 	return false;
 }
