@@ -33,6 +33,13 @@ int Manager::airlineCount() {
 }
 
 //ii
+/**
+ * Calculates the stats of a specific airport.
+ * The return vector contains the number of flights and number of airlines operating in an airport.
+ * @note Complexity: (E)
+ * @param code Airport code 
+ * @return vector with size 2
+ */
 std::vector<size_t> Manager::airportStats(std::string code) {
 	auto vtx = available_flights.findVertex(code);
 	if (vtx == NULL)
@@ -47,7 +54,14 @@ std::vector<size_t> Manager::airportStats(std::string code) {
 }
 
 //iii
-//returns a vector with {num of airports inside it, num of flights, num of airlines, num of destination cities, num of destination countries}
+/**
+ * Calculates the stats of a specific city.
+ * The return vector contains the number of airports, the number of flights,
+ * the number of airlines, the number of destination cities and the number of destination countries.
+ * @note Complexity: (V + E)
+ * @param code City name in the format "(city name), (country name)" 
+ * @return vector with size 5
+ */
 std::vector<size_t> Manager::cityStats(std::string code){
 	auto airportList = cityAirportList[code];
 	
@@ -72,16 +86,21 @@ std::vector<size_t> Manager::cityStats(std::string code){
 
 }
 
-//returns a vector with {num of flights, num of airports, num of cities, num of countries}
+/**
+ * Calculates the stats of a specific city.
+ * The return vector contains the number of flights,
+ * the number of airports, the number of destination cities and the number of destination countries.
+ * @note Complexity: (V + E)
+ * @param code Airline code 
+ * @return vector with size 3
+ */
 std::vector<size_t> Manager::airlineStats(std::string code){
 	Airline airline = airlines[code];
-	unordered_set<string> airportList;
-	unordered_set<string> cityList;
-	unordered_set<string> countryList;
+	unordered_set<string> airportList, cityList, countryList;
 	size_t totalFlights = 0;
 
-	for (auto airport : available_flights.getVertexSet()){
-		for(auto flight : airport->getAdj()){
+	for (auto airport : available_flights.getVertexSet()) {
+		for (auto flight : airport->getAdj()) {
 			if (flight.getInfo() == airline) {
 				auto w1 = airport->getInfo();
 				auto w2 = flight.getDest()->getInfo();
@@ -100,8 +119,15 @@ std::vector<size_t> Manager::airlineStats(std::string code){
 
 }
 
-
 //v
+/**
+ * Calculates the number of reacheable destinations directly from an airport.
+ * The return vector contains the number of flights, 
+ * the number of cities and the number of countries that the flights from an airport can reach.
+ * @note Complexity: O(E)
+ * @param code Airport code
+ * @return vector with size 3
+*/
 std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 	auto vtx = connections.findVertex(code);
 	if (vtx == NULL)
@@ -119,6 +145,15 @@ std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 }
 
 //vi
+/**
+ * Calculates the number of reacheable destinations at X lay-overs of an airport.
+ * The return vector contains the number of flights, 
+ * the number of cities and the number of countries that the flights from an airport can reach.
+ * @note Complexity: O(V + E)
+ * @param code Airport code
+ * @param x Number of maximum flights (lay-overs + 1)
+ * @return vector with size 3
+*/
 std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, int x) {
 	auto vtx = connections.findVertex(code);
 	if (vtx == NULL)
@@ -159,6 +194,12 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 }
 
 //viii
+/**
+ * Copies the vertexSet from the flights Graph and orders it by descending outedge.
+ * After, this copy gets resized to the size asked by the user.
+ * @param x Size of the final amount. If less than size, it is ignored
+ * @return Reduce, ordered copy of vertexSet
+*/
 vector<Vertex<Airport, Airline>*> Manager::airportsWithMostTraffic(size_t x) {
 	vector<Vertex<Airport, Airline>*> copy = available_flights.getVertexSet();
 	std::sort(copy.begin(), copy.end(), 
@@ -169,7 +210,7 @@ vector<Vertex<Airport, Airline>*> Manager::airportsWithMostTraffic(size_t x) {
 }
 
 //ix
-void dfs_art(Vertex<Airport, std::string> *v, Airport parent, set<Airport> &l, int &i, bool start) {
+/*void dfs_art(Vertex<Airport, std::string> *v, Airport parent, set<Airport> &l, int &i, bool start) {
 	v->setLow(i);
 	v->setNum(i);
 	i++;
@@ -188,8 +229,17 @@ void dfs_art(Vertex<Airport, std::string> *v, Airport parent, set<Airport> &l, i
 
 	if (start && children > 1)
 		l.insert(v->getInfo());
-}
+}*/
 
+/**
+ * Visits each node using DFS 
+ * and the Tarjan algorithm to find the articulation points of the graph.
+ * @note Complexity: O(V + E)
+ * @param vtx Starting vector
+ * @param time Integer reference keeping the order of visit
+ * @param last Vector visited before. NULL if it's the first
+ * @param res Saves the visit result
+*/
 void dfsTarjanVisit(Vertex<Airport, std::string> *vtx, int &time, Vertex<Airport, std::string> *last, std::set<Airport> &res) {
 	int children = 0;
 	vtx->setVisited(true);
@@ -214,6 +264,12 @@ void dfsTarjanVisit(Vertex<Airport, std::string> *vtx, int &time, Vertex<Airport
 		res.insert(vtx->getInfo());
 }
 
+/**
+ * Calculates what Airports are essential to the network, or by other words,
+ * the articulation points of the graph representing the network
+ * @note Complexity: O(V + E)
+ * @return Set of Airports
+*/
 std::set<Airport> Manager::essentialAirports() {
 
 	std::set<Airport> res;
@@ -234,6 +290,13 @@ std::set<Airport> Manager::essentialAirports() {
 }
 
 //vii
+/**
+ * Uses bfs to find the maximum trip that can be done 
+ * without having the possibility of making it by a faster way.
+ * @param vtx Starting vector
+ * @param maxTrip Reference to the number keeping count of the maximum trip length
+ * @param res Vector saving the pair <start, end> of the trips found.
+*/
 void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res) {
 	for (auto i : connections.getVertexSet()) {
 		i->setVisited(false);
@@ -265,6 +328,13 @@ void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVe
 	}
 }
 
+/**
+ * Calculates the maximum trip within the network.
+ * A trip can be considered maximum if it is not possible 
+ * to be done faster using routes with less stops/flights.
+ * @note Complexity: O(V * (V + E))
+ * @return Pair of a vector of pairs <start airport, end airport> and how many flights the biggest trip takes.
+*/
 std::pair<MaxTripVector, int> Manager::maximumTrip() {
 	MaxTripVector res;
 	int maxTrip = 0;
