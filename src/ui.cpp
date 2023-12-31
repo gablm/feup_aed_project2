@@ -154,7 +154,7 @@ void UI::globalStats() {
 			}
 			int num = atoi(str.substr(4).c_str());
 			if (num <= 0 && num != -1) {
-				helpMsg("Please insert an valid integer!", "top [integer >= 1]");
+				helpMsg("Please insert an valid integer!", "top [integer >= 1/integer = -1 for max]");
 				continue;
 			}
 			showTop(num);

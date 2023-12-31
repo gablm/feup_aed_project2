@@ -3,6 +3,9 @@
 
 void UI::plannerSelected() {
 	std::string str;
+	allowedAirlines.clear();
+	maxAirlines = 0;
+
 
 	while (1) {
 		CLEAR;
@@ -37,6 +40,10 @@ void UI::plannerSelected() {
 			destination.clear();
 			mainMenu();
 			return;
+		}
+		if (str == "F" || str == "f") {
+			filterSelect();
+			continue;
 		}
 		if (str == "clear") {
 			origin.clear();
@@ -76,7 +83,6 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 		i->setNum(__INT32_MAX__);
 		i->setLast(NULL, W());
 	}
-
 	vector<list<pair<T, W>>> res;
 	list<Vertex<T, W>*> queue;
 	list<pair<Vertex<T, W>*, W>> alter;
@@ -102,9 +108,9 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 			}
 		}
 	}
-
+	//cout << "test111";
 	std::cout << "ends size " << alter.size() << "\n";
-
+	//cout << "test222";
 	for (auto i : alter) {
 		list<pair<T, W>> tmp;
 		tmp.push_front(make_pair(i.first->getInfo(), i.second));
@@ -132,6 +138,15 @@ void UI::displayFlights() {
 		exit(0);
 	}
 
+	/*
+	vector<list<pair<Airport, Airline>>> tempRes; 
+	for (auto i : res){
+		if (isValid(i)){
+			tempRes.push_back(i);
+		}
+		res = tempRes;
+	}
+	*/
 	for (auto i : res) {
 		size_t len = 0;
 		for (auto j : i) {
@@ -144,4 +159,204 @@ void UI::displayFlights() {
 	}
 
 	while (std::cin.get() != '\n') {}
+}
+
+void UI::filterSelect(){
+	while(1){
+		CLEAR;
+        std::cout 
+		<< "Amadeus - Planner\n"
+		<< "\n"
+		<< ">> Select filtering method:\n"
+		<< "\n"
+		<< " [0] Limit to number of airlines\n"
+		<< " [1] Limit selection of airlines\n"
+		<< "\n"
+		<< "[B] Back\n"
+		<< "[Q] Exit\n"
+		<< "\n"
+        << "$> ";
+
+		std::string str;
+		std::getline(std::cin, str);
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+		if (str == "0"){
+			filterSelectMax();
+			break;
+		}
+		if (str == "1"){
+			filterSelectList();
+			break;
+		}
+		helpMsg("Command not found!", "help - shows all commands");
+	}
+}
+
+void UI::filterSelectMax(){
+	while(1){
+		CLEAR;
+        std::cout 
+		<< "Amadeus - Planner\n"
+		<< "\n"
+		<< ">> Select filtering method: Number of airlines\n"
+		<< "\n"
+		<< "Input the maximum number of airlines a trip should use.\n"
+		<< "\n"
+		<< "[B] Back\n"
+		<< "[Q] Exit\n"
+		<< "\n"
+        << "$> ";
+
+		std::string str;
+		std::getline(std::cin, str);
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+		int num = atoi(str.c_str());
+		if (num <= 0 && num != -1) {
+			helpMsg("Please insert an valid integer!", "top [integer >= 1]");
+			continue;
+		}
+		maxAirlines = num;
+		break;		
+	}
+}
+
+void UI::filterSelectList() {
+	std::vector<Airline> lst;
+	size_t count = 0;
+	std::string str;
+	std::string search;
+	int type;
+
+	while (1)
+    {
+		type = lst.empty() ? 0 : 1;
+		if (!lst.empty() && lst[0].getCode() == "NULL")
+			type = 2;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
+
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Planner\n"
+		<< "\n"
+		<< ">> Select filtering method: Specified airlines.\n"
+		<< "\n"
+		<< "Input the what airlines you would like to limit the search to.\n"
+		<< "\n"
+		<< ">> Selecting Airline\n";
+		if (type == 1) {
+			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
+			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
+				auto w = lst[i];
+				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+			}
+			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
+						<< totalPages << "\n";
+		}
+
+		if (type == 2) {
+			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n(nothing)\n";
+		}
+
+		std::cout
+		<< "\n"
+		<< (type != 1 ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
+		<< "\n"
+		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above\n"
+		<< "\n"
+        << "$> ";
+
+		getline(std::cin, str);
+
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+
+		if (str == "next" && !lst.empty()) {
+			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
+			continue;
+		}
+		if (str == "back" && !lst.empty()) {
+			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 5 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
+			continue;
+		}
+
+		size_t num = atol(str.c_str());
+		if (str == "0" || num != 0) {
+			if (num >= lst.size() || type == 2) {
+				helpMsg("Please enter a valid option!", "[number]");
+				continue;
+			}
+			showAirline(lst[num].getCode());
+			continue;
+		}
+		if (str.size() > 1) {
+			count = 0;
+			search = str;
+			lst = searchAirline(str);
+			if (lst.size() == 1 && lst[0].getCode() != "NULL")
+				showAirline(lst[num].getCode());
+			continue;
+		}
+		helpMsg("Search query is too small!", "[query with at least 2 characters]");
+    }
+}
+
+bool UI::isValid(list<std::pair<Airport, Airline>> path){
+	vector<Airline> usedAirlines;
+	bool newAirline = false;
+	int airlineNum = 0;
+
+	if (allowedAirlines.empty() && maxAirlines == 0){
+		return true;
+	}
+
+	for (auto i : path){
+		newAirline = true;
+		for (auto j : allowedAirlines){
+			if (j==i.second){
+				return false;
+			}
+		}
+		for (auto j : usedAirlines){
+			if (j==i.second){
+				newAirline=false;
+			}
+		}
+		if (newAirline == true){
+			airlineNum++;
+			usedAirlines.push_back(i.second);
+		}
+	}
+	if (airlineNum<=maxAirlines){
+		return true;
+	}
+	return false;
 }

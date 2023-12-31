@@ -17,6 +17,8 @@ class UI {
 
 		vector<Airport> origin;
 		vector<Airport> destination;
+		vector<Airline> allowedAirlines;
+		int maxAirlines;
 
 		void statsMenu();
 		void globalStats();
@@ -32,6 +34,11 @@ class UI {
 		void plannerCoordsSelect(bool in);
 		std::vector<Airport> searchCoords(double lat, double lon, bool in);
 		void plannerSelected();
+		void filterSelect();
+		void filterSelectMax();
+		void filterSelectList();
+
+		bool isValid(list<std::pair<Airport, Airline>> path);
 
 		void displayFlights();
 
