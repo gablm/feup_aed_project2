@@ -374,73 +374,131 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 }
 
 //
-std::vector<std::list<Airport>> findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end);
+void findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end);
+void printPath(std::list<Airport> path);
 
+vector<list<Airport>> options;
 void UI::displayFlights2() {
-	CLEAR;
-	
 	auto graph = manager.getConnections();
-	vector<std::list<Airport>> res;
+	options.clear();
+	std::list<std::thread> thr;
 	try {
-		auto ini = graph.findVertex(origin[0].getCode());
-		auto end = graph.findVertex(destination[0].getCode());
-		res = findPath2(&graph, ini, end);
+		for (auto i : origin) {
+			auto ini = graph.findVertex(i.getCode());
+			for (auto j : destination) {
+				auto end = graph.findVertex(j.getCode());
+				thr.push_back(std::thread(findPath2, &graph, ini, end));
+			}
+		}
 	} catch (const exception &e) {
+		CLEAR;
 		std::cout << e.what();
-		exit(0);
 	}
 	
-	auto av = manager.getFlights();
-	for (auto trp : res) {
-		auto i = trp.end();
-		auto li = trp.end();
-		li--;
-		while (true) {
-			i--;
-			std::cout << i->getName() << "\n";
-			if (i != trp.begin()) {
-				for (auto edge : av.findVertex(i->getCode())->getAdj()) {
-					if (edge.getDest()->getInfo() == *li) {
-						std::cout << " " << edge.getInfo().getCode() << " ";
-					}
-				}
-				std::cout << "\n";
-				li--;
-			} else break;
-			
+	std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	size_t count = 0;
+	std::string str;
+
+	while (1)
+    {
+		vector<list<Airport>> lst = options;
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
+
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Statistics\n"
+		<< "\n"
+		<< ">> Paths between the selection \n\n";
+		if (!lst.empty()) {
+			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
+				printPath(lst[i]);
+			}
+			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
+						<< totalPages << "\n";
+			std::cout << "Total count: " << lst.size() << "\n";
+		} else
+			std::cout << " There are airports.\nThis is most likely an error. Please go back and try again!\n";
+
+		std::cout
+		<< "\n"
+		<< (lst.empty() ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
+		<< "\n"
+		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
+		<< "\n"
+        << "$> ";
+
+		getline(std::cin, str);
+
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
 		}
-		std::cout << "\n";
+		if (str == "B" || str == "b")
+			break;
+
+		if (str == "next" && !lst.empty()) {
+			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
+			continue;
+		}
+		if (str == "back" && !lst.empty()) {
+			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 5 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
+			continue;
+		}
+		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
 	}
-
-	std::cout << "total trips: " << res.size() << "\nPRESS ENTER TO CONTINUE";
-
-	while (std::cin.get() != '\n') {}
 }
 
-void storeResult(list<Airport> ports,
-	Vertex<Airport, std::string> *curr, Vertex<Airport, std::string> *start, std::vector<std::list<Airport>>& res) {
+void printPath(std::list<Airport> path) {
+	auto i = path.end();
+	while (true) {
+		i--;
+		std::cout << i->getName();
+		if (i != path.begin()) {
+			std::cout << " -> ";
+		} else {
+			std::cout << "\n";
+			break;
+		}
+	}
+}
+
+void storeResult(list<Airport> ports, Vertex<Airport, std::string> *curr, Vertex<Airport, std::string> *start) {
 	
 	if (curr == start) {
-		std::cout << "beep\n";
-		res.push_back(ports);
+		options.push_back(ports);
+		//printPath(ports);
 		return;
 	}
 
 	for (auto i : curr->getLasts()) {
 		auto cports = ports;
 		cports.push_back(i.first->getInfo());
-		storeResult(cports, i.first, start, res);
+		storeResult(cports, i.first, start);
 	}	
 }
 
-std::vector<std::list<Airport>> findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end) {
+void findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end) {
 	for (auto i : g->getVertexSet()) {
 		i->setVisited(false);
 		i->setNum(__INT32_MAX__);
 		i->clearLast();
 	}
 
-	vector<std::list<Airport>> res;
 	list<Vertex<Airport, std::string>*> queue;
 	start->setVisited(true);
 	start->setNum(0);
@@ -466,8 +524,7 @@ std::vector<std::list<Airport>> findPath2(Graph<Airport, std::string> *g, Vertex
 	}
 	std::cout << "bop\n";
 	list<Airport> ports {end->getInfo()};
-	storeResult(ports, end, start, res);
-	return res;
+	storeResult(ports, end, start);
 }
 
 bool UI::isValid(list<std::pair<Airport, Airline>> path){

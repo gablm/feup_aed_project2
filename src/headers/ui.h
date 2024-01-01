@@ -7,7 +7,7 @@
 #ifdef __linux__
 # define CLEAR system("clear")
 #else
-# define CLEAR system("cls")
+# define CLEAR (void)system("cls")
 #endif
 
 class UI {
