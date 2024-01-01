@@ -374,34 +374,34 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 }
 
 //
-void findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end);
-void printPath(std::list<Airport> path);
+void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end);
+void printPath(std::pair<list<Airport>, list<Airline>> path);
 
-vector<list<Airport>> options;
+vector<std::pair<list<Airport>, list<Airline>>> options;
 void UI::displayFlights2() {
-	auto graph = manager.getConnections();
+	auto graph = manager.getFlights();
 	options.clear();
-	std::list<std::thread> thr;
+	std::vector<std::thread> thr;
+	vector<std::pair<list<Airport>, list<Airline>>> lst;
 	try {
 		for (auto i : origin) {
 			auto ini = graph.findVertex(i.getCode());
 			for (auto j : destination) {
 				auto end = graph.findVertex(j.getCode());
-				thr.push_back(std::thread(findPath2, &graph, ini, end));
+				findPath2(&graph, ini, end);
 			}
 		}
 	} catch (const exception &e) {
 		CLEAR;
 		std::cout << e.what();
 	}
-	
-	std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+	lst = options;
 	size_t count = 0;
 	std::string str;
 
 	while (1)
     {
-		vector<list<Airport>> lst = options;
 		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
         CLEAR;
@@ -461,26 +461,40 @@ void UI::displayFlights2() {
 		}
 		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
 	}
+
+	for (auto &i : thr) {
+		i.join();
+	}
 }
 
-void printPath(std::list<Airport> path) {
-	auto i = path.end();
-	while (true) {
+void printPath(std::pair<list<Airport>, list<Airline>> path) {
+	auto i = path.first.end();
+	auto j = path.second.end();
+
+	while (1) {
 		i--;
-		std::cout << i->getName();
-		if (i != path.begin()) {
-			std::cout << " -> ";
-		} else {
+		std::cout << i->getCode();
+		if (i == path.first.begin()) {
 			std::cout << "\n";
+			break;
+		}
+		std::cout << " --> ";
+	}
+	std::cout << "    ";
+	while (1) {
+		j--;
+		std::cout << j->getCode() << "     ";
+		if (j == path.second.begin()) {
+			std::cout << "\n\n";
 			break;
 		}
 	}
 }
 
-void storeResult(list<Airport> ports, Vertex<Airport, std::string> *curr, Vertex<Airport, std::string> *start) {
+void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, Vertex<Airport, Airline> *start) {
 	
 	if (curr == start) {
-		options.push_back(ports);
+		options.push_back(make_pair(ports, lines));
 		//printPath(ports);
 		return;
 	}
@@ -488,18 +502,20 @@ void storeResult(list<Airport> ports, Vertex<Airport, std::string> *curr, Vertex
 	for (auto i : curr->getLasts()) {
 		auto cports = ports;
 		cports.push_back(i.first->getInfo());
-		storeResult(cports, i.first, start);
+		auto clines = lines;
+		clines.push_back(i.second);
+		storeResult(cports, clines, i.first, start);
 	}	
 }
 
-void findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end) {
+void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end) {
 	for (auto i : g->getVertexSet()) {
 		i->setVisited(false);
 		i->setNum(__INT32_MAX__);
 		i->clearLast();
 	}
 
-	list<Vertex<Airport, std::string>*> queue;
+	list<Vertex<Airport, Airline>*> queue;
 	start->setVisited(true);
 	start->setNum(0);
 	queue.push_back(start);
@@ -524,7 +540,7 @@ void findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *sta
 	}
 	std::cout << "bop\n";
 	list<Airport> ports {end->getInfo()};
-	storeResult(ports, end, start);
+	storeResult(ports, list<Airline> {}, end, start);
 }
 
 bool UI::isValid(list<std::pair<Airport, Airline>> path){
