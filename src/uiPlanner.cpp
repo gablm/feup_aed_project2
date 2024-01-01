@@ -78,7 +78,18 @@ void UI::plannerSelected() {
 			buildFlights(false);
 			continue;
 		}
-		if (str == "s2") {
+		if (str == "deep-search") {
+			if (origin.empty() || destination.empty()) {
+				helpMsg("Please select both the origin and destination first!", 
+					"[0] to select the origin and [1] to select the destination");
+				continue;
+			}
+			if (allowedAirlines.empty() && maxAirlines == 0) {
+				helpMsg("Using this type of search requires filter!", 
+					"[f] to add filters");
+				continue;
+			}
+
 			buildFlights(true);
 			continue;
 		}
