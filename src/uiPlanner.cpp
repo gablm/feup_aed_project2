@@ -1,5 +1,7 @@
 #include "headers/ui.h"
 #include <iostream>
+#include <cmath>
+#include <cstdlib>
 
 /**
  * Shows the main menu of the trip planner, 
@@ -377,12 +379,10 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end);
 void printPath(std::pair<list<Airport>, list<Airline>> path);
 
-vector<std::pair<list<Airport>, list<Airline>>> options;
+vector<std::pair<list<Airport>, list<Airline>>> lst;
 void UI::displayFlights2() {
 	auto graph = manager.getFlights();
-	options.clear();
-	std::vector<std::thread> thr;
-	vector<std::pair<list<Airport>, list<Airline>>> lst;
+	lst.clear();
 	try {
 		for (auto i : origin) {
 			auto ini = graph.findVertex(i.getCode());
@@ -396,7 +396,6 @@ void UI::displayFlights2() {
 		std::cout << e.what();
 	}
 
-	lst = options;
 	size_t count = 0;
 	std::string str;
 
@@ -461,10 +460,6 @@ void UI::displayFlights2() {
 		}
 		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
 	}
-
-	for (auto &i : thr) {
-		i.join();
-	}
 }
 
 void printPath(std::pair<list<Airport>, list<Airline>> path) {
@@ -491,20 +486,42 @@ void printPath(std::pair<list<Airport>, list<Airline>> path) {
 	}
 }
 
-void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, Vertex<Airport, Airline> *start) {
+
+int getNextMax(int maxL) {
+	switch (maxL) {
+		case 1:
+			return 40;
+		case 2: 
+			return 16;
+		case 3: 
+			return 8;
+		case 4: 
+			return 4;
+		default: 
+			return 2;
+	}
+	return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
+}
+
+void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, Vertex<Airport, Airline> *start, int time = 0) {
 	
 	if (curr == start) {
-		options.push_back(make_pair(ports, lines));
+		lst.push_back(make_pair(ports, lines));
 		//printPath(ports);
 		return;
 	}
 
+	int maxLoops = max(getNextMax(time), 1);
+	int count = 0;
 	for (auto i : curr->getLasts()) {
+		if (maxLoops == count)
+			break;
 		auto cports = ports;
 		cports.push_back(i.first->getInfo());
 		auto clines = lines;
 		clines.push_back(i.second);
-		storeResult(cports, clines, i.first, start);
+		storeResult(cports, clines, i.first, start, time + 1);
+		count++;
 	}	
 }
 
