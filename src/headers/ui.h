@@ -41,6 +41,7 @@ class UI {
 		bool isValid(list<std::pair<Airport, Airline>> path);
 
 		void displayFlights();
+		void displayFlights2();
 
 		void statsAirportSelect();
 		void statsCitySelect();

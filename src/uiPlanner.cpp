@@ -76,6 +76,10 @@ void UI::plannerSelected() {
 			displayFlights();
 			continue;
 		}
+		if (str == "s2") {
+			displayFlights2();
+			continue;
+		}
 		helpMsg("Unknown option!", "[command]");
 	}
 }
@@ -369,6 +373,103 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 	return res;
 }
 
+//
+std::vector<std::list<Airport>> findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end);
+
+void UI::displayFlights2() {
+	CLEAR;
+	
+	auto graph = manager.getConnections();
+	vector<std::list<Airport>> res;
+	try {
+		auto ini = graph.findVertex(origin[0].getCode());
+		auto end = graph.findVertex(destination[0].getCode());
+		res = findPath2(&graph, ini, end);
+	} catch (const exception &e) {
+		std::cout << e.what();
+		exit(0);
+	}
+	
+	auto av = manager.getFlights();
+	for (auto trp : res) {
+		auto i = trp.end();
+		auto li = trp.end();
+		li--;
+		while (true) {
+			i--;
+			std::cout << i->getName() << "\n";
+			if (i != trp.begin()) {
+				for (auto edge : av.findVertex(i->getCode())->getAdj()) {
+					if (edge.getDest()->getInfo() == *li) {
+						std::cout << " " << edge.getInfo().getCode() << " ";
+					}
+				}
+				std::cout << "\n";
+				li--;
+			} else break;
+			
+		}
+		std::cout << "\n";
+	}
+
+	std::cout << "total trips: " << res.size() << "\nPRESS ENTER TO CONTINUE";
+
+	while (std::cin.get() != '\n') {}
+}
+
+void storeResult(list<Airport> ports,
+	Vertex<Airport, std::string> *curr, Vertex<Airport, std::string> *start, std::vector<std::list<Airport>>& res) {
+	
+	if (curr == start) {
+		std::cout << "beep\n";
+		res.push_back(ports);
+		return;
+	}
+
+	for (auto i : curr->getLasts()) {
+		auto cports = ports;
+		cports.push_back(i.first->getInfo());
+		storeResult(cports, i.first, start, res);
+	}	
+}
+
+std::vector<std::list<Airport>> findPath2(Graph<Airport, std::string> *g, Vertex<Airport, std::string> *start, Vertex<Airport, std::string> *end) {
+	for (auto i : g->getVertexSet()) {
+		i->setVisited(false);
+		i->setNum(__INT32_MAX__);
+		i->clearLast();
+	}
+
+	vector<std::list<Airport>> res;
+	list<Vertex<Airport, std::string>*> queue;
+	start->setVisited(true);
+	start->setNum(0);
+	queue.push_back(start);
+	int minStops = __INT32_MAX__;
+	while (!queue.empty()) {
+		auto u = queue.front();
+		queue.pop_front();
+		if (u->getNum() + 1 > minStops)
+			continue;
+		for (auto i : u->getAdj()) {
+			auto w = i.getDest();
+			if (w->getNum() == __INT32_MAX__ || u->getNum() + 1 <= w->getNum()) {
+				w->addLast(u, i.getInfo());
+				if (w == end && u->getNum() + 1 <= minStops) {
+					minStops = u->getNum() + 1;
+					continue;
+				}
+				w->setNum(u->getNum() + 1);
+				queue.push_back(w);
+			}
+		}
+	}
+	std::cout << "bop\n";
+	list<Airport> ports {end->getInfo()};
+	storeResult(ports, end, start, res);
+	return res;
+}
+
 bool UI::isValid(list<std::pair<Airport, Airline>> path){
 	set<Airline> usedAirlines;
 	bool newAirline = false;
@@ -387,8 +488,9 @@ bool UI::isValid(list<std::pair<Airport, Airline>> path){
 		//cout << i.second.getName() << "\n";
 		for (auto j : usedAirlines) {
 			if (j.getName() == i.second.getName() && i.second.getName() != "")
-				newAirline=false;
+				newAirline = false;
 		}
+
 		if (newAirline == true) {
 			airlineNum++;
 			usedAirlines.emplace(i.second);

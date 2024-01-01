@@ -20,6 +20,7 @@ class Vertex {
     std::vector<Edge<T, W>> adj;
 
 	pair<Vertex<T, W>*, W> last;
+	vector<pair<Vertex<T, W>*, W>> lasts;
     bool visited;
     bool processing;
     int indegree;
@@ -32,8 +33,14 @@ public:
     Vertex(T in);
     T getInfo() const;
     void setInfo(T in);
+	//
 	pair<Vertex<T, W> *, W> getLast() const;
 	void setLast(Vertex<T, W> *v, W info);
+	//
+	void clearLast();
+	void addLast(Vertex<T, W> *v, W info);
+	vector<pair<Vertex<T, W>*, W>> getLasts() const;
+	//
     bool isVisited() const;
     void setVisited(bool v);
     bool isProcessing() const;
@@ -60,7 +67,7 @@ public:
     void setDest(Vertex<T, W> *dest);
     double getWeight() const;
     void setWeight(double weight);
-	W getInfo() const;
+	W &getInfo();
 	bool operator==(const Edge<T,W> cmp);
     friend class Graph<T, W>;
     friend class Vertex<T, W>;
@@ -105,7 +112,7 @@ void Edge<T, W>::setWeight(double weight) {
 }
 
 template<class T, class W>
-W Edge<T, W>::getInfo() const {
+W &Edge<T, W>::getInfo() {
 	return info;
 }
 
@@ -131,9 +138,25 @@ template<class T, class W>
 pair<Vertex<T, W>*, W> Vertex<T, W>::getLast() const {
 	return last;
 }
+
 template<class T, class W>
 void Vertex<T, W>::setLast(Vertex<T, W> *v, W info) {
 	last = make_pair(v, info);
+}
+
+template<class T, class W>
+void Vertex<T, W>::addLast(Vertex<T, W> *v, W info) {
+	lasts.push_back(make_pair(v, info));
+}
+
+template<class T, class W>
+void Vertex<T, W>::clearLast() {
+	lasts = std::vector<std::pair<Vertex<T, W> *, W>> {};
+}
+
+template<class T, class W>
+std::vector<std::pair<Vertex<T, W> *, W>> Vertex<T, W>::getLasts() const {
+	return lasts;
 }
 
 template<class T, class W>
