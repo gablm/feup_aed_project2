@@ -80,94 +80,6 @@ void UI::plannerSelected() {
 	}
 }
 
-template <class T, class W>
-vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
-	
-	for (auto i : g->getVertexSet()) {
-		i->setVisited(false);
-		i->setNum(__INT32_MAX__);
-		i->setLast(NULL, W());
-	}
-	vector<list<pair<T, W>>> res;
-	list<Vertex<T, W>*> queue;
-	list<pair<Vertex<T, W>*, W>> alter;
-	start->setVisited(true);
-	start->setNum(0);
-	queue.push_back(start);
-	int minStops = __INT32_MAX__;
-	while (!queue.empty()) {
-		auto u = queue.front();
-		queue.pop_front();
-		for (auto i : u->getAdj()) {
-			auto w = i.getDest();
-			if (!w->isVisited()) {
-				if (w == end && u->getNum() + 1 <= minStops) {
-					minStops = u->getNum() + 1;
-					alter.push_back(make_pair(u, i.getInfo()));
-					continue;
-				}
-				w->setVisited(true);
-				w->setLast(u, i.getInfo());
-				w->setNum(u->getNum() + 1);
-				queue.push_back(w);
-			}
-		}
-	}
-	//cout << "test111";
-	std::cout << "ends size " << alter.size() << "\n";
-	//cout << "test222";
-	for (auto i : alter) {
-		list<pair<T, W>> tmp;
-		tmp.push_front(make_pair(i.first->getInfo(), i.second));
-		Vertex <T, W> *rn = i.first;
-		while (rn != start) {
-			auto a = rn->getLast();
-			tmp.push_front(make_pair(a.first->getInfo(), a.second));
-			rn = a.first;
-		}
-		tmp.push_back(make_pair(end->getInfo(), W()));
-		res.push_back(tmp);
-	}
-	return res;
-}
-
-void UI::displayFlights() {
-	CLEAR;
-	
-	auto graph = manager.getFlights();
-	auto ini = graph.findVertex(origin[0].getCode());
-	auto end = graph.findVertex(destination[0].getCode());
-	vector<list<pair<Airport, Airline>>> res;
-	try {
-		res = findPath(&graph, ini, end);
-	} catch (const exception &e) {
-		std::cout << e.what();
-		exit(0);
-	}
-
-	vector<list<pair<Airport, Airline>>> tempRes; 
-	for (auto i : res){
-		if (isValid(i)){
-			tempRes.push_back(i);
-		}
-	}
-	res = tempRes;
-	
-
-	for (auto i : res) {
-		size_t len = 0;
-		for (auto j : i) {
-			std::cout << j.first.getName() << (j.second.getCode() != "" ? " (" : "") << j.second.getName();
-			if (len < i.size() - 1)
-				std::cout << ") -> ";
-			len++;
-		}
-		std::cout << "\n";
-	}
-
-	while (std::cin.get() != '\n') {}
-}
-
 /**
  * Shows the current filters and which filters can be changed.
 */
@@ -366,6 +278,97 @@ void UI::filterSelectList() {
     }
 }
 
+template <class T, class W>
+vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end);
+
+void UI::displayFlights() {
+	CLEAR;
+	
+	auto graph = manager.getFlights();
+	auto ini = graph.findVertex(origin[0].getCode());
+	auto end = graph.findVertex(destination[0].getCode());
+	vector<list<pair<Airport, Airline>>> res;
+	try {
+		res = findPath(&graph, ini, end);
+	} catch (const exception &e) {
+		std::cout << e.what();
+		exit(0);
+	}
+
+	vector<list<pair<Airport, Airline>>> tempRes; 
+	for (auto i : res){
+		if (isValid(i)){
+			tempRes.push_back(i);
+		}
+	}
+	res = tempRes;
+	
+
+	for (auto i : res) {
+		size_t len = 0;
+		for (auto j : i) {
+			std::cout << j.first.getName() << (j.second.getCode() != "" ? " (" : "") << j.second.getName();
+			if (len < i.size() - 1)
+				std::cout << ") -> ";
+			len++;
+		}
+		std::cout << "\n";
+	}
+
+	while (std::cin.get() != '\n') {}
+}
+
+template <class T, class W>
+vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
+	
+	for (auto i : g->getVertexSet()) {
+		i->setVisited(false);
+		i->setNum(__INT32_MAX__);
+		i->setLast(NULL, W());
+	}
+	vector<list<pair<T, W>>> res;
+	list<Vertex<T, W>*> queue;
+	list<pair<Vertex<T, W>*, W>> alter;
+	start->setVisited(true);
+	start->setNum(0);
+	queue.push_back(start);
+	int minStops = __INT32_MAX__;
+	while (!queue.empty()) {
+		auto u = queue.front();
+		queue.pop_front();
+		for (auto i : u->getAdj()) {
+			auto w = i.getDest();
+			if (!w->isVisited()) {
+				if (w == end && u->getNum() + 1 <= minStops) {
+					minStops = u->getNum() + 1;
+					alter.push_back(make_pair(u, i.getInfo()));
+					continue;
+				}
+				w->setVisited(true);
+				w->setLast(u, i.getInfo());
+				w->setNum(u->getNum() + 1);
+				queue.push_back(w);
+			}
+		}
+	}
+	//cout << "test111";
+	std::cout << "ends size " << alter.size() << "\n";
+	//cout << "test222";
+	for (auto i : alter) {
+		list<pair<T, W>> tmp;
+		tmp.push_front(make_pair(i.first->getInfo(), i.second));
+		Vertex <T, W> *rn = i.first;
+		while (rn != start) {
+			auto a = rn->getLast();
+			tmp.push_front(make_pair(a.first->getInfo(), a.second));
+			rn = a.first;
+		}
+		tmp.push_back(make_pair(end->getInfo(), W()));
+		res.push_back(tmp);
+	}
+	return res;
+}
+
 bool UI::isValid(list<std::pair<Airport, Airline>> path){
 	set<Airline> usedAirlines;
 	bool newAirline = false;
@@ -377,13 +380,13 @@ bool UI::isValid(list<std::pair<Airport, Airline>> path){
 	for (auto i : path) {
 		newAirline = true;
 		for (auto j : allowedAirlines){
-			if (j.getName()==i.second.getName()){
+			if (j.getName() == i.second.getName()){
 				return false;
 			}
 		}
-		cout << i.second.getName() << "\n";
+		//cout << i.second.getName() << "\n";
 		for (auto j : usedAirlines) {
-			if (j.getName()==i.second.getName() && i.second.getName() != "")
+			if (j.getName() == i.second.getName() && i.second.getName() != "")
 				newAirline=false;
 		}
 		if (newAirline == true) {
