@@ -10,6 +10,7 @@
 # define CLEAR (void)system("cls")
 #endif
 
+#define Trip std::pair<list<Airport>, list<Airline>>
 class UI {
 	private:
 		Manager manager;
@@ -40,8 +41,9 @@ class UI {
 
 		bool isValid(list<std::pair<Airport, Airline>> path);
 
-		void displayFlights();
-		void displayFlights2();
+		void displayFlights(vector<Trip> &lst);
+		void buildFlights(bool way);
+		void printPath(Trip path);
 
 		void statsAirportSelect();
 		void statsCitySelect();

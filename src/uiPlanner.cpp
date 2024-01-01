@@ -75,11 +75,11 @@ void UI::plannerSelected() {
 					"[0] to select the origin and [1] to select the destination");
 				continue;
 			}
-			displayFlights();
+			buildFlights(false);
 			continue;
 		}
 		if (str == "s2") {
-			displayFlights2();
+			buildFlights(true);
 			continue;
 		}
 		helpMsg("Unknown option!", "[command]");
@@ -285,54 +285,14 @@ void UI::filterSelectList() {
 }
 
 template <class T, class W>
-vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end);
-
-void UI::displayFlights() {
-	CLEAR;
-	
-	auto graph = manager.getFlights();
-	auto ini = graph.findVertex(origin[0].getCode());
-	auto end = graph.findVertex(destination[0].getCode());
-	vector<list<pair<Airport, Airline>>> res;
-	try {
-		res = findPath(&graph, ini, end);
-	} catch (const exception &e) {
-		std::cout << e.what();
-		exit(0);
-	}
-
-	vector<list<pair<Airport, Airline>>> tempRes; 
-	for (auto i : res){
-		if (isValid(i)){
-			tempRes.push_back(i);
-		}
-	}
-	res = tempRes;
-	
-
-	for (auto i : res) {
-		size_t len = 0;
-		for (auto j : i) {
-			std::cout << j.first.getName() << (j.second.getCode() != "" ? " (" : "") << j.second.getName();
-			if (len < i.size() - 1)
-				std::cout << ") -> ";
-			len++;
-		}
-		std::cout << "\n";
-	}
-
-	while (std::cin.get() != '\n') {}
-}
-
-template <class T, class W>
-vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
+vector<pair<list<T>, list<W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
 	
 	for (auto i : g->getVertexSet()) {
 		i->setVisited(false);
 		i->setNum(__INT32_MAX__);
 		i->setLast(NULL, W());
 	}
-	vector<list<pair<T, W>>> res;
+	vector<pair<list<T>, list<W>>> res;
 	list<Vertex<T, W>*> queue;
 	list<pair<Vertex<T, W>*, W>> alter;
 	start->setVisited(true);
@@ -361,41 +321,84 @@ vector<list<pair<T, W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T,
 	std::cout << "ends size " << alter.size() << "\n";
 	//cout << "test222";
 	for (auto i : alter) {
-		list<pair<T, W>> tmp;
-		tmp.push_front(make_pair(i.first->getInfo(), i.second));
+		list<T> a;
+		list<W> b;
+		a.push_front(i.first->getInfo());
+		b.push_front(i.second);
 		Vertex <T, W> *rn = i.first;
 		while (rn != start) {
-			auto a = rn->getLast();
-			tmp.push_front(make_pair(a.first->getInfo(), a.second));
-			rn = a.first;
+			auto vt = rn->getLast();
+			a.push_front(vt.first->getInfo());
+			b.push_front(vt.second);
+			rn = vt.first;
 		}
-		tmp.push_back(make_pair(end->getInfo(), W()));
-		res.push_back(tmp);
+		a.push_back(end->getInfo());
+		res.push_back(make_pair(a, b));
 	}
 	return res;
 }
 
 //
 void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end);
-void printPath(std::pair<list<Airport>, list<Airline>> path);
 
-vector<std::pair<list<Airport>, list<Airline>>> lst;
-void UI::displayFlights2() {
-	auto graph = manager.getFlights();
-	lst.clear();
-	try {
-		for (auto i : origin) {
-			auto ini = graph.findVertex(i.getCode());
-			for (auto j : destination) {
-				auto end = graph.findVertex(j.getCode());
-				findPath2(&graph, ini, end);
-			}
+void UI::printPath(Trip path) {
+	auto i = path.first.end();
+	auto j = path.second.end();
+
+	while (1) {
+		i--;
+		std::cout << i->getCode();
+		if (i == path.first.begin()) {
+			std::cout << "\n";
+			break;
 		}
-	} catch (const exception &e) {
-		CLEAR;
-		std::cout << e.what();
+		std::cout << " --> ";
 	}
+	std::cout << "    ";
+	while (1) {
+		j--;
+		std::cout << j->getCode() << "     ";
+		if (j == path.second.begin()) {
+			std::cout << "\n\n";
+			break;
+		}
+	}
+}
 
+vector<Trip> lst;
+void UI::buildFlights(bool way) {
+	lst.clear();
+	if (way) {
+		auto graph = manager.getFlights();
+		try {
+			for (auto i : origin) {
+				auto ini = graph.findVertex(i.getCode());
+				for (auto j : destination) {
+					auto end = graph.findVertex(j.getCode());
+					findPath2(&graph, ini, end);
+				}
+			}
+		} catch (const exception &e) {
+			CLEAR;
+			std::cout << e.what();
+		}
+	} else {
+		auto graph = manager.getFlights();
+		auto ini = graph.findVertex(origin[0].getCode());
+		auto end = graph.findVertex(destination[0].getCode());
+		try {
+			lst = findPath(&graph, ini, end);
+		} catch (const exception &e) {
+			std::cout << e.what();
+			exit(0);
+		}
+	}
+	displayFlights(lst);
+
+}
+
+void UI::displayFlights(vector<Trip> &lst) {
+	
 	size_t count = 0;
 	std::string str;
 
@@ -462,31 +465,6 @@ void UI::displayFlights2() {
 	}
 }
 
-void printPath(std::pair<list<Airport>, list<Airline>> path) {
-	auto i = path.first.end();
-	auto j = path.second.end();
-
-	while (1) {
-		i--;
-		std::cout << i->getCode();
-		if (i == path.first.begin()) {
-			std::cout << "\n";
-			break;
-		}
-		std::cout << " --> ";
-	}
-	std::cout << "    ";
-	while (1) {
-		j--;
-		std::cout << j->getCode() << "     ";
-		if (j == path.second.begin()) {
-			std::cout << "\n\n";
-			break;
-		}
-	}
-}
-
-
 int getNextMax(int maxL) {
 	switch (maxL) {
 		case 1:
@@ -494,16 +472,18 @@ int getNextMax(int maxL) {
 		case 2: 
 			return 16;
 		case 3: 
-			return 8;
-		case 4: 
-			return 4;
+			return 10;
+		case 4:
+			return 6;
+		case 5:
+			return 3;
 		default: 
 			return 2;
 	}
 	return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
 }
 
-void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, Vertex<Airport, Airline> *start, int time = 0) {
+void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, Vertex<Airport, Airline> *start, int time = 1) {
 	
 	if (curr == start) {
 		lst.push_back(make_pair(ports, lines));
