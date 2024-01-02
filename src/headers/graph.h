@@ -100,6 +100,12 @@ public:
 	vector<Vertex<T, W>*> getVertexSet() const;
 };
 
+/** 
+ * Constructor for an Edge
+ * @param d Target Vertex
+ * @param w Weight
+ * @param info Information to be stored in the Edge	
+*/
 template <class T, class W>
 Edge<T, W>::Edge(Vertex<T, W> *d, double w, W &info): dest(d), weight(w), info(info) {}
 
@@ -133,108 +139,153 @@ void Edge<T, W>::setWeight(double weight) {
     Edge::weight = weight;
 }
 
-/**
- * 	@return Information of the connection
-*/
+/** @return Information of the connection */
 template<class T, class W>
 W &Edge<T, W>::getInfo() {
 	return info;
 }
 
+/** 
+ * Equality operator for an Edge.
+ * Two edges are equal if all their fields are equal.
+ * @param cmp Edge to compare to
+ * @return If edges are equal
+*/
 template<class T, class W>
 bool Edge<T, W>::operator==(const Edge<T,W> cmp) {
 	return dest == cmp.dest && weight == cmp.weight && info == cmp.info;
 }
 
+/** 
+ *  Constructor for a Vertex 
+ *  @param in Information to store in the vertex
+*/
 template<class T, class W>
 Vertex<T, W>::Vertex(T in): info(in) {}
 
+/** @return Information of the Vertex */
 template<class T, class W>
 T Vertex<T, W>::getInfo() const {
     return info;
 }
 
+/**
+ * Sets the information on a vertex 
+ * @param in New information to be stored
+*/
 template<class T, class W>
 void Vertex<T, W>::setInfo(T in) {
     Vertex::info = in;
 }
 
+/**
+ * Adds a new Pair to the lasts vector.
+ * This is useful in Path Finding between Vertexes.
+ * @param v Last vertex
+ * @param info Connection information
+*/
 template<class T, class W>
 void Vertex<T, W>::addLast(Vertex<T, W> *v, W info) {
 	lasts.push_back(make_pair(v, info));
 }
 
+/** Clear the pairs stored inside the lasts vector. */
 template<class T, class W>
 void Vertex<T, W>::clearLast() {
 	lasts.clear();
 }
 
+/** @return Lasts vector */
 template<class T, class W>
 std::vector<std::pair<Vertex<T, W> *, W>> Vertex<T, W>::getLasts() const {
 	return lasts;
 }
 
+/** @return Processing tag */
 template<class T, class W>
 bool Vertex<T, W>::isProcessing() const {
     return processing;
 }
 
+/** Sets the Processing tag
+ * @param p New value
+ */
 template<class T, class W>
 void Vertex<T, W>::setProcessing(bool p) {
     Vertex::processing = p;
 }
 
+/** @return ~Visited tag */
 template<class T, class W>
 bool Vertex<T, W>::isVisited() const {
     return visited;
 }
 
+/** @return Indegree count */
 template<class T, class W>
 int Vertex<T, W>::getIndegree() const {
     return indegree;
 }
 
+/** Sets the Indegree value
+ * @param indegree New value
+ */
 template<class T, class W>
 void Vertex<T, W>::setIndegree(int indegree) {
     Vertex::indegree = indegree;
 }
 
+/** @return Num value */
 template<class T, class W>
 int Vertex<T, W>::getNum() const {
     return num;
 }
 
+/** Sets the Num value
+ * @param num New value
+ */
 template<class T, class W>
 void Vertex<T, W>::setNum(int num) {
     Vertex::num = num;
 }
 
+/** @return Low value */
 template<class T, class W>
 int Vertex<T, W>::getLow() const {
     return low;
 }
 
+/** Sets the Low value
+ * @param low New value
+ */
 template<class T, class W>
 void Vertex<T, W>::setLow(int low) {
     Vertex::low = low;
 }
 
+/** Sets the Visited tag
+ * @param v New value
+ */
 template<class T, class W>
 void Vertex<T, W>::setVisited(bool v) {
     Vertex::visited = v;
 }
 
+/** @return Vector of Connections/Edges */
 template<class T, class W>
 const std::vector<Edge<T, W>> &Vertex<T, W>::getAdj() const {
     return adj;
 }
 
+/** Sets the adjacent vector
+ * @param adj New vector of Edges
+ */
 template<class T, class W>
 void Vertex<T, W>::setAdj(const std::vector<Edge<T, W>> &adj) {
     Vertex::adj = adj;
 }
 
-/*
+/**
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
  */
@@ -243,7 +294,7 @@ void Vertex<T, W>::addEdge(Vertex<T, W> *d, double w, W &info) {
     adj.push_back(Edge<T, W>(d, w, info));
 }
 
-/*
+/**
  * Auxiliary function to remove an outgoing edge (with a given destination (d))
  * from a vertex (this).
  * Returns true if successful, and false if such edge does not exist.
@@ -258,23 +309,26 @@ bool Vertex<T, W>::removeEdgeTo(Vertex<T, W> *d) {
     return false;
 }
 
+/** @return Number of Vertexes */
 template<class T, class W>
 int Graph<T, W>::getNumVertex() const {
     return vertexSet.size();
 }
 
+/** @return Map of String, Vertex*/
 template<class T, class W>
 map<std::string, Vertex<T, W>*> Graph<T, W>::getVertexMap() const {
     return vertexMap;
 }
 
+/** @return Vector of Vertexes */
 template<class T, class W>
 vector<Vertex<T, W>*> Graph<T, W>::getVertexSet() const {
     return vertexSet;
 }
 
-/*
- * Auxiliary function to find a vertex with a given content.
+/**
+ * Auxiliary function to find a vertex with a given associated tag.
  */
 template<class T, class W>
 Vertex<T, W> * Graph<T, W>::findVertex(std::string id) {
@@ -285,7 +339,7 @@ Vertex<T, W> * Graph<T, W>::findVertex(std::string id) {
 	}
 }
 
-/*
+/**
  *  Adds a vertex with a given content or info (in) to a graph (this).
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
@@ -301,7 +355,7 @@ bool Graph<T, W>::addVertex(const T &in, std::string id) {
 }
 
 
-/*
+/**
  * Adds an edge to a graph (this), given the contents of the source and
  * destination vertices and the edge weight (w).
  * Returns true if successful, and false if the source or destination vertex does not exist.
@@ -316,7 +370,7 @@ bool Graph<T, W>::addEdge(const T &sourc, const T &dest, double w, W &info) {
     return true;
 }
 
-/*
+/**
  * Removes an edge from a graph (this).
  * The edge is identified by the source (sourc) and destination (dest) contents.
  * Returns true if successful, and false if such edge does not exist.
@@ -330,10 +384,10 @@ bool Graph<T, W>::removeEdge(const T &sourc, const T &dest) {
     return v1->removeEdgeTo(v2);
 }
 
-/*
- *  Removes a vertex with a given content (in) from a graph (this), and
- *  all outgoing and incoming edges.
- *  Returns true if successful, and false if such vertex does not exist.
+/**
+ * Removes a vertex with a given content (in) from a graph (this), and
+ * all outgoing and incoming edges.
+ * Returns true if successful, and false if such vertex does not exist.
  */
 template<class T, class W>
 bool Graph<T, W>::removeVertex(const T &in) {

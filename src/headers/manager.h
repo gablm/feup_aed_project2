@@ -25,9 +25,10 @@ class Manager {
 	public:
 		Manager() {}
 		~Manager();
-		Graph<Airport *, int> getConnections() { return connections; }
-		Graph<Airport *, Airline *> getFlights() { return available_flights; }
-		std::map<std::string, Airline *> getAirlines() { return airlines; }
+		/** @return Graph of connections, without repeating edges */
+		Graph<Airport *, int> getConnections();
+		Graph<Airport *, Airline *> getFlights();
+		std::map<std::string, Airline *> getAirlines();
 		
 		void loadAirports();
 		void loadAirlines();
@@ -57,5 +58,22 @@ class Manager {
 		//ix
 		std::set<Airport *> essentialAirports();
 };
+
+/** @return Graph of connections, without repeating edges */
+inline Graph<Airport *, int> Manager::getConnections() { 
+	return connections; 
+}
+/** 
+ * @return Graph of flights, with repeating edges 
+ * if there is more than one airline that operated the route. 
+ */
+inline Graph<Airport *, Airline *> Manager::getFlights() { 
+	return available_flights; 
+}
+
+/** @return Map of Airlines */
+inline std::map<std::string, Airline *> Manager::getAirlines() { 
+	return airlines;
+}
 
 #endif

@@ -313,7 +313,7 @@ void UI::plannerCitySelect(bool in) {
  * airports using coordinates.
  * It will display all the airports within 300 km 
  * and ask for how many to save for the search.
- * @param in True -> Source / False -> Destination
+ * @param mode True -> Source / False -> Destination
 */
 void UI::plannerCoordsSelect(bool mode) {
 	std::vector<Airport *> lst;
@@ -440,6 +440,7 @@ void UI::plannerCoordsSelect(bool mode) {
  * Searches the connection graph for matches with the query.
  * It matches the query with a airport code or its name.
  * @param query String with the content to search
+ * @param in If false, it will check if the airport is already in the origin list.
  * @return Vector of matches
 */
 vector<Airport *> UI::searchAirport(std::string query, bool in) {
@@ -473,6 +474,7 @@ vector<Airport *> UI::searchAirport(std::string query, bool in) {
  * Searches the connection graph for matches with the query.
  * It matches the query with a airport if their city or country matches the query.
  * @param query String with the content to search
+ * @param in If false, it will check if the airport is already in the origin list.
  * @return Vector of matches
 */
 std::set<std::string> UI::searchCity(std::string query, bool in) {	

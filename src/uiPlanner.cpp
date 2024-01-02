@@ -557,6 +557,11 @@ void UI::findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vecto
 	*loading = false;
 }
 
+/**
+ * Builds the vectors of vertexes used in a search 
+ * and starts it according to the parameter.
+ * @param way True -> Slow search / False -> Fast Search
+*/
 void UI::buildFlights(bool way) {
 	plannerResult.clear();
 	auto graph = manager.getFlights();

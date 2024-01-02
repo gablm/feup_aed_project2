@@ -22,7 +22,7 @@ class Airline {
 };
 
 /**
- * Default constructor for an Airline
+ * Constructor for an Airline
  * @param code Airline code
  * @param name Airline name
  * @param callsign Airline Call Sign

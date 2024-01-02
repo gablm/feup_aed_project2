@@ -27,6 +27,9 @@ class UI {
 		vector<Trip> plannerResult;
 		size_t maxAirlines;
 		//bool useRecursionLimiter = true;
+	public:
+		UI();
+		void mainMenu();
 
 		void statsMenu();
 		void globalStats();
@@ -69,9 +72,6 @@ class UI {
 		void showAirline(std::string str);
 
 		void helpMsg(std::string error, std::string usage);
-	public:
-		UI();
-		void mainMenu();
 };
 
 #endif

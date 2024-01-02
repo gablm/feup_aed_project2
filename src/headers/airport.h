@@ -28,7 +28,7 @@ class Airport {
 };
 
 /**
- * Default constructor for an Airport
+ * Constructor for an Airport
  * @param code Airport code
  * @param name Airport name
  * @param city City where the airport is located
