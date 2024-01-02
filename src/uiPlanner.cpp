@@ -379,6 +379,9 @@ void UI::filterSelectList() {
     }
 }
 
+/**
+ * Displays the flights found for the current search.
+*/
 void UI::displayFlights(vector<Trip> &lst) {
 	
 	size_t count = 0;
@@ -447,6 +450,18 @@ void UI::displayFlights(vector<Trip> &lst) {
 	}
 }
 
+/**
+ * Finds paths between two vectors of origins and destinations.
+ * If an airport was already reached, it won't count twice for other routes even 
+ * if the airports in between them are different and they have the same lenght.
+ * Such consideration will only happen at the final node.
+ * The result will be saved in a vector inside the UI class.
+ * A trip is defined as a pair of vectors <Airport *> and <Airline *>,
+ * representing all the airports and airlines in a trip option. 
+ * @param start Vector of vertexes of starting airports
+ * @param end vector of vertexes of ending airports
+ * @note Complexity: O(V + E)
+*/
 void UI::fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end) {
 	auto graph = manager.getFlights();
 	for (auto i : graph.getVertexSet()) {
@@ -506,7 +521,10 @@ void UI::fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Verte
 	plannerResult = res;
 }
 
-
+/**
+ * Prints a path in the format: AIRPORT -> AIRPORT AIRLINE
+ * @param path A trip (pair of vectors <Airport *> and <Airline *>)
+*/
 void UI::printPath(Trip path) {
 	auto i = path.first.end();
 	auto j = path.second.end();
@@ -531,6 +549,9 @@ void UI::printPath(Trip path) {
 	}
 }
 
+/**
+ * Used to delegate a calculation to another thread.
+*/
 void UI::findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end, bool *loading) {
 	who->findPathFilter(start, end);
 	*loading = false;
@@ -574,6 +595,11 @@ void UI::buildFlights(bool way) {
 	displayFlights(plannerResult);
 }
 
+/**
+ * Returns the amount of recursions allowed after maxL recursion.
+ * Used to prevent slow searches and hogging of resources.
+ * @param maxL Current recursion count.
+*/
 int UI::getNextMax(int maxL) {
 	//if (!useRecursionLimiter)
 	//	return 1000000;
@@ -594,6 +620,19 @@ int UI::getNextMax(int maxL) {
 	//return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
 }
 
+/**
+ * Stores the trips returned by deep-search using recursion.
+ * As there could be millions of combinations between two airports,
+ * a recursion limiter is used.
+ * This process starts at the ending vertex and ends at a starting vertex from the vector provided.
+ * @param ports List of airports for a trip
+ * @param lines List of airlines for a trip
+ * @param curr Current Vertex being added to a trip
+ * @param start Vector of starting vertexes.
+ * @param time Recursion counter
+ * @param airlineSet Used when the amount of airlines is limited by a filter
+ * @note Complexity: O(2 ^ F - 1), F being the number of flights found
+*/
 void UI::storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet) {
 
 	if (std::find(start.begin(), start.end(), curr) != start.end()) {
@@ -621,6 +660,17 @@ void UI::storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airpor
 	}	
 }
 
+/**
+ * Finds paths between two vectors of origins and destinations.
+ * This includes all options that have the same length, that is
+ * if the airports in between them are different but the route has similar distance.
+ * The result will be saved in a vector inside the UI class.
+ * A trip is defined as a pair of vectors <Airport *> and <Airline *>,
+ * representing all the airports and airlines in a trip option. 
+ * @param start Vector of vertexes of starting airports
+ * @param end vector of vertexes of ending airports
+ * @note Complexity: O(V + E)
+*/
 void UI::findPathFilter(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end) {
 	auto graph = manager.getFlights();
 	for (auto i : graph.getVertexSet()) {

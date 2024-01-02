@@ -52,6 +52,7 @@ class UI {
 		int getNextMax(int maxL);
 
 		void static findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end, bool *loading);
+		bool strFind(const std::string &one, const std::string &two);
 
 		void statsAirportSelect();
 		void statsCitySelect();

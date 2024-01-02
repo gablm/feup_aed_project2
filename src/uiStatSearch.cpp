@@ -103,8 +103,6 @@ void UI::statsAirportSelect() {
     }
 }
 
-bool str_find(const std::string &one, const std::string &two);
-
 /**
  * Shows the City selection menu to present 
  * the statistics of a specific city
@@ -317,8 +315,8 @@ std::vector<Airline *> UI::searchAirline(std::string query) {
 
 	for (auto i : manager.getAirlines()) {
 		auto w = i.second;
-		if (str_find(w->getCode(), query) || str_find(w->getName(), query) 
-				|| str_find(w->getCallSign(), query))
+		if (strFind(w->getCode(), query) || strFind(w->getName(), query) 
+				|| strFind(w->getCallSign(), query))
 			res.push_back(w);
 	}
 

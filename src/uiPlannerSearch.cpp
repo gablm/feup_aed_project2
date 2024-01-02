@@ -4,13 +4,24 @@
 #include <sstream>
 #include <iomanip>
 
-bool str_find(const std::string &one, const std::string &two) {
+/**
+ * Searches a string in another string.
+ * This search is case-insensitive.
+ * @param one The string to search
+ * @param two The string to be searched
+ * @return If there are any matches
+*/
+bool UI::strFind(const std::string &one, const std::string &two) {
 	auto it = std::search(one.begin(), one.end(), two.begin(), two.end(),
     	[](unsigned char a, unsigned char b) { return std::toupper(a) == std::toupper(b);}
   		);
-  	return (it != one.end() );
+  	return (it != one.end());
 }
 
+/**
+ * Shows the menu for selecting how the search the source/destination airports.
+ * @param in True -> Source / False -> Destination
+*/
 void UI::plannerMenu(bool in) {
 	while (1)
     {
@@ -57,6 +68,11 @@ void UI::plannerMenu(bool in) {
     }
 }
 
+/**
+ * Shows the menu for selecting source/destination 
+ * airports using the airport code/name.
+ * @param in True -> Source / False -> Destination
+*/
 void UI::plannerAirportSelect(bool in) {
 	std::vector<Airport *> lst;
 	size_t count = 0;
@@ -166,6 +182,11 @@ void UI::plannerAirportSelect(bool in) {
     }
 }
 
+/**
+ * Shows the menu for selecting source/destination 
+ * airports using the city they are located in.
+ * @param in True -> Source / False -> Destination
+*/
 void UI::plannerCitySelect(bool in) {
 	std::set<std::string> lst;
 	size_t count = 0;
@@ -287,6 +308,13 @@ void UI::plannerCitySelect(bool in) {
     }
 }
 
+/**
+ * Shows the menu for selecting source/destination 
+ * airports using coordinates.
+ * It will display all the airports within 300 km 
+ * and ask for how many to save for the search.
+ * @param in True -> Source / False -> Destination
+*/
 void UI::plannerCoordsSelect(bool mode) {
 	std::vector<Airport *> lst;
 	std::string str;
@@ -408,6 +436,12 @@ void UI::plannerCoordsSelect(bool mode) {
     }
 }
 
+/**
+ * Searches the connection graph for matches with the query.
+ * It matches the query with a airport code or its name.
+ * @param query String with the content to search
+ * @return Vector of matches
+*/
 vector<Airport *> UI::searchAirport(std::string query, bool in) {
 	auto conns = manager.getConnections();
 	std::transform(query.begin(), query.end(), query.begin(), ::toupper);
@@ -425,7 +459,7 @@ vector<Airport *> UI::searchAirport(std::string query, bool in) {
 		auto w = i->getInfo();
 		if (!in && std::find(origin.begin(), origin.end(), w) != origin.end())
 			continue;
-		if (str_find(w->getCode(), query) || str_find(w->getName(), query))
+		if (strFind(w->getCode(), query) || strFind(w->getName(), query))
 			res.push_back(w);
 	}
 
@@ -435,6 +469,12 @@ vector<Airport *> UI::searchAirport(std::string query, bool in) {
 	return res;
 }
 
+/**
+ * Searches the connection graph for matches with the query.
+ * It matches the query with a airport if their city or country matches the query.
+ * @param query String with the content to search
+ * @return Vector of matches
+*/
 std::set<std::string> UI::searchCity(std::string query, bool in) {	
 	auto conns = manager.getConnections();
 	std::set<std::string> res;
@@ -444,7 +484,7 @@ std::set<std::string> UI::searchCity(std::string query, bool in) {
 		if (!in && std::find(origin.begin(), origin.end(), w) != origin.end())
 			continue;
 		std::string fullName = w->getCity() + ", " + w->getCountry();
-		if (str_find(w->getCity(), query) || str_find(w->getCountry(), query))
+		if (strFind(w->getCity(), query) || strFind(w->getCountry(), query))
 			res.insert(fullName);
 		std::string fl2 = fullName;
 		std::transform(fullName.begin(), fullName.end(), fl2.begin(), ::tolower);
