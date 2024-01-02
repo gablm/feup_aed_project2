@@ -39,32 +39,32 @@ class Airport {
 inline Airport::Airport(std::string code, std::string name, std::string city, std::string country, double latitude, double longitude) : 
 	code(code), name(name), city(city), country(country), latitude(latitude), longitude(longitude) {}
 
-/** Returns the Airport code */
+/** @return Airport code */
 inline std::string Airport::getCode() const {
 	return code;
 }
 
-/** Returns the Airport name */
+/** @return Airport name */
 inline std::string Airport::getName() const { 
 	return name; 
 }
 
-/** Returns the Airport city */
+/** @return Airport city */
 inline std::string Airport::getCity() const { 
 	return city; 
 }
 
-/** Returns the Airport country */
+/** @return Airport country */
 inline std::string Airport::getCountry() const { 
 	return country;
 }
 
-/** Returns the Airport latitude */
+/** @return Airport latitude */
 inline double Airport::getLatitude() const {
 	return latitude;
 }
 
-/** Returns the Airport longitude */
+/** @return Airport longitude */
 inline double Airport::getLongitude() const {
 	return longitude;
 }

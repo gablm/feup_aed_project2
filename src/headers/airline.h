@@ -31,22 +31,22 @@ class Airline {
 inline Airline::Airline(std::string code, std::string name, std::string callsign, std::string country) :
 		code(code), name(name), callsign(callsign), country(country) {}
 
-/** Returns the Airline code */
+/** @return Airline code */
 inline std::string Airline::getCode() const {
 	return code;
 }
 
-/** Returns the Airline name */
+/** @return Airline name */
 inline std::string Airline::getName() const { 
 	return name; 
 }
 
-/** Returns the Airline callsign */
+/** @return Airline callsign */
 inline std::string Airline::getCallSign() const { 
 	return callsign; 
 }
 
-/** Returns the Airline country */
+/** @return Airline country */
 inline std::string Airline::getCountry() const { 
 	return country;
 }

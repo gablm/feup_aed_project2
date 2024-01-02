@@ -14,6 +14,11 @@ template <class T, class W> class Vertex;
 template <class T, class W> class Edge;
 template <class T, class W> class Graph;
 
+/**
+ * Represents an element of a graph.
+ * It is composed by the information it store, 
+ * a vector of edges and some fields necessary to search and traverse the graph.
+*/
 template <class T, class W>
 class Vertex {
     T info;
@@ -52,6 +57,11 @@ public:
     friend class Graph<T, W>;
 };
 
+/**
+ * Represents a connection between two vertexes.
+ * Store the weight of such connection 
+ * and store a piece of information related to that connection.
+*/
 template <class T, class W>
 class Edge {
     Vertex<T, W>* dest;
@@ -69,6 +79,12 @@ public:
     friend class Vertex<T, W>;
 };
 
+/**
+ * Represents a graph of elements.
+ * Uses both a vector to enable simpler traversal 
+ * and a map for a faster access to specific elements.
+ * Both structures contain the same content.
+*/
 template <class T, class W>
 class Graph {
     map<std::string, Vertex<T, W>*> vertexMap;
@@ -87,26 +103,39 @@ public:
 template <class T, class W>
 Edge<T, W>::Edge(Vertex<T, W> *d, double w, W &info): dest(d), weight(w), info(info) {}
 
+/** @return Target of a connection */
 template<class T, class W>
 Vertex<T, W> *Edge<T, W>::getDest() const {
     return dest;
 }
 
+/** 
+ * Sets the target of a connection
+ * @param d New vertex target 
+*/
 template<class T, class W>
 void Edge<T, W>::setDest(Vertex<T, W> *d) {
     Edge::dest = d;
 }
 
+/** @return Weight of a connection */
 template<class T, class W>
 double Edge<T, W>::getWeight() const {
     return weight;
 }
 
+/** 
+ * Sets the weight of a connection 
+ * @param weight New weight value
+*/
 template<class T, class W>
 void Edge<T, W>::setWeight(double weight) {
     Edge::weight = weight;
 }
 
+/**
+ * 	@return Information of the connection
+*/
 template<class T, class W>
 W &Edge<T, W>::getInfo() {
 	return info;
