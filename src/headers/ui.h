@@ -21,7 +21,7 @@ class UI {
 		set<Airline *> allowedAirlines;
 		vector<Trip> plannerResult;
 		size_t maxAirlines;
-		bool useRecursionLimiter = true;
+		//bool useRecursionLimiter = true;
 
 		void statsMenu();
 		void globalStats();
@@ -40,7 +40,7 @@ class UI {
 		void filterSelect();
 		void filterSelectMax();
 		void filterSelectList();
-		void filterDisableLimiter();
+		//void filterDisableLimiter();
 
 		void displayFlights(vector<Trip> &lst);
 		void buildFlights(bool way);

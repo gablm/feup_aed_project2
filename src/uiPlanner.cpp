@@ -60,7 +60,7 @@ void UI::plannerSelected() {
 			destination.clear();
 			allowedAirlines.clear();
 			maxAirlines = 0;
-			useRecursionLimiter = true;
+			//useRecursionLimiter = true;
 			continue;
 		}
 		if (str == "0") {
@@ -124,8 +124,8 @@ void UI::filterSelect() {
 		<< "\n"
 		<< ">> Current filters:\n"
 		<< "\n"
-		<< " Result limiter: " << (useRecursionLimiter ? "True" : "False") << "\n"
-		<< "\n"
+		//<< " Result limiter: " << (useRecursionLimiter ? "True" : "False") << "\n"
+		//<< "\n"
 		<< " Airline limit: " << (maxAirlines > 0 ? to_string(maxAirlines) : "None") << "\n"
 		<< "\n"
 		<< " Selected airlines: " << (allowedAirlines.empty() ? "All\n" : "\n\n");
@@ -159,7 +159,7 @@ void UI::filterSelect() {
 		if (str == "C" || str == "c") {
 			allowedAirlines.clear();
 			maxAirlines = 0;
-			useRecursionLimiter = true;
+			//useRecursionLimiter = true;
 			continue;
 		}
 		if (str == "0") {
@@ -170,15 +170,17 @@ void UI::filterSelect() {
 			filterSelectList();
 			continue;
 		}
-		if (str == "2") {
+		/*if (str == "2") {
 			filterDisableLimiter();
 			continue;
-		}
+		}*/
 		helpMsg("Command not found!", "help - shows all commands");
 	}
 }
 
-void UI::filterDisableLimiter() {
+// Unused code due to the possibility of hogging all the memory and crashing the entire system
+
+/*void UI::filterDisableLimiter() {
 	CLEAR;
 
 	std::cout 
@@ -227,7 +229,7 @@ void UI::filterDisableLimiter() {
 		return;
 
 	useRecursionLimiter = false;
-}
+}*/
 
 /**
  * Prints the menu to change the maximum number of airlines a trip should use.
@@ -573,8 +575,8 @@ void UI::buildFlights(bool way) {
 }
 
 int UI::getNextMax(int maxL) {
-	if (!useRecursionLimiter)
-		return 1000000;
+	//if (!useRecursionLimiter)
+	//	return 1000000;
 	switch (maxL) {
 		case 1:
 			return 40;
