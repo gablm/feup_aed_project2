@@ -35,6 +35,6 @@ amadeus.exe
 
 # Folders
 objs/
-docs/html/
 .vscode/
 .idea/
+docs/doxygen/
