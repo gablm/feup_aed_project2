@@ -49,10 +49,6 @@ class UI {
 		void fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end);
 		void storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet);
 
-		void storeResultV2(std::string ports, std::string lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet);
-		void printPathV2(pair<std::string, std::string> path);
-		void displayFlightsV2(vector<pair<string, string>> &lst);
-
 		void static findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end, bool *loading);
 
 		void statsAirportSelect();

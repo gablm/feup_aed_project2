@@ -384,74 +384,6 @@ void UI::displayFlights(vector<Trip> &lst) {
 	}
 }
 
-void UI::displayFlightsV2(vector<pair<string, string>> &lst) {
-	
-	size_t count = 0;
-	std::string str;
-
-	while (1)
-    {
-		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
-
-        CLEAR;
-        std::cout 
-		<< "Amadeus - Statistics\n"
-		<< "\n"
-		<< ">> Paths between the selection \n\n";
-		if (!lst.empty()) {
-			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
-				printPathV2(lst[i]);
-			}
-			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< totalPages << "\n";
-			std::cout << "Total count: " << lst.size() << "\n";
-		} else
-			std::cout << " No path between the airports was found with the current filters.\n";
-
-		std::cout
-		<< "\n"
-		<< (lst.empty() ? "" : "[back] - Previous page\t[next] - Next page\n")
-		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
-		<< "[B] - Back \t\t[Q] - Exit\n"
-		<< "\n"
-		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
-		<< "\n"
-        << "$> ";
-
-		getline(std::cin, str);
-
-        if (str == "Q" || str == "q") {
-			CLEAR;
-            exit(0);
-		}
-		if (str == "B" || str == "b")
-			break;
-
-		if (str == "next" && !lst.empty()) {
-			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
-			continue;
-		}
-		if (str == "back" && !lst.empty()) {
-			count = count < 10 ? 0 : count - 10;
-			continue;
-		}
-		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 5 || lst.empty()) {
-				helpMsg("There is no page to change to!", "page [num] if there is results");
-				continue;
-			}
-			int page = atoi(str.substr(5).c_str());
-			if (page <= 0 || page > totalPages) {
-				helpMsg("That page does not exist!", "page [num] if there is results");
-				continue;
-			}
-			count = (page - 1) * 10;
-			continue;
-		}
-		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
-	}
-}
-
 void UI::fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end) {
 	auto graph = manager.getFlights();
 	for (auto i : graph.getVertexSet()) {
@@ -511,7 +443,7 @@ void UI::fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Verte
 	plannerResult = res;
 }
 
-//
+
 void UI::printPath(Trip path) {
 	auto i = path.first.end();
 	auto j = path.second.end();
@@ -534,33 +466,6 @@ void UI::printPath(Trip path) {
 			break;
 		}
 	}
-}
-
-void UI::printPathV2(pair<std::string, std::string> path) {
-	auto i = path.first;
-	auto j = path.second;
-
-	istringstream iss(i);
-	istringstream jss(j);
-	string temp;
-
-	while (1) {
-		iss >> temp;
-		std::cout << temp;
-		if (iss.eof())
-			break;
-		std::cout << " --> ";
-	}
-
-	std::cout << "\n" << "    ";
-	while (1) {
-		jss >> temp;
-		std::cout << temp;
-		if (iss.eof())
-			break;
-		std::cout << "     ";
-	}
-	std::cout << "\n";
 }
 
 void UI::findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end, bool *loading) {
@@ -603,7 +508,7 @@ void UI::buildFlights(bool way) {
 	} else
 		fastFindPath(start, end);
 
-	displayFlightsV2(plannerResultV2);
+	displayFlights(plannerResult);
 }
 
 int getNextMax(int maxL) {
@@ -651,29 +556,6 @@ void UI::storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airpor
 	}	
 }
 
-void UI::storeResultV2(std::string ports, std::string lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet) {
-	
-	if (std::find(start.begin(), start.end(), curr) != start.end()) {
-		plannerResultV2.push_back(make_pair(ports, lines));
-		return;
-	}
-
-	//int maxLoops = max(getNextMax(time), 1);
-	//int count = 0;
-	for (auto i : curr->getLasts()) {
-		auto cairset = airlineSet;
-		//if (maxLoops == count)
-			//break;
-		if (maxAirlines > 0) {
-			cairset.insert(i.second);
-			if (cairset.size() > maxAirlines)
-				continue;
-		}
-		storeResultV2(i.first->getInfo()->getCode() + " " + ports, i.second->getCode() + " " + lines, i.first, start, time + 1, cairset);
-		//count++;
-	}
-}
-
 void UI::findPathFilter(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end) {
 	auto graph = manager.getFlights();
 	for (auto i : graph.getVertexSet()) {
@@ -714,7 +596,6 @@ void UI::findPathFilter(vector<Vertex<Airport *, Airline *> *> start, vector<Ver
 	std::cout << "bop\n";
 	for (auto i : end) {
 		list<Airport *> ports {i->getInfo()};
-		//storeResult(ports, list<Airline> {}, i, start, 1, set<Airline> {});
-		storeResultV2(i->getInfo()->getCode(), "", i, start, 1, set<Airline *> {});
+		storeResult(ports, list<Airline *> {}, i, start, 1, set<Airline *> {});
 	}
 }
