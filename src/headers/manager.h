@@ -10,6 +10,12 @@
 
 #define MaxTripVector std::vector<std::pair<Airport *, Airport *>>
 
+/**
+ * Object that stores all the base data for the program.
+ * Contains 2 graphs representing the flight network, 
+ * a two maps, one with all the airlines and one with the airports for each city.
+ * Additionally, this class is responsible for the calculation of simple statistics on its own data. 
+*/
 class Manager {
 	private:
 		Graph<Airport *, int> connections;

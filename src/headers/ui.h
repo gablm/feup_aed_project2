@@ -11,6 +11,11 @@
 #endif
 
 #define Trip std::pair<list<Airport*>, list<Airline *>>
+
+/**
+ * Represents the User Interface of the program.
+ * Contains all the function to display information on the screen.
+*/
 class UI {
 	private:
 		Manager manager;

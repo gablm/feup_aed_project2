@@ -3,6 +3,10 @@
 
 #include <string>
 
+/** 
+ * An object that represents an Airline. 
+ * It is composed by a code, name, callsign and country.
+*/
 class Airline {
 	private:
 		std::string code;
@@ -10,24 +14,41 @@ class Airline {
 		std::string callsign;
 		std::string country;
 	public:
-		Airline() : code("") {}
-		Airline(std::string code) : code(code) {}
-		Airline(std::string code, std::string name, std::string callsign, std::string country) :
-			code(code), name(name), callsign(callsign), country(country) {}
-		std::string getCode() const { return code; }
-		std::string getName() const { return name; }
-		std::string getCallSign() const { return callsign; }
-		std::string getCountry() const { return country; }
-		bool operator==(const Airline &cmp) const {
-			return code == cmp.code && name == cmp.name 
-				&& callsign == cmp.callsign && country == cmp.country;
-		}
-		bool operator<(const Airline &cmp) const {
-			return code != cmp.code ? code < cmp.code : 
-				name != cmp.name ? name < cmp.name :
-				callsign != cmp.callsign ? callsign < cmp.callsign :
-				country < cmp.country; 
-		}
+		Airline(std::string code, std::string name, std::string callsign, std::string country);
+		std::string getCode() const;
+		std::string getName() const;
+		std::string getCallSign() const;
+		std::string getCountry() const;
 };
+
+/**
+ * Default constructor for an Airline
+ * @param code Airline code
+ * @param name Airline name
+ * @param callsign Airline Call Sign
+ * @param country Country where the city and Airline are located
+*/
+inline Airline::Airline(std::string code, std::string name, std::string callsign, std::string country) :
+		code(code), name(name), callsign(callsign), country(country) {}
+
+/** Returns the Airline code */
+inline std::string Airline::getCode() const {
+	return code;
+}
+
+/** Returns the Airline name */
+inline std::string Airline::getName() const { 
+	return name; 
+}
+
+/** Returns the Airline callsign */
+inline std::string Airline::getCallSign() const { 
+	return callsign; 
+}
+
+/** Returns the Airline country */
+inline std::string Airline::getCountry() const { 
+	return country;
+}
 
 #endif
