@@ -1,10 +1,13 @@
 #include "headers/ui.h"
-
 #include <iostream>
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
 
+/**
+ * Shows the Airport selection menu to present 
+ * the statistics of a specific airport
+*/
 void UI::statsAirportSelect() {
 	std::vector<Airport *> lst;
 	size_t count = 0;
@@ -44,7 +47,7 @@ void UI::statsAirportSelect() {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Search for a term" << (type != 1 ? "" : ", select a airport using a number") << " or use one of the commands above\n"
+		<< "Search for a term" << (type != 1 ? "" : ", select a airport using a number") << " or use one of the commands above.\n"
 		<< "\n"
         << "$> ";
 
@@ -102,6 +105,10 @@ void UI::statsAirportSelect() {
 
 bool str_find(const std::string &one, const std::string &two);
 
+/**
+ * Shows the City selection menu to present 
+ * the statistics of a specific city
+*/
 void UI::statsCitySelect() {
 	std::set<std::string> lst;
 	size_t count = 0;
@@ -141,7 +148,7 @@ void UI::statsCitySelect() {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Search for a term" << (type != 1 ? "" : ", select a city using a number") << " or use one of the commands above\n"
+		<< "Search for a term" << (type != 1 ? "" : ", select a city using a number") << " or use one of the commands above.\n"
 		<< "\n"
         << "$> ";
 
@@ -199,6 +206,10 @@ void UI::statsCitySelect() {
     }
 }
 
+/**
+ * Shows the Airline selection menu to present 
+ * the statistics of a specific airline
+*/
 void UI::statsAirlineSelect() {
 	std::vector<Airline *> lst;
 	size_t count = 0;
@@ -238,7 +249,7 @@ void UI::statsAirlineSelect() {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above\n"
+		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above.\n"
 		<< "\n"
         << "$> ";
 
@@ -294,6 +305,12 @@ void UI::statsAirlineSelect() {
     }
 }
 
+/**
+ * Searches the airline map for matches with the query.
+ * It matches the query with a airline code, its name or its call sign.
+ * @param query String with the content to search
+ * @return Vector of matches
+*/
 std::vector<Airline *> UI::searchAirline(std::string query) {
 	std::vector<Airline *> res;
 	std::transform(query.begin(), query.end(), query.begin(), ::toupper);

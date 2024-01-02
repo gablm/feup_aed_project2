@@ -288,7 +288,7 @@ void UI::filterSelectList() {
         std::cout 
 		<< "Amadeus - Planner\n"
 		<< "\n"
-		<< ">> Select filtering method: Specified Airlines.\n"
+		<< ">> Select filtering method: Specified Airlines\n"
 		<< "\n"
 		<< "Input the what Airlines you would like to limit the search to.\n"
 		<< "Selecting a Airline currently selected will remove it\n"
@@ -316,7 +316,7 @@ void UI::filterSelectList() {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above\n"
+		<< "Search for a term" << (type != 1 ? "" : ", select a airline using a number") << " or use one of the commands above.\n"
 		<< "\n"
         << "$> ";
 
@@ -409,7 +409,7 @@ void UI::displayFlights(vector<Trip> &lst) {
 		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
+		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above.\n"
 		<< "\n"
         << "$> ";
 

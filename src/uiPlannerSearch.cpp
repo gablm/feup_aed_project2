@@ -87,7 +87,7 @@ void UI::plannerAirportSelect(bool in) {
 		}
 
 		if (type == 2) {
-			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n(nothing)\n";
+			std::cout << "\nThe search for \"" << str << "\" has returned:\n\n(nothing / already selected)\n";
 		}
 
 		std::cout
@@ -96,7 +96,8 @@ void UI::plannerAirportSelect(bool in) {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a airport using a number:\n")
+		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a airport using a number.\n")
+		<< "\n"
         << "$> ";
 
 		getline(std::cin, str);
@@ -195,7 +196,7 @@ void UI::plannerCitySelect(bool in) {
 		}
 
 		if (type == 2) {
-			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n(nothing)\n";
+			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n(nothing / already selected)\n";
 		}
 
 		std::cout
@@ -204,7 +205,8 @@ void UI::plannerCitySelect(bool in) {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a city using a number:\n")
+		<< "Please enter a term to search" << (type != 1 ? ":\n" : " or select a city using a number.\n")
+		<< "\n"
         << "$> ";
 
 		getline(std::cin, str);
@@ -316,7 +318,10 @@ void UI::plannerCoordsSelect(bool mode) {
 		}
 
 		if (type == 2) {
-			std::cout << "\nThere are no airport within a 300 km radius of " << lat << " La, " << lon << " Lo\n";
+			std::cout 
+			<< "\n" 
+			<< "There are no airport within a 300 km radius of " << lat << " La, " << lon << " Lo\n"
+			<< "Or all of them were already selected.\n";
 		}
 
 		std::cout
@@ -325,7 +330,9 @@ void UI::plannerCoordsSelect(bool mode) {
 		<< (type != 1 ? "" : "[page (integer)] - Select a specific page\n")
 		<< "[B] - Back \t\t[Q] - Exit\n"
 		<< "\n"
-		<< "Please enter coordinates to search" << (type != 1 ? ":\n" : " or enter the number of closest airports to consider:\n")
+		<< "Please enter coordinates to search" << (type != 1 ? ":\n" : " or enter the number of closest airports to consider.\n")
+		<< "Enter the coordinates in the format LATITUDE LONGITUDE (ex: \'40 40\').\n"
+		<< "\n"
         << "$> ";
 
 		getline(std::cin, str);
@@ -408,20 +415,22 @@ vector<Airport *> UI::searchAirport(std::string query, bool in) {
 	vector<Airport *> res;
 
 	if (vtx != NULL) {
-		res.push_back(vtx->getInfo());
-		return res;
+		if (in || std::find(origin.begin(), origin.end(), vtx->getInfo()) != origin.end()) {
+			res.push_back(vtx->getInfo());
+			return res;
+		}
 	}
 	
 	for (auto i : conns.getVertexSet()) {
 		auto w = i->getInfo();
+		if (!in && std::find(origin.begin(), origin.end(), w) != origin.end())
+			continue;
 		if (str_find(w->getCode(), query) || str_find(w->getName(), query))
 			res.push_back(w);
 	}
 
 	if (res.empty())
 		res.push_back(0);
-
-	(void)in;
 	
 	return res;
 }
@@ -432,6 +441,8 @@ std::set<std::string> UI::searchCity(std::string query, bool in) {
 	std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 	for (auto i : conns.getVertexSet()) {
 		auto w = i->getInfo();
+		if (!in && std::find(origin.begin(), origin.end(), w) != origin.end())
+			continue;
 		std::string fullName = w->getCity() + ", " + w->getCountry();
 		if (str_find(w->getCity(), query) || str_find(w->getCountry(), query))
 			res.insert(fullName);
@@ -452,11 +463,23 @@ std::set<std::string> UI::searchCity(std::string query, bool in) {
 	return res;
 }
 
+/**
+ * Searches the connections graph for airports near the coordinates provided.
+ * An airport is considered near if the distance if less or equal to 300 km.
+ * If the distance to an airport is less than 5 km, 
+ * it is considered to be the coordinates of that airport.
+ * @param lat Latitude to search
+ * @param lon Longitude to search
+ * @param in Search mode, origin or destination
+ * @return Vector of matches
+*/
 std::vector<Airport *> UI::searchCoords(double lat, double lon, bool in) {
 	std::vector<Airport *> res;
 
 	for (auto i : manager.getConnections().getVertexSet()) {
 		auto w = i->getInfo();
+		if (in && std::find(origin.begin(), origin.end(), w) != origin.end())
+			continue;
 		double dist = Manager::distance(lat, lon, w->getLatitude(), w->getLongitude());
 		if (dist < 5) {
 			res.clear();
@@ -473,8 +496,6 @@ std::vector<Airport *> UI::searchCoords(double lat, double lon, bool in) {
 
 	if (res.empty())
 		res.push_back(0);
-
-	(void)in;
 
 	return res;
 }

@@ -9,6 +9,10 @@
 #include <cmath>
 #include <algorithm>
 
+/**
+ * Deletes all the allocated memory during the load.
+ * @note Complexity: O(V)
+*/
 Manager::~Manager() {
 	for (auto i : airlines)
 		delete i.second;
