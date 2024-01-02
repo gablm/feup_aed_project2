@@ -449,7 +449,7 @@ vector<Airport *> UI::searchAirport(std::string query, bool in) {
 	vector<Airport *> res;
 
 	if (vtx != NULL) {
-		if (in || std::find(origin.begin(), origin.end(), vtx->getInfo()) != origin.end()) {
+		if (in || std::find(origin.begin(), origin.end(), vtx->getInfo()) == origin.end()) {
 			res.push_back(vtx->getInfo());
 			return res;
 		}
