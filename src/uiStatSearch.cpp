@@ -92,7 +92,7 @@ void UI::statsAirportSelect() {
 			count = 0;
 			search = str;
 			lst = searchAirport(str, true);
-			if (lst.size() == 1 && lst[0] == 0)
+			if (lst.size() == 1 && lst[0] != 0)
 				showAirport(lst[num]->getCode());
 			continue;
 		}
@@ -286,7 +286,7 @@ void UI::statsAirlineSelect() {
 			count = 0;
 			search = str;
 			lst = searchAirline(str);
-			if (lst.size() == 1 && lst[0] == 0)
+			if (lst.size() == 1 && lst[0] != 0)
 				showAirline(lst[num]->getCode());
 			continue;
 		}

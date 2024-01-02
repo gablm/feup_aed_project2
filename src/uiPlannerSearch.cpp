@@ -150,7 +150,7 @@ void UI::plannerAirportSelect(bool in) {
 			count = 0;
 			search = str;
 			lst = searchAirport(str, in);
-			if (lst.size() == 1 && lst[0] == 0) {
+			if (lst.size() == 1 && lst[0] != 0) {
 				if (in) {
 					origin = lst;
 					destination.clear();
@@ -386,7 +386,7 @@ void UI::plannerCoordsSelect(bool mode) {
 		if (str.size() > 1) {
 			count = 0;
 			lst = searchCoords(lat, lon, mode);
-			if (lst.size() == 1 && lst[0] == 0) {
+			if (lst.size() == 1 && lst[0] != 0) {
 				if (in) {
 					origin = lst;
 					destination.clear();
