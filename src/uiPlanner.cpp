@@ -60,6 +60,7 @@ void UI::plannerSelected() {
 			destination.clear();
 			allowedAirlines.clear();
 			maxAirlines = 0;
+			useRecursionLimiter = true;
 			continue;
 		}
 		if (str == "0") {
@@ -123,6 +124,8 @@ void UI::filterSelect() {
 		<< "\n"
 		<< ">> Current filters:\n"
 		<< "\n"
+		<< " Result limiter: " << (useRecursionLimiter ? "True" : "False") << "\n"
+		<< "\n"
 		<< " Airline limit: " << (maxAirlines > 0 ? to_string(maxAirlines) : "None") << "\n"
 		<< "\n"
 		<< " Selected airlines: " << (allowedAirlines.empty() ? "All\n" : "\n\n");
@@ -136,6 +139,8 @@ void UI::filterSelect() {
 		<< "\n"
 		<< " [0] Limit to number of airlines\n"
 		<< " [1] Limit selection of airlines\n"
+		<< "\n"
+		<< " [2] Disable result limiter (WARNING)\n"
 		<< "\n"
 		<< "[C] Clear filters\n"
 		<< "[B] Back\n"
@@ -154,6 +159,7 @@ void UI::filterSelect() {
 		if (str == "C" || str == "c") {
 			allowedAirlines.clear();
 			maxAirlines = 0;
+			useRecursionLimiter = true;
 			continue;
 		}
 		if (str == "0") {
@@ -164,8 +170,63 @@ void UI::filterSelect() {
 			filterSelectList();
 			continue;
 		}
+		if (str == "2") {
+			filterDisableLimiter();
+			continue;
+		}
 		helpMsg("Command not found!", "help - shows all commands");
 	}
+}
+
+void UI::filterDisableLimiter() {
+	CLEAR;
+
+	std::cout 
+	<< "Amadeus - Planner\n"
+	<< "\n"
+	<< ">> Disable the result limiter\n"
+	<< "\n"
+	<< " WARNING - PLEASE READ\n"
+	<< "\n"
+	<< "Disabling the limiter will result in a more complete result.\n"
+	<< "Despite this, the memory used and the calculation time will be exponentially bigger.\n"
+	<< "It is not recommended as it some cases can crash the program and cause general lag on the Computer.\n"
+	<< "\n"
+	<< "Are you sure you want to continue? Type \"YES\" to continue.\n"
+	<< "\n"
+	<< "$> ";
+
+	std::string str;
+	std::getline(std::cin, str);
+	if (str != "YES")
+		return;
+	
+	std::cout
+	<< "\n"
+	<< "Are you really sure you want to continue?\n"
+	<< "Type \"I HAVE READ THE WARNING\" to continue.\n"
+	<< "\n"
+	<< "$> ";
+
+	std::getline(std::cin, str);
+
+	if (str != "I HAVE READ THE WARNING")
+		return;
+
+	std::cout
+	<< "\n"
+	<< "LAST CHANCE\n"
+	<< "Are you really sure you want to continue?\n"
+	<< "Type \"I AM SURE\" to continue.\n"
+	<< "\n"
+	<< "$> ";
+
+	std::getline(std::cin, str);
+
+	if (str != "I AM SURE")
+		return;
+
+	useRecursionLimiter = false;
 }
 
 /**
@@ -511,7 +572,9 @@ void UI::buildFlights(bool way) {
 	displayFlights(plannerResult);
 }
 
-int getNextMax(int maxL) {
+int UI::getNextMax(int maxL) {
+	if (!useRecursionLimiter)
+		return 1000000;
 	switch (maxL) {
 		case 1:
 			return 40;
@@ -526,7 +589,7 @@ int getNextMax(int maxL) {
 		default: 
 			return 2;
 	}
-	return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
+	//return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
 }
 
 void UI::storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet) {

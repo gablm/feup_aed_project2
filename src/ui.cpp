@@ -30,6 +30,7 @@ UI::UI() : manager(Manager()) {
  * Enables access to the Planner and the Statistics sections.
 */
 void UI::mainMenu() {
+	useRecursionLimiter = true;
 	while (1)
     {
         CLEAR;

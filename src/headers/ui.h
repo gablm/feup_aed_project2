@@ -5,9 +5,9 @@
 #include <thread>
 
 #ifdef __linux__
-# define CLEAR system("clear")
+# define CLEAR int retv = system("clear"); if (retv == -1) {}
 #else
-# define CLEAR (void)system("cls")
+# define CLEAR int retv = system("cls"); if (retv == -1) {}
 #endif
 
 #define Trip std::pair<list<Airport*>, list<Airline *>>
@@ -20,8 +20,8 @@ class UI {
 		vector<Airport *> destination;
 		set<Airline *> allowedAirlines;
 		vector<Trip> plannerResult;
-		vector<pair<std::string, std::string>> plannerResultV2;
 		size_t maxAirlines;
+		bool useRecursionLimiter = true;
 
 		void statsMenu();
 		void globalStats();
@@ -40,6 +40,7 @@ class UI {
 		void filterSelect();
 		void filterSelectMax();
 		void filterSelectList();
+		void filterDisableLimiter();
 
 		void displayFlights(vector<Trip> &lst);
 		void buildFlights(bool way);
@@ -48,6 +49,7 @@ class UI {
 		void findPathFilter(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end);
 		void fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end);
 		void storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet);
+		int getNextMax(int maxL);
 
 		void static findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end, bool *loading);
 
