@@ -40,14 +40,14 @@ class UI {
 		void filterSelectMax();
 		void filterSelectList();
 
-		bool isValid(list<std::pair<Airport, Airline>> path);
-
 		void displayFlights(vector<Trip> &lst);
 		void buildFlights(bool way);
 		void printPath(Trip path);
 
 		void findPathFilter(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end);
+		void fastFindPath(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end);
 		void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, vector<Vertex<Airport, Airline> *> start, int time);
+		bool isValid(Trip path);
 
 		void statsAirportSelect();
 		void statsCitySelect();
