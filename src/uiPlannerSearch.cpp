@@ -58,7 +58,7 @@ void UI::plannerMenu(bool in) {
 }
 
 void UI::plannerAirportSelect(bool in) {
-	std::vector<Airport> lst;
+	std::vector<Airport *> lst;
 	size_t count = 0;
 	std::string str;
 	std::string search;
@@ -67,7 +67,7 @@ void UI::plannerAirportSelect(bool in) {
 	while (1)
     {
 		type = lst.empty() ? 0 : 1;
-		if (!lst.empty() && lst[0].getCode() == "NULL")
+		if (!lst.empty() && lst[0] == 0)
 			type = 2;
 		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
@@ -80,7 +80,7 @@ void UI::plannerAirportSelect(bool in) {
 			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
-				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+				std::cout << i << ". " << w->getCode() << " - " << w->getName() << "  (" << w->getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< totalPages << "\n";
@@ -136,7 +136,7 @@ void UI::plannerAirportSelect(bool in) {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
-			vector<Airport> res;
+			vector<Airport *> res;
 			res.push_back(lst[num]);
 			if (in) {
 				origin = res;
@@ -150,7 +150,7 @@ void UI::plannerAirportSelect(bool in) {
 			count = 0;
 			search = str;
 			lst = searchAirport(str, in);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
+			if (lst.size() == 1 && lst[0] == 0) {
 				if (in) {
 					origin = lst;
 					destination.clear();
@@ -245,10 +245,10 @@ void UI::plannerCitySelect(bool in) {
 			}
 			auto it = lst.begin();
 			std::advance(it, num);
-			vector<Airport> res;
+			vector<Airport *> res;
 			for (auto i : manager.getConnections().getVertexSet()) {
 				auto w = i->getInfo();
-				if (w.getCity() + ", " + w.getCountry() == *it)
+				if (w->getCity() + ", " + w->getCountry() == *it)
 					res.push_back(w);
 			}
 			if (in) {
@@ -265,10 +265,10 @@ void UI::plannerCitySelect(bool in) {
 			search = str;
 			lst = searchCity(str, in);
 			if (lst.size() == 1 && *lst.begin() != "NULL") {
-				vector<Airport> res;
+				vector<Airport *> res;
 				for (auto i : manager.getConnections().getVertexSet()) {
 					auto w = i->getInfo();
-					if (w.getCity() + ", " + w.getCountry() == *lst.begin())
+					if (w->getCity() + ", " + w->getCountry() == *lst.begin())
 						res.push_back(w);
 				}
 				if (in) {
@@ -286,7 +286,7 @@ void UI::plannerCitySelect(bool in) {
 }
 
 void UI::plannerCoordsSelect(bool mode) {
-	std::vector<Airport> lst;
+	std::vector<Airport *> lst;
 	std::string str;
 	size_t count = 0;
 	double lat = 0, lon = 0;
@@ -295,7 +295,7 @@ void UI::plannerCoordsSelect(bool mode) {
 	while (1)
     { 
 		type = lst.empty() ? 0 : 1;
-		if (!lst.empty() && lst[0].getCode() == "NULL")
+		if (!lst.empty() && lst[0] == 0)
 			type = 2;
 		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
@@ -308,8 +308,8 @@ void UI::plannerCoordsSelect(bool mode) {
 			std::cout << "\nThe closest airports to " << lat << " La, " << lon << " Lo are:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
-				std::cout << std::fixed << std::setprecision(2) << Manager::distance(lat, lon, w.getLatitude(), w.getLongitude()) << "\tkm | "
-					<< w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ") \n";
+				std::cout << std::fixed << std::setprecision(2) << Manager::distance(lat, lon, w->getLatitude(), w->getLongitude()) << "\tkm | "
+					<< w->getCode() << " - " << w->getName() << "  (" << w->getCountry() << ") \n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< totalPages << "\n";
@@ -386,7 +386,7 @@ void UI::plannerCoordsSelect(bool mode) {
 		if (str.size() > 1) {
 			count = 0;
 			lst = searchCoords(lat, lon, mode);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL") {
+			if (lst.size() == 1 && lst[0] == 0) {
 				if (in) {
 					origin = lst;
 					destination.clear();
@@ -401,11 +401,11 @@ void UI::plannerCoordsSelect(bool mode) {
     }
 }
 
-vector<Airport> UI::searchAirport(std::string query, bool in) {
+vector<Airport *> UI::searchAirport(std::string query, bool in) {
 	auto conns = manager.getConnections();
 	std::transform(query.begin(), query.end(), query.begin(), ::toupper);
 	auto vtx = conns.findVertex(query);
-	vector<Airport> res;
+	vector<Airport *> res;
 
 	if (vtx != NULL) {
 		res.push_back(vtx->getInfo());
@@ -414,12 +414,12 @@ vector<Airport> UI::searchAirport(std::string query, bool in) {
 	
 	for (auto i : conns.getVertexSet()) {
 		auto w = i->getInfo();
-		if (str_find(w.getCode(), query) || str_find(w.getName(), query))
+		if (str_find(w->getCode(), query) || str_find(w->getName(), query))
 			res.push_back(w);
 	}
 
 	if (res.empty())
-		res.push_back(Airport("NULL"));
+		res.push_back(0);
 
 	(void)in;
 	
@@ -432,8 +432,8 @@ std::set<std::string> UI::searchCity(std::string query, bool in) {
 	std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 	for (auto i : conns.getVertexSet()) {
 		auto w = i->getInfo();
-		std::string fullName = w.getCity() + ", " + w.getCountry();
-		if (str_find(w.getCity(), query) || str_find(w.getCountry(), query))
+		std::string fullName = w->getCity() + ", " + w->getCountry();
+		if (str_find(w->getCity(), query) || str_find(w->getCountry(), query))
 			res.insert(fullName);
 		std::string fl2 = fullName;
 		std::transform(fullName.begin(), fullName.end(), fl2.begin(), ::tolower);
@@ -452,12 +452,12 @@ std::set<std::string> UI::searchCity(std::string query, bool in) {
 	return res;
 }
 
-std::vector<Airport> UI::searchCoords(double lat, double lon, bool in) {
-	std::vector<Airport> res;
+std::vector<Airport *> UI::searchCoords(double lat, double lon, bool in) {
+	std::vector<Airport *> res;
 
 	for (auto i : manager.getConnections().getVertexSet()) {
 		auto w = i->getInfo();
-		double dist = Manager::distance(lat, lon, w.getLatitude(), w.getLongitude());
+		double dist = Manager::distance(lat, lon, w->getLatitude(), w->getLongitude());
 		if (dist < 5) {
 			res.clear();
 			res.push_back(w);
@@ -466,13 +466,13 @@ std::vector<Airport> UI::searchCoords(double lat, double lon, bool in) {
 		if (dist <= 300)
 			res.push_back(w);
 	}
-	std::sort(res.begin(), res.end(), [lat, lon](Airport &a, Airport &b) {
-		return Manager::distance(lat, lon, a.getLatitude(), a.getLongitude()) < 
-			Manager::distance(lat, lon, b.getLatitude(), b.getLongitude());
+	std::sort(res.begin(), res.end(), [lat, lon](Airport *a, Airport *b) {
+		return Manager::distance(lat, lon, a->getLatitude(), a->getLongitude()) < 
+			Manager::distance(lat, lon, b->getLatitude(), b->getLongitude());
 	});
 
 	if (res.empty())
-		res.push_back(Airport("NULL"));
+		res.push_back(0);
 
 	(void)in;
 

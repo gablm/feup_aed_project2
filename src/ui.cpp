@@ -225,7 +225,7 @@ void UI::showMax() {
 	p.join();
 
 	int tripSize = dataPair.second;
-	std::vector<std::pair<Airport, Airport>> airportVector = dataPair.first;
+	std::vector<std::pair<Airport *, Airport *>> airportVector = dataPair.first;
 
 	while (1)
     {
@@ -238,7 +238,7 @@ void UI::showMax() {
 		<< "There are several places you can start and end a trip of that size, those being:\n"
 		<< "\n";
 		for(auto i : airportVector){
-			std::cout << " " << i.first.getCode() << " to " << i.second.getCode() << "\n";
+			std::cout << " " << i.first->getCode() << " to " << i.second->getCode() << "\n";
 		}
 		std::cout
         << "\n"
@@ -284,7 +284,7 @@ void UI::showAirport(std::string str) {
 	size_t destinationCities = 0;
 	size_t destinationCountries = 0;
 
-	Airport airport = manager.getConnections().findVertex(str)->getInfo();
+	Airport *airport = manager.getConnections().findVertex(str)->getInfo();
 
 	while (1)
     {
@@ -292,7 +292,7 @@ void UI::showAirport(std::string str) {
         std::cout 
 		<< "Amadeus - Airport statistics\n"
 		<< "\n"
-		<< airport.getCode() << " or " << airport.getName() << " is an airport in " << airport.getCity() << ", " << airport.getCountry() << "\n"
+		<< airport->getCode() << " or " << airport->getName() << " is an airport in " << airport->getCity() << ", " << airport->getCountry() << "\n"
 		<< "\n"
 		<< "This airport has a total of " << totalFlights << " flights departing from it, which can reach:\n"
 		<< " \n"
@@ -344,7 +344,7 @@ void UI::showAirport(std::string str) {
 			if (stops < 0)
 				stops = __INT32_MAX__ - 1;
 
-			destinationDataVector = manager.reachableDestinationsFromAirport(airport.getCode(), stops + 1);
+			destinationDataVector = manager.reachableDestinationsFromAirport(airport->getCode(), stops + 1);
 			numberInputed = true;
 			continue;
 		}
@@ -420,7 +420,7 @@ void UI::showAirline(std::string str) {
 	int totalCities = dataVector[2];
 	int totalCountries = dataVector[3];
 
-	Airline airline = manager.getAirlines()[str];
+	Airline *airline = manager.getAirlines()[str];
 
 	while (1)
     {
@@ -428,7 +428,7 @@ void UI::showAirline(std::string str) {
         std::cout 
 		<< "Amadeus - Airline statistics\n"
 		<< "\n"
-		<< str << " or " << airline.getName() << " is an airline from " << airline.getCountry() <<".\n"
+		<< str << " or " << airline->getName() << " is an airline from " << airline->getCountry() <<".\n"
 		<< "\n"
 		<< "This airline has " << totalFlights << " scheduled flights and operates in:\n"
 		<< "\n "
@@ -436,7 +436,7 @@ void UI::showAirline(std::string str) {
 		<< totalCities << " Cities\n "
 		<< totalCountries << " Countries\n"
 		<< "\n"
-		<< "Its callsign is \"" << airline.getCallSign() << "\".\n"
+		<< "Its callsign is \"" << airline->getCallSign() << "\".\n"
 		<< "\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
@@ -479,7 +479,7 @@ void UI::helpMsg(std::string error, std::string usage) {
  * Shows the essential airports to the network.
 */
 void UI::showEssential() {
-	std::set<Airport> lst = manager.essentialAirports();
+	std::set<Airport *> lst = manager.essentialAirports();
 	size_t count = 0;
 	std::string str;
 	int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
@@ -496,7 +496,7 @@ void UI::showEssential() {
 				auto it = lst.begin();
 				std::advance(it, i);
 				auto w = *it;
-				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+				std::cout << i << ". " << w->getCode() << " - " << w->getName() << "  (" << w->getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< totalPages << "\n";
@@ -552,7 +552,7 @@ void UI::showEssential() {
 			}
 			auto it = lst.begin();
 			std::advance(it, num);
-			showAirport((*it).getCode());
+			showAirport((*it)->getCode());
 			continue;
 		}
 		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
@@ -579,7 +579,7 @@ void UI::showTop(int x) {
 		if (!lst.empty()) {
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i]->getInfo();
-				std::cout << i + 1 << ". " <<  std::fixed << lst[i]->getAdj().size() << " flights | " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+				std::cout << i + 1 << ". " <<  std::fixed << lst[i]->getAdj().size() << " flights | " << w->getCode() << " - " << w->getName() << "  (" << w->getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< totalPages << "\n";
@@ -647,7 +647,7 @@ void UI::showTop(int x) {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
-			showAirport(lst[num - 1]->getInfo().getCode());
+			showAirport(lst[num - 1]->getInfo()->getCode());
 			continue;
 		}
 		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");

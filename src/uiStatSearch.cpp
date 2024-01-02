@@ -6,7 +6,7 @@
 #include <iomanip>
 
 void UI::statsAirportSelect() {
-	std::vector<Airport> lst;
+	std::vector<Airport *> lst;
 	size_t count = 0;
 	std::string str;
 	std::string search;
@@ -15,7 +15,7 @@ void UI::statsAirportSelect() {
 	while (1)
     {
 		type = lst.empty() ? 0 : 1;
-		if (!lst.empty() && lst[0].getCode() == "NULL")
+		if (!lst.empty() && lst[0] == 0)
 			type = 2;
 		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
@@ -28,7 +28,7 @@ void UI::statsAirportSelect() {
 			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
-				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+				std::cout << i << ". " << w->getCode() << " - " << w->getName() << "  (" << w->getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< totalPages << "\n";
@@ -85,15 +85,15 @@ void UI::statsAirportSelect() {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
-			showAirport(lst[num].getCode());
+			showAirport(lst[num]->getCode());
 			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
 			lst = searchAirport(str, true);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL")
-				showAirport(lst[num].getCode());
+			if (lst.size() == 1 && lst[0] == 0)
+				showAirport(lst[num]->getCode());
 			continue;
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
@@ -200,7 +200,7 @@ void UI::statsCitySelect() {
 }
 
 void UI::statsAirlineSelect() {
-	std::vector<Airline> lst;
+	std::vector<Airline *> lst;
 	size_t count = 0;
 	std::string str;
 	std::string search;
@@ -209,7 +209,7 @@ void UI::statsAirlineSelect() {
 	while (1)
     {
 		type = lst.empty() ? 0 : 1;
-		if (!lst.empty() && lst[0].getCode() == "NULL")
+		if (!lst.empty() && lst[0] == 0)
 			type = 2;
 		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
 
@@ -222,7 +222,7 @@ void UI::statsAirlineSelect() {
 			std::cout << "\nThe search for \"" << search << "\" has returned:\n\n";
 			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
 				auto w = lst[i];
-				std::cout << i << ". " << w.getCode() << " - " << w.getName() << "  (" << w.getCountry() << ")\n";
+				std::cout << i << ". " << w->getCode() << " - " << w->getName() << "  (" << w->getCountry() << ")\n";
 			}
 			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
 						<< totalPages << "\n";
@@ -279,34 +279,34 @@ void UI::statsAirlineSelect() {
 				helpMsg("Please enter a valid option!", "[number]");
 				continue;
 			}
-			showAirline(lst[num].getCode());
+			showAirline(lst[num]->getCode());
 			continue;
 		}
 		if (str.size() > 1) {
 			count = 0;
 			search = str;
 			lst = searchAirline(str);
-			if (lst.size() == 1 && lst[0].getCode() != "NULL")
-				showAirline(lst[num].getCode());
+			if (lst.size() == 1 && lst[0] == 0)
+				showAirline(lst[num]->getCode());
 			continue;
 		}
 		helpMsg("Search query is too small!", "[query with at least 2 characters]");
     }
 }
 
-std::vector<Airline> UI::searchAirline(std::string query) {
-	std::vector<Airline> res;
+std::vector<Airline *> UI::searchAirline(std::string query) {
+	std::vector<Airline *> res;
 	std::transform(query.begin(), query.end(), query.begin(), ::toupper);
 
 	for (auto i : manager.getAirlines()) {
 		auto w = i.second;
-		if (str_find(w.getCode(), query) || str_find(w.getName(), query) 
-				|| str_find(w.getCallSign(), query))
+		if (str_find(w->getCode(), query) || str_find(w->getName(), query) 
+				|| str_find(w->getCallSign(), query))
 			res.push_back(w);
 	}
 
 	if (res.empty())
-		res.push_back(Airline("NULL"));
+		res.push_back(0);
 
 	return res;
 }

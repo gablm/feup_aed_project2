@@ -9,6 +9,17 @@
 #include <cmath>
 #include <algorithm>
 
+Manager::~Manager() {
+	for (auto i : airlines)
+		delete i.second;
+	for (auto i : connections.getVertexSet()) {
+		delete i->getInfo();
+		delete i;
+	}
+	for (auto i : available_flights.getVertexSet())
+		delete i;
+}
+
 /**
  * Loads the airports into the graphs.
  * As our graph class has an addicional map to improve access times to the graph,
@@ -60,12 +71,12 @@ void Manager::loadAirports() {
 
 		}
 
-		Airport newData = Airport(code, name, city, country, latitude, longitude);
+		Airport *newData = new Airport(code, name, city, country, latitude, longitude);
 
 		connections.addVertex(newData, code);
 		if (available_flights.addVertex(newData, code)){
-			Vertex<Airport, Airline> *vertexPointer = available_flights.findVertex(code);
-        	cityAirportList[city+", "+country].push_back(vertexPointer);
+			Vertex<Airport *, Airline *> *vertexPointer = available_flights.findVertex(code);
+        	cityAirportList[city + ", " + country].push_back(vertexPointer);
 		}
 	}
 
@@ -117,7 +128,7 @@ void Manager::loadAirlines() {
 
 		}
 
-		airlines[code] = Airline(code, name, callsign, country);
+		airlines[code] = new Airline(code, name, callsign, country);
 	}
 
 	file.close();
@@ -151,11 +162,11 @@ void Manager::loadFlights() {
 
 	std::string line, source, oldSource, target, airline;
 
-	Vertex<Airport, std::string> *cn_src = nullptr;
-	std::vector<Edge<Airport, std::string>> cn_edge;
+	Vertex<Airport *, int> *cn_src = nullptr;
+	std::vector<Edge<Airport *, int>> cn_edge;
 
-	Vertex<Airport, Airline> *av_src = nullptr;
-	std::vector<Edge<Airport, Airline>> av_edge;
+	Vertex<Airport *, Airline *> *av_src = nullptr;
+	std::vector<Edge<Airport *, Airline *>> av_edge;
 	
 
 	ifstream file;
@@ -186,8 +197,7 @@ void Manager::loadFlights() {
 			std::getline(ss, target, ',');
 			std::getline(ss, airline, '\r');
 
-			Airline company = airlines[airline];
-			std::string empty;
+			Airline *company = airlines[airline];
 
 			if (av_src == nullptr || cn_src == nullptr || oldSource != source) {
 				if (av_src != nullptr && cn_src != nullptr) {
@@ -203,15 +213,16 @@ void Manager::loadFlights() {
 
 			auto cn_dst = connections.findVertex(target);
 
-			Airport src = cn_src->getInfo();
-			Airport dst = cn_dst->getInfo();
+			Airport *src = cn_src->getInfo();
+			Airport *dst = cn_dst->getInfo();
 
-			double dist = distance(src.getLatitude(), src.getLongitude(), dst.getLatitude(), dst.getLongitude());
+			double dist = distance(src->getLatitude(), src->getLongitude(), dst->getLatitude(), dst->getLongitude());
 
 			auto av_dst = available_flights.findVertex(target);
-			av_edge.push_back(Edge<Airport, Airline>(av_dst, dist, company));
+			av_edge.push_back(Edge<Airport *, Airline *>(av_dst, dist, company));
 
-			Edge <Airport, std::string> edg(cn_dst, dist, empty);
+			int empty = 0;
+			Edge<Airport *, int> edg(cn_dst, dist, empty);
 			if (std::find(cn_edge.begin(), cn_edge.end(), edg) == cn_edge.end())
 				cn_edge.push_back(edg);
 

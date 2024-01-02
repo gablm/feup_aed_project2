@@ -8,28 +8,24 @@
 #include "airport.h"
 #include "graph.h"
 
-#define MaxTripVector std::vector<std::pair<Airport, Airport>>
+#define MaxTripVector std::vector<std::pair<Airport *, Airport *>>
 
 class Manager {
 	private:
-		Graph<Airport, std::string> connections;
-		Graph<Airport, Airline> available_flights;
-		std::map<std::string, Airline> airlines;
-        std::map<std::string, std::list<Vertex<Airport, Airline>*>> cityAirportList;
+		Graph<Airport *, int> connections;
+		Graph<Airport *, Airline *> available_flights;
+		std::map<std::string, Airline *> airlines;
+        std::map<std::string, std::list<Vertex<Airport *, Airline *>*>> cityAirportList;
 	public:
 		Manager() {}
-		Graph<Airport, std::string> getConnections() { return connections; }
-		Graph<Airport, Airline> getFlights() { return available_flights; }
-		std::map<std::string, Airline> getAirlines() { return airlines; }
+		~Manager();
+		Graph<Airport *, int> getConnections() { return connections; }
+		Graph<Airport *, Airline *> getFlights() { return available_flights; }
+		std::map<std::string, Airline *> getAirlines() { return airlines; }
 		
 		void loadAirports();
-		void testAirports();
-
 		void loadAirlines();
-		void testAirlines();
-		
 		void loadFlights();
-		void testFlights();
 
 		double static distance(double la1, double lo1, double la2, double lo2);
 
@@ -48,12 +44,12 @@ class Manager {
 		//vi
 		std::vector<size_t> reachableDestinationsFromAirport(std::string code, int x);
 		//vii
-		void bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res);
+		void bfsFind(Vertex<Airport *, int> *vtx, int &maxTrip, MaxTripVector &res);
 		std::pair<MaxTripVector, int> maximumTrip();
 		//viii
-		std::vector<Vertex<Airport, Airline>*> airportsWithMostTraffic(size_t x);
+		std::vector<Vertex<Airport *, Airline *>*> airportsWithMostTraffic(size_t x);
 		//ix
-		std::set<Airport> essentialAirports();
+		std::set<Airport *> essentialAirports();
 };
 
 #endif

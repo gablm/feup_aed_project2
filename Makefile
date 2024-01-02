@@ -10,10 +10,10 @@ FILES= objs/manager.o objs/managerStats.o \
 all: $(NAME)
 
 objs/%.o: src/%.cpp
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) -O3 $(FLAGS) -c $< -o $@
 
 $(NAME): $(FILES)
-	$(CC) -pthread $(FLAGS) $(FILES) -o $(NAME)
+	$(CC) -O3 -pthread $(FLAGS) $(FILES) -o $(NAME)
 
 doxygen:
 	@doxygen Doxyfile

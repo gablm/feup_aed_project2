@@ -10,16 +10,17 @@
 # define CLEAR (void)system("cls")
 #endif
 
-#define Trip std::pair<list<Airport>, list<Airline>>
+#define Trip std::pair<list<Airport*>, list<Airline *>>
 class UI {
 	private:
 		Manager manager;
 		double loadtime;
 
-		vector<Airport> origin;
-		vector<Airport> destination;
-		set<Airline> allowedAirlines;
+		vector<Airport *> origin;
+		vector<Airport *> destination;
+		set<Airline *> allowedAirlines;
 		vector<Trip> plannerResult;
+		vector<pair<std::string, std::string>> plannerResultV2;
 		size_t maxAirlines;
 
 		void statsMenu();
@@ -30,11 +31,11 @@ class UI {
 
 		void plannerMenu(bool in);
 		void plannerAirportSelect(bool in);
-		std::vector<Airport> searchAirport(std::string query, bool in);
+		std::vector<Airport *> searchAirport(std::string query, bool in);
 		void plannerCitySelect(bool in);
 		std::set<std::string> searchCity(std::string query, bool in);
 		void plannerCoordsSelect(bool in);
-		std::vector<Airport> searchCoords(double lat, double lon, bool in);
+		std::vector<Airport *> searchCoords(double lat, double lon, bool in);
 		void plannerSelected();
 		void filterSelect();
 		void filterSelectMax();
@@ -44,16 +45,20 @@ class UI {
 		void buildFlights(bool way);
 		void printPath(Trip path);
 
-		void findPathFilter(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end);
-		void fastFindPath(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end);
-		void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, vector<Vertex<Airport, Airline> *> start, int time, set<Airline> airlineSet);
+		void findPathFilter(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end);
+		void fastFindPath(vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end);
+		void storeResult(list<Airport *> ports, list<Airline *> lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet);
 
-		void static findFilter(UI *who, vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end, bool *loading);
+		void storeResultV2(std::string ports, std::string lines, Vertex<Airport *, Airline *> *curr, vector<Vertex<Airport *, Airline *> *> start, int time, set<Airline *> airlineSet);
+		void printPathV2(pair<std::string, std::string> path);
+		void displayFlightsV2(vector<pair<string, string>> &lst);
+
+		void static findFilter(UI *who, vector<Vertex<Airport *, Airline *> *> start, vector<Vertex<Airport *, Airline *> *> end, bool *loading);
 
 		void statsAirportSelect();
 		void statsCitySelect();
 		void statsAirlineSelect();
-		std::vector<Airline> searchAirline(std::string query);
+		std::vector<Airline *> searchAirline(std::string query);
 
 		void showAirport(std::string str);
 		void showCity(std::string str);

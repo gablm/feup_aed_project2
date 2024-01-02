@@ -45,7 +45,7 @@ std::vector<size_t> Manager::airportStats(std::string code) {
 	if (vtx == NULL)
 		return {__INT64_MAX__};
 	
-	std::set<Airline> airlines;
+	std::set<Airline *> airlines;
 
 	for (auto i : vtx->getAdj())
 		airlines.insert(i.getInfo());
@@ -76,9 +76,9 @@ std::vector<size_t> Manager::cityStats(std::string code){
 
 	for (auto airportPtr : airportList){
 		for (auto i : airportPtr->getAdj()) {
-			airlineList.insert(i.getInfo().getName());
-			cityList.insert(i.getDest()->getInfo().getCity());
-			countryList.insert(i.getDest()->getInfo().getCountry());
+			airlineList.insert(i.getInfo()->getName());
+			cityList.insert(i.getDest()->getInfo()->getCity());
+			countryList.insert(i.getDest()->getInfo()->getCountry());
 		}
 		totalFlights += airportPtr->getAdj().size();
 	}
@@ -95,7 +95,7 @@ std::vector<size_t> Manager::cityStats(std::string code){
  * @return vector with size 3
  */
 std::vector<size_t> Manager::airlineStats(std::string code){
-	Airline airline = airlines[code];
+	Airline *airline = airlines[code];
 	unordered_set<string> airportList, cityList, countryList;
 	size_t totalFlights = 0;
 
@@ -105,12 +105,12 @@ std::vector<size_t> Manager::airlineStats(std::string code){
 				auto w1 = airport->getInfo();
 				auto w2 = flight.getDest()->getInfo();
 				totalFlights++;
-				airportList.insert(w1.getCode());
-				airportList.insert(w2.getCode());
-				cityList.insert(w1.getCity() + ", " + w1.getCountry());
-				cityList.insert(w2.getCity() + ", " + w2.getCountry());
-				countryList.insert(w1.getCountry());
-				countryList.insert(w2.getCountry());
+				airportList.insert(w1->getCode());
+				airportList.insert(w2->getCode());
+				cityList.insert(w1->getCity() + ", " + w1->getCountry());
+				cityList.insert(w2->getCity() + ", " + w2->getCountry());
+				countryList.insert(w1->getCountry());
+				countryList.insert(w2->getCountry());
 			}
 		}
 	}
@@ -137,8 +137,8 @@ std::vector<size_t> Manager::destinationsFromAirport(std::string code) {
 
 	for (auto i : vtx->getAdj()) {
 		auto flg = i.getDest()->getInfo();
-		cities.insert(flg.getCity() + ", " + flg.getCountry());
-		countries.insert(flg.getCountry());
+		cities.insert(flg->getCity() + ", " + flg->getCountry());
+		countries.insert(flg->getCountry());
 	}
 
 	return {vtx->getAdj().size(), cities.size(), countries.size()};
@@ -165,7 +165,7 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 	}
 
 	std::set<std::string> cities, countries;
-	list<Vertex<Airport, std::string>*> queue;
+	list<Vertex<Airport *, int>*> queue;
 	size_t count = 0;
 	vtx->setVisited(true);
 	vtx->setNum(0);
@@ -183,8 +183,8 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
 				queue.push_back(w);
 				if (lvl <= x) {
 					auto wa = w->getInfo();
-					cities.insert(wa.getCity() + ", " + wa.getCountry());
-					countries.insert(wa.getCountry());
+					cities.insert(wa->getCity() + ", " + wa->getCountry());
+					countries.insert(wa->getCountry());
 					count++;
 				}
 			}
@@ -200,10 +200,10 @@ std::vector<size_t> Manager::reachableDestinationsFromAirport(std::string code, 
  * @param x Size of the final amount. If less than size, it is ignored
  * @return Reduce, ordered copy of vertexSet
 */
-vector<Vertex<Airport, Airline>*> Manager::airportsWithMostTraffic(size_t x) {
-	vector<Vertex<Airport, Airline>*> copy = available_flights.getVertexSet();
+vector<Vertex<Airport *, Airline *> *> Manager::airportsWithMostTraffic(size_t x) {
+	vector<Vertex<Airport *, Airline *> *> copy = available_flights.getVertexSet();
 	std::sort(copy.begin(), copy.end(), 
-		[](Vertex<Airport, Airline> *x, Vertex<Airport, Airline> *y) { return x->getAdj().size() > y->getAdj().size(); });
+		[](Vertex<Airport *, Airline *> *x, Vertex<Airport *, Airline *> *y) { return x->getAdj().size() > y->getAdj().size(); });
 	if (x < copy.size())
 		copy.resize(x);
 	return copy;
@@ -240,7 +240,7 @@ vector<Vertex<Airport, Airline>*> Manager::airportsWithMostTraffic(size_t x) {
  * @param last Vector visited before. NULL if it's the first
  * @param res Saves the visit result
 */
-void dfsTarjanVisit(Vertex<Airport, std::string> *vtx, int &time, Vertex<Airport, std::string> *last, std::set<Airport> &res) {
+void dfsTarjanVisit(Vertex<Airport *, int> *vtx, int &time, Vertex<Airport *, int> *last, std::set<Airport *> &res) {
 	int children = 0;
 	vtx->setVisited(true);
 	vtx->setLow(++time);
@@ -270,9 +270,9 @@ void dfsTarjanVisit(Vertex<Airport, std::string> *vtx, int &time, Vertex<Airport
  * @note Complexity: O(V + E)
  * @return Set of Airports
 */
-std::set<Airport> Manager::essentialAirports() {
+std::set<Airport *> Manager::essentialAirports() {
 
-	std::set<Airport> res;
+	std::set<Airport *> res;
 	int time = 0;
 
 	for (auto i : connections.getVertexSet()) {
@@ -297,13 +297,13 @@ std::set<Airport> Manager::essentialAirports() {
  * @param maxTrip Reference to the number keeping count of the maximum trip length
  * @param res Vector saving the pair <start, end> of the trips found.
 */
-void Manager::bfsFind(Vertex<Airport, std::string> *vtx, int &maxTrip, MaxTripVector &res) {
+void Manager::bfsFind(Vertex<Airport *, int> *vtx, int &maxTrip, MaxTripVector &res) {
 	for (auto i : connections.getVertexSet()) {
 		i->setVisited(false);
 		i->setNum(__INT32_MAX__);
 	}
 
-	list<Vertex<Airport, std::string>*> queue;
+	list<Vertex<Airport *, int> *> queue;
 	vtx->setVisited(true);
 	vtx->setNum(0);
 	queue.push_back(vtx);
