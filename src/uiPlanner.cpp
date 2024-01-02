@@ -467,6 +467,11 @@ void UI::printPath(Trip path) {
 	}
 }
 
+void UI::findFilter(UI *who, vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end, bool *loading) {
+	who->findPathFilter(start, end);
+	*loading = false;
+}
+
 void UI::buildFlights(bool way) {
 	plannerResult.clear();
 	auto graph = manager.getFlights();
@@ -480,9 +485,26 @@ void UI::buildFlights(bool way) {
 	for (auto i : destination)
 		end.push_back(graph.findVertex(i.getCode()));
 	
-	if (way)	
-		findPathFilter(start, end);
-	else
+	if (way) {
+		bool loading = true;
+		std::thread th = std::thread(UI::findFilter, this, start, end, &loading);
+
+		int count = 0;
+		double time_sec = 0;
+		while (loading) {
+			CLEAR;
+			std::cout << "Amadeus - Global statistics\n"
+				  	<< "\n"
+				  	<< "Paths are currently being calculated.\n"
+				  	<< "Please wait" << std::string(count, '.') << "\n"
+					<< "\n"
+					<< "Time elapsed: " << (int)time_sec << "s\n";
+			count = count == 3 ? 0 : count + 1;
+			time_sec += 0.5;
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		}
+		th.join();
+	} else
 		fastFindPath(start, end);
 
 	displayFlights(plannerResult);
