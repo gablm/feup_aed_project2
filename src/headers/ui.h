@@ -19,6 +19,7 @@ class UI {
 		vector<Airport> origin;
 		vector<Airport> destination;
 		set<Airline> allowedAirlines;
+		vector<Trip> plannerResult;
 		int maxAirlines;
 
 		void statsMenu();
@@ -44,6 +45,9 @@ class UI {
 		void displayFlights(vector<Trip> &lst);
 		void buildFlights(bool way);
 		void printPath(Trip path);
+
+		void findPathFilter(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end);
+		void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, vector<Vertex<Airport, Airline> *> start, int time);
 
 		void statsAirportSelect();
 		void statsCitySelect();

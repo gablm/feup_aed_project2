@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
+#include <algorithm>
 
 /**
  * Shows the main menu of the trip planner, 
@@ -9,8 +10,6 @@
 */
 void UI::plannerSelected() {
 	std::string str;
-	allowedAirlines.clear();
-	maxAirlines = 0;
 
 	while (1) {
 		CLEAR;
@@ -31,7 +30,10 @@ void UI::plannerSelected() {
 		<< " [0] - Select origin\t\t[1] - Select destination\n"
 		<< " (erasing destinations if any)\t[clear] - Reset all fields\n"
 		<< "\n"
-		<< " [F] - Add filters\t\t[search] - Start search\n"
+		<< " [search / s] - Fast search\t[deep-search / ds] - Deep search\n"
+		<< " (no filters / limited options)\t(requires filters / slower)\n"
+		<< " [F] - Add filters\n"
+		<< "\n"
 		<< " [B] Back\t\t\t[Q] - Quit\n"
 		<< "\n$> ";
 
@@ -43,6 +45,8 @@ void UI::plannerSelected() {
 		if (str == "B" || str == "b") {
 			origin.clear();
 			destination.clear();
+			allowedAirlines.clear();
+			maxAirlines = 0;
 			mainMenu();
 			return;
 		}
@@ -69,7 +73,7 @@ void UI::plannerSelected() {
 			plannerMenu(false);
 			continue;
 		}
-		if (str == "search") {
+		if (str == "search" || str == "s") {
 			if (origin.empty() || destination.empty()) {
 				helpMsg("Please select both the origin and destination first!", 
 					"[0] to select the origin and [1] to select the destination");
@@ -78,7 +82,7 @@ void UI::plannerSelected() {
 			buildFlights(false);
 			continue;
 		}
-		if (str == "deep-search") {
+		if (str == "deep-search" || str == "ds") {
 			if (origin.empty() || destination.empty()) {
 				helpMsg("Please select both the origin and destination first!", 
 					"[0] to select the origin and [1] to select the destination");
@@ -101,7 +105,7 @@ void UI::plannerSelected() {
  * Shows the current filters and which filters can be changed.
 */
 void UI::filterSelect() {
-	while(1){
+	while(1) {
 		CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
@@ -122,6 +126,7 @@ void UI::filterSelect() {
 		<< " [0] Limit to number of airlines\n"
 		<< " [1] Limit selection of airlines\n"
 		<< "\n"
+		<< "[C] Clear filters\n"
 		<< "[B] Back\n"
 		<< "[Q] Exit\n"
 		<< "\n"
@@ -135,13 +140,17 @@ void UI::filterSelect() {
 		}
 		if (str == "B" || str == "b")
 			break;
-		if (str == "0"){
-			filterSelectMax();
-			break;
+		if (str == "C" || str == "c") {
+			allowedAirlines.clear();
+			maxAirlines = 0;
 		}
-		if (str == "1"){
+		if (str == "0") {
+			filterSelectMax();
+			continue;
+		}
+		if (str == "1") {
 			filterSelectList();
-			break;
+			continue;
 		}
 		helpMsg("Command not found!", "help - shows all commands");
 	}
@@ -151,7 +160,7 @@ void UI::filterSelect() {
  * Prints the menu to change the maximum number of airlines a trip should use.
 */
 void UI::filterSelectMax() {
-	while(1){
+	while(1) {
 		CLEAR;
         std::cout 
 		<< "Amadeus - Planner\n"
@@ -295,6 +304,74 @@ void UI::filterSelectList() {
     }
 }
 
+void UI::displayFlights(vector<Trip> &lst) {
+	
+	size_t count = 0;
+	std::string str;
+
+	while (1)
+    {
+		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
+
+        CLEAR;
+        std::cout 
+		<< "Amadeus - Statistics\n"
+		<< "\n"
+		<< ">> Paths between the selection \n\n";
+		if (!lst.empty()) {
+			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
+				printPath(lst[i]);
+			}
+			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
+						<< totalPages << "\n";
+			std::cout << "Total count: " << lst.size() << "\n";
+		} else
+			std::cout << " No path between the airports was found with the current filters.\n";
+
+		std::cout
+		<< "\n"
+		<< (lst.empty() ? "" : "[back] - Previous page\t[next] - Next page\n")
+		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
+		<< "[B] - Back \t\t[Q] - Exit\n"
+		<< "\n"
+		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
+		<< "\n"
+        << "$> ";
+
+		getline(std::cin, str);
+
+        if (str == "Q" || str == "q") {
+			CLEAR;
+            exit(0);
+		}
+		if (str == "B" || str == "b")
+			break;
+
+		if (str == "next" && !lst.empty()) {
+			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
+			continue;
+		}
+		if (str == "back" && !lst.empty()) {
+			count = count < 10 ? 0 : count - 10;
+			continue;
+		}
+		if (str.substr(0, 4) == "page") {
+			if (str.size() <= 5 || lst.empty()) {
+				helpMsg("There is no page to change to!", "page [num] if there is results");
+				continue;
+			}
+			int page = atoi(str.substr(5).c_str());
+			if (page <= 0 || page > totalPages) {
+				helpMsg("That page does not exist!", "page [num] if there is results");
+				continue;
+			}
+			count = (page - 1) * 10;
+			continue;
+		}
+		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
+	}
+}
+
 template <class T, class W>
 vector<pair<list<T>, list<W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Vertex<T, W> *end) {
 	
@@ -350,8 +427,6 @@ vector<pair<list<T>, list<W>>> findPath(Graph<T, W> *g, Vertex<T, W> *start, Ver
 }
 
 //
-void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end);
-
 void UI::printPath(Trip path) {
 	auto i = path.first.end();
 	auto j = path.second.end();
@@ -370,25 +445,26 @@ void UI::printPath(Trip path) {
 		j--;
 		std::cout << j->getCode() << "     ";
 		if (j == path.second.begin()) {
-			std::cout << "\n\n";
+			std::cout << "\n";
 			break;
 		}
 	}
 }
 
-vector<Trip> lst;
 void UI::buildFlights(bool way) {
-	lst.clear();
+	plannerResult.clear();
 	if (way) {
 		auto graph = manager.getFlights();
 		try {
-			for (auto i : origin) {
-				auto ini = graph.findVertex(i.getCode());
-				for (auto j : destination) {
-					auto end = graph.findVertex(j.getCode());
-					findPath2(&graph, ini, end);
-				}
-			}
+			vector<Vertex<Airport, Airline> *> start;
+			vector<Vertex<Airport, Airline> *> end;
+			for (auto i : origin)
+				start.push_back(graph.findVertex(i.getCode()));
+				
+			for (auto i : destination)
+				end.push_back(graph.findVertex(i.getCode()));
+				
+			findPathFilter(start, end);
 		} catch (const exception &e) {
 			CLEAR;
 			std::cout << e.what();
@@ -398,82 +474,13 @@ void UI::buildFlights(bool way) {
 		auto ini = graph.findVertex(origin[0].getCode());
 		auto end = graph.findVertex(destination[0].getCode());
 		try {
-			lst = findPath(&graph, ini, end);
+			plannerResult = findPath(&graph, ini, end);
 		} catch (const exception &e) {
 			std::cout << e.what();
 			exit(0);
 		}
 	}
-	displayFlights(lst);
-
-}
-
-void UI::displayFlights(vector<Trip> &lst) {
-	
-	size_t count = 0;
-	std::string str;
-
-	while (1)
-    {
-		int totalPages = (lst.size() + 9 - (lst.size() - 1) % 10) / 10;
-
-        CLEAR;
-        std::cout 
-		<< "Amadeus - Statistics\n"
-		<< "\n"
-		<< ">> Paths between the selection \n\n";
-		if (!lst.empty()) {
-			for (size_t i = count; i < min(count + 10, lst.size()); i++) {
-				printPath(lst[i]);
-			}
-			std::cout << "\nPage " << (count + 10 - count % 10) / 10 << " of " 
-						<< totalPages << "\n";
-			std::cout << "Total count: " << lst.size() << "\n";
-		} else
-			std::cout << " There are airports.\nThis is most likely an error. Please go back and try again!\n";
-
-		std::cout
-		<< "\n"
-		<< (lst.empty() ? "" : "[back] - Previous page\t[next] - Next page\n")
-		<< (lst.empty() ? "" : "[page (integer)] - Select a specific page\n")
-		<< "[B] - Back \t\t[Q] - Exit\n"
-		<< "\n"
-		<< (lst.empty() ? "Use" : "Select a airport by its number or use") << " one of the commands above\n"
-		<< "\n"
-        << "$> ";
-
-		getline(std::cin, str);
-
-        if (str == "Q" || str == "q") {
-			CLEAR;
-            exit(0);
-		}
-		if (str == "B" || str == "b")
-			break;
-
-		if (str == "next" && !lst.empty()) {
-			count = count + 10 < lst.size() + lst.size() % 10 ? count + 10 : count;
-			continue;
-		}
-		if (str == "back" && !lst.empty()) {
-			count = count < 10 ? 0 : count - 10;
-			continue;
-		}
-		if (str.substr(0, 4) == "page") {
-			if (str.size() <= 5 || lst.empty()) {
-				helpMsg("There is no page to change to!", "page [num] if there is results");
-				continue;
-			}
-			int page = atoi(str.substr(5).c_str());
-			if (page <= 0 || page > totalPages) {
-				helpMsg("That page does not exist!", "page [num] if there is results");
-				continue;
-			}
-			count = (page - 1) * 10;
-			continue;
-		}
-		helpMsg("Invalid command!", "[next/back/b/q/(integer)]");
-	}
+	displayFlights(plannerResult);
 }
 
 int getNextMax(int maxL) {
@@ -494,11 +501,10 @@ int getNextMax(int maxL) {
 	return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
 }
 
-void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, Vertex<Airport, Airline> *start, int time = 1) {
+void UI::storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, vector<Vertex<Airport, Airline> *> start, int time = 1) {
 	
-	if (curr == start) {
-		lst.push_back(make_pair(ports, lines));
-		//printPath(ports);
+	if (std::find(start.begin(), start.end(), curr) != start.end()) {
+		plannerResult.push_back(make_pair(ports, lines));
 		return;
 	}
 
@@ -516,17 +522,20 @@ void storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airli
 	}	
 }
 
-void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vertex<Airport, Airline> *end) {
-	for (auto i : g->getVertexSet()) {
+void UI::findPathFilter(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Airport, Airline> *> end) {
+	auto graph = manager.getFlights();
+	for (auto i : graph.getVertexSet()) {
 		i->setVisited(false);
 		i->setNum(__INT32_MAX__);
 		i->clearLast();
 	}
 
 	list<Vertex<Airport, Airline>*> queue;
-	start->setVisited(true);
-	start->setNum(0);
-	queue.push_back(start);
+	for (auto i : start) {
+		i->setVisited(true);
+		i->setNum(0);
+		queue.push_back(i);
+	}
 	int minStops = __INT32_MAX__;
 	while (!queue.empty()) {
 		auto u = queue.front();
@@ -536,8 +545,12 @@ void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vert
 		for (auto i : u->getAdj()) {
 			auto w = i.getDest();
 			if (w->getNum() == __INT32_MAX__ || u->getNum() + 1 <= w->getNum()) {
+				if (!allowedAirlines.empty()) {
+					if (std::find(allowedAirlines.begin(), allowedAirlines.end(), i.getInfo()) == allowedAirlines.end())
+						continue;
+				}
 				w->addLast(u, i.getInfo());
-				if (w == end && u->getNum() + 1 <= minStops) {
+				if (std::find(end.begin(), end.end(), w) != start.end() && u->getNum() + 1 <= minStops) {
 					minStops = u->getNum() + 1;
 					continue;
 				}
@@ -547,8 +560,10 @@ void findPath2(Graph<Airport, Airline> *g, Vertex<Airport, Airline> *start, Vert
 		}
 	}
 	std::cout << "bop\n";
-	list<Airport> ports {end->getInfo()};
-	storeResult(ports, list<Airline> {}, end, start);
+	for (auto i : end) {
+		list<Airport> ports {i->getInfo()};
+		storeResult(ports, list<Airline> {}, i, start);
+	}
 }
 
 bool UI::isValid(list<std::pair<Airport, Airline>> path){
