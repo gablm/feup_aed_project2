@@ -97,6 +97,16 @@ void UI::plannerSelected() {
 			buildFlights(true);
 			continue;
 		}
+		if (str == "fs") {
+			if (origin.empty() || destination.empty()) {
+				helpMsg("Please select both the origin and destination first!", 
+					"[0] to select the origin and [1] to select the destination");
+				continue;
+			}
+
+			buildFlights(true);
+			continue;
+		}
 		helpMsg("Unknown option!", "[command]");
 	}
 }
@@ -380,6 +390,7 @@ void UI::fastFindPath(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Ai
 		i->setNum(__INT32_MAX__);
 		i->clearLast();
 	}
+
 	vector<Trip> res;
 	list<Vertex<Airport, Airline>*> queue;
 	for (auto i : start) {
@@ -391,6 +402,8 @@ void UI::fastFindPath(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Ai
 	while (!queue.empty()) {
 		auto u = queue.front();
 		queue.pop_front();
+		if (u->getNum() + 1 > minStops)
+			continue;
 		for (auto i : u->getAdj()) {
 			auto w = i.getDest();
 			if (!w->isVisited()) {
@@ -401,7 +414,8 @@ void UI::fastFindPath(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Ai
 					continue;
 				}
 				w->setVisited(true);
-				w->setLast(u, i.getInfo());
+				w->clearLast();
+				w->addLast(u, i.getInfo());
 				w->setNum(u->getNum() + 1);
 				queue.push_back(w);
 			}
@@ -416,7 +430,7 @@ void UI::fastFindPath(vector<Vertex<Airport, Airline> *> start, vector<Vertex<Ai
 			b.push_front(i.second);
 			Vertex <Airport, Airline> *rn = i.first;
 			while (std::find(start.begin(), start.end(), rn) == start.end()) {
-				auto vt = rn->getLast();
+				auto vt = rn->getLasts().back();
 				a.push_front(vt.first->getInfo());
 				b.push_front(vt.second);
 				rn = vt.first;
@@ -492,8 +506,8 @@ int getNextMax(int maxL) {
 	return (int)(39.9579019304262 * std::exp(-0.4069703510623 * maxL));
 }
 
-void UI::storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, vector<Vertex<Airport, Airline> *> start, int time = 1) {
-	
+void UI::storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, Airline> *curr, vector<Vertex<Airport, Airline> *> start, int time, set<Airline> airlineSet) {
+
 	if (std::find(start.begin(), start.end(), curr) != start.end()) {
 		plannerResult.push_back(make_pair(ports, lines));
 		return;
@@ -502,13 +516,19 @@ void UI::storeResult(list<Airport> ports, list<Airline> lines, Vertex<Airport, A
 	int maxLoops = max(getNextMax(time), 1);
 	int count = 0;
 	for (auto i : curr->getLasts()) {
+		auto cairset = airlineSet;
 		if (maxLoops == count)
 			break;
+		if (maxAirlines > 0) {
+			cairset.insert(i.second);
+			if (cairset.size() > maxAirlines)
+				continue;
+		}
 		auto cports = ports;
 		cports.push_back(i.first->getInfo());
 		auto clines = lines;
 		clines.push_back(i.second);
-		storeResult(cports, clines, i.first, start, time + 1);
+		storeResult(cports, clines, i.first, start, time + 1, cairset);
 		count++;
 	}	
 }
@@ -541,7 +561,7 @@ void UI::findPathFilter(vector<Vertex<Airport, Airline> *> start, vector<Vertex<
 						continue;
 				}
 				w->addLast(u, i.getInfo());
-				if (std::find(end.begin(), end.end(), w) != start.end() && u->getNum() + 1 <= minStops) {
+				if (std::find(end.begin(), end.end(), w) != end.end() && u->getNum() + 1 <= minStops) {
 					minStops = u->getNum() + 1;
 					continue;
 				}
@@ -553,25 +573,6 @@ void UI::findPathFilter(vector<Vertex<Airport, Airline> *> start, vector<Vertex<
 	std::cout << "bop\n";
 	for (auto i : end) {
 		list<Airport> ports {i->getInfo()};
-		storeResult(ports, list<Airline> {}, i, start);
+		storeResult(ports, list<Airline> {}, i, start, 1, set<Airline> {});
 	}
-}
-
-bool UI::isValid(Trip path){
-	set<Airline> usedAirlines;
-	int airlineNum = 0;
-
-	if (maxAirlines == 0)
-		return true;
-
-	for (auto i : path.second) {
-		if (std::find(usedAirlines.begin(), usedAirlines.end(), i) == usedAirlines.end()) {
-			airlineNum++;
-			usedAirlines.emplace(i);
-		}
-		if (airlineNum > maxAirlines)
-			return false;
-	}
-
-	return true;
 }

@@ -19,7 +19,6 @@ class Vertex {
     T info;
     std::vector<Edge<T, W>> adj;
 
-	pair<Vertex<T, W>*, W> last;
 	vector<pair<Vertex<T, W>*, W>> lasts;
     bool visited;
     bool processing;
@@ -33,9 +32,6 @@ public:
     Vertex(T in);
     T getInfo() const;
     void setInfo(T in);
-	//
-	pair<Vertex<T, W> *, W> getLast() const;
-	void setLast(Vertex<T, W> *v, W info);
 	//
 	void clearLast();
 	void addLast(Vertex<T, W> *v, W info);
@@ -135,23 +131,13 @@ void Vertex<T, W>::setInfo(T in) {
 }
 
 template<class T, class W>
-pair<Vertex<T, W>*, W> Vertex<T, W>::getLast() const {
-	return last;
-}
-
-template<class T, class W>
-void Vertex<T, W>::setLast(Vertex<T, W> *v, W info) {
-	last = make_pair(v, info);
-}
-
-template<class T, class W>
 void Vertex<T, W>::addLast(Vertex<T, W> *v, W info) {
 	lasts.push_back(make_pair(v, info));
 }
 
 template<class T, class W>
 void Vertex<T, W>::clearLast() {
-	lasts = std::vector<std::pair<Vertex<T, W> *, W>> {};
+	lasts.clear();
 }
 
 template<class T, class W>
